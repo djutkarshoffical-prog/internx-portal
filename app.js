@@ -1,4 +1,4 @@
-// app.js - Core Javascript Controller for InternX by UTX
+ï»¿// app.js - Core Javascript Controller for InternX by UTX
 
 // Safe localStorage wrapper to prevent exceptions under file:// or restricted browser profiles
 const storage = {
@@ -56,7 +56,7 @@ function updateThemeToggleIcons(theme) {
         btn.title = "Switch to Light Mode";
       }
     } else {
-      // Header button — icon only
+      // Header button ï¿½ icon only
       if (theme === 'light') {
         btn.innerHTML = '??';
         btn.title = "Switch to Dark Mode";
@@ -71,7 +71,7 @@ function updateThemeToggleIcons(theme) {
 // Call loadTheme immediately so the theme applies before full page load
 loadTheme();
 
-// ====== LOGO 7-CLICK EASTER EGG — Toggle Supabase Badge ======
+// ====== LOGO 7-CLICK EASTER EGG ï¿½ Toggle Supabase Badge ======
 let _logoClickCount = 0;
 let _logoClickTimer = null;
 
@@ -89,7 +89,7 @@ function handleLogoSecretClick() {
     // Portal sidebar badge wrapper
     const sidebarWrapper = document.getElementById('supabase-sidebar-wrapper');
 
-    // Toggle both — whichever is visible on current page
+    // Toggle both ï¿½ whichever is visible on current page
     let anyVisible = false;
     if (landingWrapper) {
       const vis = landingWrapper.style.display !== 'none';
@@ -192,7 +192,7 @@ function cleanDatabaseCollections() {
     }
   });
 
-  // Deduplicate users by email — keep the best record per student
+  // Deduplicate users by email ï¿½ keep the best record per student
   if (db && Array.isArray(db.users)) {
     db.users = dedupeUsersByEmail(db.users);
   }
@@ -617,7 +617,7 @@ function setSupabaseSyncBadge(state, detail) {
   const badgeMenuEl = document.getElementById('supabase-status-badge-sidebar');
   const labels = {
     active: 'DB: Supabase (Active)',
-    partial: 'DB: Supabase (Sync Partial — click to retry)',
+    partial: 'DB: Supabase (Sync Partial ï¿½ click to retry)',
     offline: 'DB: Supabase (Offline)',
     local: 'DB: Local Storage (Fallback)'
   };
@@ -630,7 +630,7 @@ function setSupabaseSyncBadge(state, detail) {
       badge.title = 'Cloud database connected';
     } else if (state === 'partial') {
       badge.className = 'supabase-status-badge fallback';
-      badge.title = 'Sync incomplete — click to retry';
+      badge.title = 'Sync incomplete ï¿½ click to retry';
     } else {
       badge.className = 'supabase-status-badge fallback';
       badge.title = state === 'local' ? 'Using local storage only' : 'Click to configure Supabase';
@@ -700,7 +700,7 @@ async function retrySupabaseCloudSync(silent) {
     if (!silent) alert('Supabase is not connected. Check your internet or Supabase settings.');
     return false;
   }
-  if (!silent) setSupabaseSyncBadge('partial', 'DB: Supabase (Retrying sync…)');
+  if (!silent) setSupabaseSyncBadge('partial', 'DB: Supabase (Retrying syncï¿½)');
 
   const ok = await pullCollectionsFromApexSync(APEX_SYNC_COLLECTIONS);
   if (ok) {
@@ -1324,11 +1324,11 @@ function showRegStep(step) {
 }
 window.showRegStep = showRegStep;
 
-// Counter for "Get Started" clicks — unlocks Mentor/Admin form after 5
+// Counter for "Get Started" clicks ï¿½ unlocks Mentor/Admin form after 5
 let _registerOpenCount = 0;
 
 function _updateRoleTabLock() {
-  // No visual change on tabs — just control form usability
+  // No visual change on tabs ï¿½ just control form usability
   _applyRegisterFormLock();
 }
 
@@ -1411,7 +1411,7 @@ function _makeFaceScanOptional() {
 
   // Update status text
   const statusEl = document.getElementById('reg-face-status');
-  if (statusEl) statusEl.textContent = 'Optional — skip if not needed.';
+  if (statusEl) statusEl.textContent = 'Optional ï¿½ skip if not needed.';
 }
 
 function setRegisterRole(role) {
@@ -1478,7 +1478,7 @@ function populateRegisterMentors() {
   const mentorSelect = document.getElementById('reg-mentor-select');
   if (!mentorSelect) return;
 
-  // Loose domain match — normalize both sides for comparison
+  // Loose domain match ï¿½ normalize both sides for comparison
   const normalizeDomain = (d) => (d || '').toLowerCase().replace(/[^a-z]/g, '');
   const normalizedSelected = normalizeDomain(domain);
 
@@ -1561,7 +1561,7 @@ function switchTab(portal, tabName) {
   syncDatabase();
 
   if (portal === 'student' && !isFaceVerifiedThisSession() && tabName === 'dash') {
-    // Only show gate on dashboard tab — allow navigation to other tabs
+    // Only show gate on dashboard tab ï¿½ allow navigation to other tabs
     checkStudentGate();
   } else if (portal === 'student' && !isFaceVerifiedThisSession()) {
     // Allow switching to other tabs even without face verification
@@ -1771,7 +1771,7 @@ async function handleLoginSubmit(event) {
     currentUser = syncedUser || authenticatedUser;
     refreshCurrentUserFromDb();
     if (currentUser.role === 'student' && !resolveFaceDescriptor(currentUser)) {
-      console.warn('Student logged in without face enrollment — attendance scan may fail until profile is updated.');
+      console.warn('Student logged in without face enrollment ï¿½ attendance scan may fail until profile is updated.');
     }
     sessionStorage.removeItem('apex_intern_session_face_verified');
     storage.setItem('apex_intern_currentUser', JSON.stringify(currentUser));
@@ -1802,12 +1802,12 @@ async function handleRegisterSubmit(event) {
     }
 
     const feeAmount = _selectedInternFee > 0 ? _selectedInternFee : 99;
-    openRzpModal(email, feeAmount, 'InternX Registration Fee', (paymentMethod) => {
+    openRzpModal(email, feeAmount, 'InternX Registration Fee', (razorpayPaymentId) => {
       pendingRegistrationPayment = {
-        method: paymentMethod,
+        method: 'Razorpay',
         timestamp: new Date().toISOString(),
         amount: feeAmount,
-        reference: `pay_rzp_${Date.now()}`
+        reference: razorpayPaymentId  // Real Razorpay payment ID e.g. pay_ABC123XYZ
       };
       handleRegisterSubmit(event);
     });
@@ -1936,7 +1936,7 @@ async function handleRegisterSubmit(event) {
   saveDatabase();
   const regSynced = await syncRecordToSupabase('users', newUser);
   if (!regSynced && supabaseActive) {
-    console.warn('Registration saved locally but Supabase sync may have failed — check browser console.');
+    console.warn('Registration saved locally but Supabase sync may have failed ï¿½ check browser console.');
   }
   if (newUser.mentorEmail && db.pairingRequests) {
     const lastReq = db.pairingRequests[db.pairingRequests.length - 1];
@@ -2564,7 +2564,7 @@ function loadStudentLogs() {
   if (!currentUser) return;
   if (!db.weeklyLogs) db.weeklyLogs = [];
 
-  // Set defaults — safely
+  // Set defaults ï¿½ safely
   const weekNumEl = document.getElementById('log-week-num');
   const logStartEl = document.getElementById('log-start');
   const logEndEl = document.getElementById('log-end');
@@ -2607,9 +2607,9 @@ function loadStudentLogs() {
           <span class="status-badge ${statusClass}">${log.status || 'Pending'}</span>
         </div>
         <div style="font-size:12px;color:var(--text-dark);margin-bottom:8px;">
-          ?? ${log.startDate || '—'} ? ${log.endDate || '—'} &nbsp;|&nbsp; ?? ${log.hoursLogged || 0} hrs
+          ?? ${log.startDate || 'ï¿½'} ? ${log.endDate || 'ï¿½'} &nbsp;|&nbsp; ?? ${log.hoursLogged || 0} hrs
         </div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Submitted: ${log.submittedAt || '—'}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Submitted: ${log.submittedAt || 'ï¿½'}</div>
         ${log.summary ? `<p style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-top:6px;">${log.summary}</p>` : ''}
         ${log.blockers ? `<div style="font-size:12px;color:var(--danger);margin-top:6px;">?? Blockers: ${log.blockers}</div>` : ''}
         ${log.feedback ? `<div style="font-size:12px;color:var(--primary-magenta);border-top:1px dashed var(--border-color);padding-top:8px;margin-top:8px;">?? Mentor Feedback: ${log.feedback}</div>` : ''}
@@ -2676,7 +2676,7 @@ function handleLogSubmit(event) {
         id: `msg-log-submit-${Date.now()}`,
         from: currentUser.email,
         to: mentorEmail,
-        text: `?? Weekly Report Submitted — Week ${weekNumber}\n\n?? Period: ${startDate} ? ${endDate}\n?? Hours: ${hoursLogged}h\n\n?? Summary: ${summary}${blockers ? '\n\n?? Blockers: ' + blockers : ''}`,
+        text: `?? Weekly Report Submitted ï¿½ Week ${weekNumber}\n\n?? Period: ${startDate} ? ${endDate}\n?? Hours: ${hoursLogged}h\n\n?? Summary: ${summary}${blockers ? '\n\n?? Blockers: ' + blockers : ''}`,
         timestamp: new Date().toISOString(),
         type: 'weekly_log_alert',
         logId: newLog.id
@@ -3583,7 +3583,7 @@ function prepareTaskForCloudSync(task) {
     if (att.isChunked) {
       att.data = '';
     } else if (att.data && typeof att.data === 'string' && att.data.length > 80000) {
-      console.warn('Task attachment too large for cloud sync — storing metadata only:', cloudTask.id);
+      console.warn('Task attachment too large for cloud sync ï¿½ storing metadata only:', cloudTask.id);
       att.data = '';
       att.cloudStripped = true;
     }
@@ -4141,7 +4141,7 @@ function loadAdminRelations() {
         ? `<span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #fff; background: rgba(224, 26, 139, 0.15); border: 1px solid var(--primary-magenta); padding: 2px 8px; border-radius: 20px;">PAID</span>`
         : `<span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #fff; background: rgba(42, 107, 242, 0.15); border: 1px solid var(--accent-blue); padding: 2px 8px; border-radius: 20px;">UNPAID</span>`;
       
-      let stipendInfo = '—';
+      let stipendInfo = 'ï¿½';
       if (isPaid) {
         const symb = student.stipendCurrency === 'USD' ? '$' : '?';
         const freqLabel = student.stipendFrequency === 'streaming' ? '/ hr active' : (student.stipendFrequency === 'task' ? '/ completed task' : '/ month');
@@ -4231,6 +4231,16 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
     container.innerHTML = `<div style="margin: auto; text-align: center; color: var(--text-dark); font-size: 13px;">No conversations found. Type a message below to start the thread.</div>`;
   } else {
     relevantChats.forEach(chat => {
+      // Special rendering for meeting notification messages
+      if (chat.type === 'meeting_notification') {
+        const meetNode = document.createElement('div');
+        meetNode.style.cssText = 'margin:8px auto;max-width:420px;background:linear-gradient(135deg,rgba(0,182,108,0.12),rgba(66,133,244,0.12));border:1px solid rgba(0,182,108,0.35);border-radius:12px;padding:12px 16px;text-align:center;';
+        const lnk = chat.meetLink ? ('<a href="' + chat.meetLink + '" target="_blank" style="color:#4285f4;font-weight:700;word-break:break-all;">' + chat.meetLink + '</a>') : '';
+        meetNode.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,0.9);"><span style="font-size:18px;">ðŸ“¹</span> ' + escapeHTML(chat.message || '') + (lnk ? ('<br><span style="font-size:11px;color:rgba(255,255,255,0.55);">Meet Link:</span> ' + lnk) : '') + '</div><div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:4px;">' + (new Date(chat.timestamp)).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + '</div>';
+        container.appendChild(meetNode);
+        return;
+      }
+
       const isSent = chat.from && currentUser.email && chat.from.trim().toLowerCase() === currentUser.email.trim().toLowerCase();
       const isDeleted = chat.deleted === true;
       const date = new Date(chat.timestamp);
@@ -5330,7 +5340,7 @@ function refreshDebugPanel() {
   const content = document.getElementById('debug-panel-content');
   if (!content) return;
   
-  let html = `<div><strong>Current Session User:</strong><br>${currentUser ? `• Name: ${currentUser.name}<br>• Email: ${currentUser.email}<br>• Role: ${currentUser.role}` : 'Logged Out'}</div>`;
+  let html = `<div><strong>Current Session User:</strong><br>${currentUser ? `ï¿½ Name: ${currentUser.name}<br>ï¿½ Email: ${currentUser.email}<br>ï¿½ Role: ${currentUser.role}` : 'Logged Out'}</div>`;
   
   html += `<div style="margin-top: 10px; color: var(--accent-blue);"><strong>Users in LocalStorage DB (${db.users?.length || 0}):</strong></div>`;
   html += `<div style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); line-height: 1.4; margin-top: 4px;">`;
@@ -5629,7 +5639,7 @@ async function captureRegistrationFace() {
       showToast('? Face enrolled! Proceeding to payment...', 2000);
       setTimeout(() => showRegStep(2), 600);
     } else {
-      // FREE tier — highlight Sign Up button
+      // FREE tier ï¿½ highlight Sign Up button
       const submitBtn = document.querySelector('#register-form button[type="submit"]');
       if (submitBtn) {
         setTimeout(() => { submitBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 200);
@@ -6435,8 +6445,8 @@ async function compareFaces(img1Input, img2Input) {
 
 function warnFileProtocolIfNeeded() {
   if (location.protocol !== 'file:') return;
-  console.warn('InternX: file:// mode detected — use run_local_server.bat and open http://localhost:8080/');
-  setSupabaseSyncBadge('partial', 'DB: file:// mode — use localhost');
+  console.warn('InternX: file:// mode detected ï¿½ use run_local_server.bat and open http://localhost:8080/');
+  setSupabaseSyncBadge('partial', 'DB: file:// mode ï¿½ use localhost');
   setTimeout(() => {
     if (!document.getElementById('file-protocol-warning')) {
       const banner = document.createElement('div');
@@ -6793,7 +6803,7 @@ function checkStudentGate() {
     });
   } else {
     gateOverlay.style.display = 'flex';
-    // DO NOT disable sidebar links — let student navigate but gate shows on dashboard tab
+    // DO NOT disable sidebar links ï¿½ let student navigate but gate shows on dashboard tab
     document.querySelectorAll('#student-menu li a').forEach(el => {
       el.style.pointerEvents = 'auto';
       el.style.opacity = '1';
@@ -7257,7 +7267,7 @@ try {
       const badgeMenuEl = document.getElementById('supabase-status-badge-sidebar');
       [badgeEl, badgeMenuEl].forEach(badge => {
         if (badge) {
-          badge.innerText = 'DB: Supabase (Sync Partial — Realtime ON)';
+          badge.innerText = 'DB: Supabase (Sync Partial ï¿½ Realtime ON)';
           badge.className = 'supabase-status-badge fallback';
         }
       });
@@ -7368,7 +7378,7 @@ try {
     const badgeMenuEl = document.getElementById('supabase-status-badge-sidebar');
     [badgeEl, badgeMenuEl].forEach(badge => {
       if (badge) {
-        badge.innerText = 'DB: Supabase (Sync Partial — Realtime ON)';
+        badge.innerText = 'DB: Supabase (Sync Partial ï¿½ Realtime ON)';
         badge.className = 'supabase-status-badge fallback';
       }
     });
@@ -7396,7 +7406,7 @@ function handleSupabaseChange(payload) {
       let parsedData = robustParse(record.data);
       if (!parsedData || typeof parsedData !== 'object') return;
 
-      // WebRTC signals are ephemeral — never persist to localStorage (prevents hang during calls)
+      // WebRTC signals are ephemeral ï¿½ never persist to localStorage (prevents hang during calls)
       if (record.collection === 'signals') {
         if (parsedData.meetingId === activeMeeting?.id && parsedData.sender && currentUser?.email &&
             parsedData.sender.trim().toLowerCase() !== currentUser.email.trim().toLowerCase()) {
@@ -7444,7 +7454,7 @@ function handleSupabaseChange(payload) {
 
     refreshCurrentUserFromDb();
 
-    // Targeted UI refresh — debounced to prevent student list flicker
+    // Targeted UI refresh ï¿½ debounced to prevent student list flicker
     if (currentUser?.role === 'mentor' && !cloudSyncInProgress) {
       const mentorTab = getActiveMentorTab();
       if (changedCollection === 'chats') {
@@ -7657,7 +7667,7 @@ async function syncRecordToSupabase(collection, record) {
     if (error) {
       console.error(`Error saving document ${docId} to Supabase apex_sync:`, error);
       if (collection === 'tasks') {
-        console.error('Task cloud sync failed — student will not see this task until sync succeeds.');
+        console.error('Task cloud sync failed ï¿½ student will not see this task until sync succeeds.');
       }
     }
 
@@ -7910,7 +7920,7 @@ function getMentorCallTargets() {
 
   getMentorStudents({ activeOnly: true }).forEach(s => {
     if (!s.email) return;
-    // Domain match — student's domain should match mentor's domain
+    // Domain match ï¿½ student's domain should match mentor's domain
     const studentDomain = (s.domain || '').trim().toLowerCase();
     if (mentorDomain && studentDomain && studentDomain !== mentorDomain) return;
     emails.add(normalizeChatEmail(s.email));
@@ -8073,6 +8083,17 @@ function handleStudentMeetingSync() {
 function handleMeetingBroadcast(data) {
   if (!data || !currentUser) return;
 
+  // Meeting link auto-alert for student
+  if ((data.type === 'meeting_live_alert' || data.type === 'meeting_scheduled_alert') && data.meeting && currentUser.role === 'student') {
+    mergeCloudRecordIntoDb('meetings', data.meeting, data.meeting.id);
+    saveDatabase();
+    checkStudentGroupCallBadge();
+    const isLive = data.type === 'meeting_live_alert';
+    showStudentMeetingAlert(data.meeting, isLive, data.mentorName);
+    if (isLive) checkIncomingCalls();
+    return;
+  }
+
   if (data.type === 'call_started' && data.meeting) {
     mergeCloudRecordIntoDb('meetings', data.meeting, data.meeting.id);
     saveDatabase();
@@ -8096,7 +8117,7 @@ function handleMeetingBroadcast(data) {
     return;
   }
 
-  // Task submitted by student — refresh mentor's review panel
+  // Task submitted by student ï¿½ refresh mentor's review panel
   if (data.type === 'task_submitted' && currentUser.role === 'mentor') {
     syncDatabase();
     if (typeof loadMentorReviews === 'function') {
@@ -8110,7 +8131,7 @@ function handleMeetingBroadcast(data) {
     return;
   }
 
-  // Weekly log submitted — refresh mentor reviews
+  // Weekly log submitted ï¿½ refresh mentor reviews
   if (data.type === 'weekly_log_submitted' && currentUser && currentUser.role === 'mentor') {
     syncDatabase();
     if (typeof loadMentorReviews === 'function') {
@@ -8148,7 +8169,7 @@ function initMeetingBroadcastSync() {
   }
 }
 
-// Stable mentor cloud sync — throttled so student counts don't flicker (2?4)
+// Stable mentor cloud sync ï¿½ throttled so student counts don't flicker (2?4)
 setInterval(async () => {
   if (!currentUser || currentUser.role !== 'mentor' || cloudSyncInProgress) return;
   const now = Date.now();
@@ -8166,7 +8187,7 @@ setInterval(async () => {
   else if (tabName === 'chat') loadMentorChat(false);
 }, 12000);
 
-// Student cloud sync — tasks + chat (throttled)
+// Student cloud sync ï¿½ tasks + chat (throttled)
 let lastStudentChatSyncAt = 0;
 let lastStudentTaskSyncAt = 0;
 setInterval(async () => {
@@ -8326,7 +8347,7 @@ async function checkIncomingCalls() {
   }
 }
 
-// ====== JITSI MEET GROUP CALL — WhatsApp Style ======
+// ====== JITSI MEET GROUP CALL ï¿½ WhatsApp Style ======
 // Uses Jitsi Meet API for real camera/mic/speaker group calls
 let _jitsiApi = null;
 let _jitsiRoomId = null;
@@ -8386,6 +8407,9 @@ async function startMentorGroupCall() {
   saveDatabase(true);
   notifyMeetingEvent({ type: 'call_started', meeting: newMeeting });
   syncRecordToSupabase('meetings', newMeeting).catch(err => console.warn('Meeting sync failed:', err));
+
+  // Auto-notify students about this live call
+  sendMeetingNotificationToStudents(newMeeting, true);
 
   activeMeeting = newMeeting;
 
@@ -8549,14 +8573,14 @@ function stopGroupCallDialTone() {
   }
 }
 
-// ====== IMPROVED INCOMING RING (Google Meet style — descending 3 tones) ======
+// ====== IMPROVED INCOMING RING (Google Meet style ï¿½ descending 3 tones) ======
 function playCallChime() {
   if (callChimeInterval) return;
 
   const playRing = () => {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      // G5 ? E5 ? C5 descending — classic incoming ring pattern
+      // G5 ? E5 ? C5 descending ï¿½ classic incoming ring pattern
       const notes = [783.99, 659.25, 523.25];
       notes.forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -9299,7 +9323,7 @@ async function leaveMeeting() {
         const notesEl = document.getElementById('meet-summary-notes');
         const outputEl = document.getElementById('meet-ai-summary-output');
         if (notesEl) notesEl.value = '';
-        if (outputEl) outputEl.innerHTML = '? Auto-generating AI summary…';
+        if (outputEl) outputEl.innerHTML = '? Auto-generating AI summaryï¿½';
 
         modal.classList.add('active');
         modal.classList.remove('hidden');
@@ -9366,7 +9390,7 @@ async function saveMeetingSessionReport(meetingRecord, durationSeconds, aiSummar
   // If no summary provided, build a basic auto-summary fallback
   const finalSummary = aiSummary || `Meeting held on ${dateStr} at ${timeStr}. Students: ${studentNamesString}. Duration: ${durationStr}. Internship topics were discussed. Students should complete their assigned tasks.`;
 
-  // Primary Payload — match actual Supabase table columns (no AI Summary column)
+  // Primary Payload ï¿½ match actual Supabase table columns (no AI Summary column)
   const tablePayload = {
     "Domain": domain,
     "Mentor Name": mentorName,
@@ -9518,7 +9542,7 @@ async function generateMeetingSummary() {
   const notesEl  = document.getElementById('meet-summary-notes');
   const btnEl    = document.getElementById('btn-generate-ai-summary');
 
-  if (outputEl) outputEl.innerHTML = '? Gemini is analysing the meeting…';
+  if (outputEl) outputEl.innerHTML = '? Gemini is analysing the meetingï¿½';
   if (btnEl)    btnEl.disabled = true;
 
   const meetingRecord = window._pendingMeetingRecord || activeMeeting;
@@ -9584,8 +9608,8 @@ Keep it brief and student-facing. Do NOT include greetings or sign-offs.`;
     if (outputEl) {
       const formatted = summaryText
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n- /g, '<br>• ')
-        .replace(/\n\* /g, '<br>• ')
+        .replace(/\n- /g, '<br>ï¿½ ')
+        .replace(/\n\* /g, '<br>ï¿½ ')
         .replace(/\n/g, '<br>');
       outputEl.innerHTML = formatted;
     }
@@ -9593,7 +9617,7 @@ Keep it brief and student-facing. Do NOT include greetings or sign-offs.`;
     console.warn('Gemini summary failed, using structured fallback:', err.message);
     const fallback = `Meeting held on ${new Date().toDateString()} with students: ${studentList || 'N/A'}. Duration: ${durationStr}. ${verbalNotes ? `Topics covered: ${verbalNotes}.` : 'Key internship topics were discussed.'} Students are advised to review shared resources and complete assigned tasks.`;
     window._generatedMeetingSummary = fallback;
-    if (outputEl) outputEl.innerHTML = `<em style="color:var(--text-muted);">?? AI unavailable – auto-summary:</em><br>${fallback}`;
+    if (outputEl) outputEl.innerHTML = `<em style="color:var(--text-muted);">?? AI unavailable ï¿½ auto-summary:</em><br>${fallback}`;
   }
 
   if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '?? Regenerate Summary'; }
@@ -9709,7 +9733,7 @@ function getLocalMeetingRecapsForStudent() {
       time: m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
       mentorName: m.mentorName || 'Your Mentor',
       mentorEmail: m.mentorEmail || '',
-      duration: '—',
+      duration: 'ï¿½',
       recordingLink: `https://gvsextnrduejeaxyadbj.supabase.co/storage/v1/object/public/recordings/meet-rec-${m.id}.webm`,
       aiSummary: buildLocalMeetingRecapText(m),
       chatMessages: m.messages || [],
@@ -9725,7 +9749,7 @@ function buildLocalMeetingRecapText(meetingOrData) {
   if (!msgs.length) {
     return `You joined a group video session with ${mentorName}. No group chat was saved for this call. Check your task board and message your mentor if you need a reminder of what was assigned.`;
   }
-  const highlights = msgs.slice(0, 12).map(m => `• ${m.from}: ${m.text}`).join('\n');
+  const highlights = msgs.slice(0, 12).map(m => `ï¿½ ${m.from}: ${m.text}`).join('\n');
   return `Here is what was discussed in your group call with ${mentorName}:\n\n${highlights}\n\nTip: Follow up on any tasks or deadlines mentioned above.`;
 }
 
@@ -9733,8 +9757,8 @@ function formatMeetingSummaryHtml(text) {
   if (!text) return '<em style="color:var(--text-muted)">No summary available for this session yet.</em>';
   return escapeHTML(text)
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n- /g, '<br>• ')
-    .replace(/\n\* /g, '<br>• ')
+    .replace(/\n- /g, '<br>ï¿½ ')
+    .replace(/\n\* /g, '<br>ï¿½ ')
     .replace(/\n/g, '<br>');
 }
 
@@ -9752,8 +9776,8 @@ function openStudentMeetingSummary(cacheKey) {
   const modal = document.getElementById('student-meeting-recap-modal');
 
   if (mentorEl) mentorEl.innerText = data.mentorName || data['Mentor Name'] || 'Your Mentor';
-  if (dateEl) dateEl.innerText = `${data.date || data['Date'] || '—'} ${data.time || data['Time'] || ''}`.trim();
-  if (durEl) durEl.innerText = data.duration || data['Duration'] || '—';
+  if (dateEl) dateEl.innerText = `${data.date || data['Date'] || 'ï¿½'} ${data.time || data['Time'] || ''}`.trim();
+  if (durEl) durEl.innerText = data.duration || data['Duration'] || 'ï¿½';
 
   const summaryText = data.aiSummary || data['AI Summary'] || buildLocalMeetingRecapText(data);
   if (summaryEl) summaryEl.innerHTML = formatMeetingSummaryHtml(summaryText);
@@ -9801,7 +9825,7 @@ async function loadDashboardMeetings(role) {
   if (!tableEl) return;
   const tbody = tableEl.querySelector('tbody');
   if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Loading…</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Loadingï¿½</td></tr>`;
 
   if (role === 'student') studentMeetingSummariesCache = {};
 
@@ -9863,22 +9887,22 @@ async function loadDashboardMeetings(role) {
 
     tbody.innerHTML = '';
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No group call recaps yet. Join a mentor video call — your AI summary will appear here after the session ends.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No group call recaps yet. Join a mentor video call ï¿½ your AI summary will appear here after the session ends.</td></tr>`;
       const latestCard = document.getElementById('student-latest-meeting-recap-card');
       if (latestCard) latestCard.classList.add('hidden');
       return;
     }
 
     rows.forEach((row, idx) => {
-      const dateStr = `${row['Date'] || row.date || '—'} ${row['Time'] || row.time || ''}`.trim();
+      const dateStr = `${row['Date'] || row.date || 'ï¿½'} ${row['Time'] || row.time || ''}`.trim();
       const students = row['Student Names'] || row.studentNames || `${row['Students Count'] || row.studentsCount || 0} students`;
       const mentor = row['Mentor Name'] || row.mentorName || 'Mentor';
-      const duration = row['Duration'] || row.duration || '—';
+      const duration = row['Duration'] || row.duration || 'ï¿½';
       const rawSummary = row['AI Summary'] || row.aiSummary || row.ai_summary || '';
       const recLink = row['Recording Link'] || row.recordingLink || row.recording_link || '';
       const cacheKey = `meet-row-${idx}`;
       const preview = rawSummary
-        ? escapeHTML(rawSummary.substring(0, 72)) + (rawSummary.length > 72 ? '…' : '')
+        ? escapeHTML(rawSummary.substring(0, 72)) + (rawSummary.length > 72 ? 'ï¿½' : '')
         : '<em style="color:var(--text-muted)">Tap View Recap</em>';
 
       if (role === 'student') {
@@ -9897,7 +9921,7 @@ async function loadDashboardMeetings(role) {
           const latestCard = document.getElementById('student-latest-meeting-recap-card');
           const latestText = document.getElementById('student-latest-meeting-recap-text');
           if (latestCard) latestCard.classList.remove('hidden');
-          if (latestText) latestText.innerText = `${dateStr} with ${mentor} — click to see the full AI recap.`;
+          if (latestText) latestText.innerText = `${dateStr} with ${mentor} ï¿½ click to see the full AI recap.`;
         }
       }
 
@@ -9918,7 +9942,7 @@ async function loadDashboardMeetings(role) {
           <td style="font-size:11px;white-space:nowrap;">${escapeHTML(duration)}</td>
           <td style="font-size:11px;max-width:260px;line-height:1.5;">${rawSummary ? formatMeetingSummaryHtml(rawSummary) : '<em style="color:var(--text-muted)">No summary yet</em>'}</td>
           <td style="text-align:center;">
-            ${recLink ? `<a href="${escapeHTML(recLink)}" target="_blank" style="color:var(--primary-magenta);font-size:11px;font-weight:600;">? Play</a>` : '<span style="color:var(--text-muted);font-size:11px;">—</span>'}
+            ${recLink ? `<a href="${escapeHTML(recLink)}" target="_blank" style="color:var(--primary-magenta);font-size:11px;font-weight:600;">? Play</a>` : '<span style="color:var(--text-muted);font-size:11px;">ï¿½</span>'}
           </td>`;
       }
       tbody.appendChild(tr);
@@ -9932,11 +9956,11 @@ async function loadDashboardMeetings(role) {
 async function uploadMeetingRecordingToSupabase(meetingId, blob) {
   try {
     if (!supabaseActive || !supabaseClient) {
-      console.warn("Supabase not active — meeting recording upload skipped.");
+      console.warn("Supabase not active ï¿½ meeting recording upload skipped.");
       return null;
     }
     if (!meetingId || !blob || blob.size === 0) {
-      console.warn("Invalid meeting recording — upload skipped.", { meetingId, size: blob?.size });
+      console.warn("Invalid meeting recording ï¿½ upload skipped.", { meetingId, size: blob?.size });
       return null;
     }
     const fileName = `meet-rec-${meetingId}.webm`;
@@ -10061,7 +10085,7 @@ async function stopAndDownloadMeetingRecording(explicitMeetingId) {
       meetingMediaRecorder = null;
 
       if (meetingRecordedChunks.length === 0) {
-        console.warn("No meeting recording data captured — Supabase upload skipped.");
+        console.warn("No meeting recording data captured ï¿½ Supabase upload skipped.");
         resolve(null);
         return;
       }
@@ -10097,7 +10121,7 @@ async function stopAndDownloadMeetingRecording(explicitMeetingId) {
 
     if (meetingMediaRecorder && meetingMediaRecorder.state !== 'inactive') {
       meetingMediaRecorder.onstop = () => {
-        console.log("MediaRecorder stopped — processing recording chunks...");
+        console.log("MediaRecorder stopped ï¿½ processing recording chunks...");
         finalizeRecording();
       };
       try {
@@ -11557,7 +11581,7 @@ const APEX_PROJECT_BLUEPRINT = {
 - **Spreadsheet Attendance Matrix**:
   - Implemented in \`renderMentorAttendanceSheet()\` inside **[app.js](file:///c:/Users/Asus/Desktop/2000006/app.js)**.
   - Displays calendar days 1 to 30/31 for the active cohort month.
-  - Preceding Monday–Saturday working days are evaluated. Sundays are marked with a purple \`S\` chip.
+  - Preceding Mondayï¿½Saturday working days are evaluated. Sundays are marked with a purple \`S\` chip.
   - Mon-Sat running averages are calculated and rendered inside each week column (\`W1 %\` to \`W5 %\`), and overall score is in \`Total %\`.
   - Uses \`filterMentorInternsByDomain()\` bound to domain selection changes.
 - **Exporting Data**:
@@ -13465,22 +13489,22 @@ function verifyCertificate(certId) {
     const cert = db.certificates.find(c => c.certificateId && c.certificateId.trim().toLowerCase() === idClean);
     if (cert) {
       const verNameEl = document.getElementById('ver-student-name');
-      if (verNameEl) verNameEl.innerText = cert.studentName || '—';
+      if (verNameEl) verNameEl.innerText = cert.studentName || 'ï¿½';
       
       const verDomainEl = document.getElementById('ver-domain');
-      if (verDomainEl) verDomainEl.innerText = cert.domain || '—';
+      if (verDomainEl) verDomainEl.innerText = cert.domain || 'ï¿½';
       
       const verDurationEl = document.getElementById('ver-duration');
       if (verDurationEl) verDurationEl.innerText = `${cert.duration} Month${cert.duration > 1 ? 's' : ''}`;
       
       const verMentorEl = document.getElementById('ver-mentor');
-      if (verMentorEl) verMentorEl.innerText = cert.mentorName || '—';
+      if (verMentorEl) verMentorEl.innerText = cert.mentorName || 'ï¿½';
       
       const verIssueDateEl = document.getElementById('ver-issue-date');
-      if (verIssueDateEl) verIssueDateEl.innerText = cert.issuedDate || '—';
+      if (verIssueDateEl) verIssueDateEl.innerText = cert.issuedDate || 'ï¿½';
       
       const verCertIdEl = document.getElementById('ver-cert-id');
-      if (verCertIdEl) verCertIdEl.innerText = cert.certificateId || '—';
+      if (verCertIdEl) verCertIdEl.innerText = cert.certificateId || 'ï¿½';
       
       openModal('verification-modal');
     } else {
@@ -13676,7 +13700,7 @@ const MOCK_INTERNSHIPS = [
   }
 ];
 
-// Initialize and Render explore list — with carousel pagination
+// Initialize and Render explore list ï¿½ with carousel pagination
 let _explorePage = 0;
 const _explorePageSize = 6;
 
@@ -13703,14 +13727,14 @@ function _buildInternshipCard(intern) {
   const stipendLabel = isPaid
     ? `<div style="font-size:14px;font-weight:700;color:var(--text-main);">${intern.stipend}</div><div style="font-size:9px;color:var(--primary-magenta);">Reg. Fee: ?${intern.fee}</div>`
     : intern.fee === 0
-      ? `<div style="font-size:14px;font-weight:700;color:var(--success);">FREE</div><div style="font-size:9px;color:var(--text-muted);">No Stipend · Experience Letter</div>`
-      : `<div style="font-size:14px;font-weight:700;color:var(--accent-blue);">?${intern.fee} Registration</div><div style="font-size:9px;color:var(--text-muted);">No Stipend · Experience Letter</div>`;
+      ? `<div style="font-size:14px;font-weight:700;color:var(--success);">FREE</div><div style="font-size:9px;color:var(--text-muted);">No Stipend ï¿½ Experience Letter</div>`
+      : `<div style="font-size:14px;font-weight:700;color:var(--accent-blue);">?${intern.fee} Registration</div><div style="font-size:9px;color:var(--text-muted);">No Stipend ï¿½ Experience Letter</div>`;
 
   const btnStyle = isPaid
     ? `background:var(--primary-magenta);border-color:var(--primary-magenta);color:#fff;`
     : `background:rgba(42,107,242,0.12);border-color:var(--accent-blue);color:var(--accent-blue);`;
 
-  // Domain header gradient — unique per domain type
+  // Domain header gradient ï¿½ unique per domain type
   const domainColors = {
     'Web Development':        ['#e01a8b','#8327ec'],
     'Python / ML':            ['#f59e0b','#ef4444'],
@@ -13856,7 +13880,7 @@ function applyForExploreInternship(internId) {
   // Set role to student
   setRegisterRole('student');
 
-  // Pre-select Domain in Register Form — map internship domain to dropdown option
+  // Pre-select Domain in Register Form ï¿½ map internship domain to dropdown option
   const domainEl = document.getElementById('reg-domain');
   if (domainEl && intern.domain) {
     // Try exact match first, then partial match
@@ -14028,7 +14052,7 @@ function handleRegisterTierChange(value) {
 
   if (value === 'paid') {
     const feeToShow = _selectedInternFee > 0 ? `?${_selectedInternFee}` : '?99';
-    infoEl.innerHTML = `&#x1F4B0; <strong style='color:var(--primary-magenta);'>Registration Fee ${feeToShow}</strong> — Stipend + premium mentorship included.`;
+    infoEl.innerHTML = `&#x1F4B0; <strong style='color:var(--primary-magenta);'>Registration Fee ${feeToShow}</strong> ï¿½ Stipend + premium mentorship included.`;
 
     // Update the QR amount display
     const displayAmt = document.getElementById('reg-payment-display-amount');
@@ -14078,119 +14102,121 @@ function handleRegisterTierChange(value) {
   }
 }
 
-// ====== RAZORPAY GATEWAY SIMULATOR ======
-let rzpActiveMethod = 'upi';
+// ====== RAZORPAY REAL PAYMENT GATEWAY ======
+// NOTE: Only Key ID is used here (client-side). Secret Key must NEVER be in browser code.
+const RZP_KEY_ID = 'rzp_test_T3PtB4bEFBsFXp';
+
 let rzpPaymentSuccessCallback = null;
 
+/**
+ * Opens the official Razorpay Checkout popup.
+ * @param {string} email    - Prefill email for the checkout
+ * @param {number} amount   - Amount in INR (e.g. 499)
+ * @param {string} merchant - Description shown in checkout
+ * @param {function} callback - Called with (paymentId, method) on success
+ */
 function openRzpModal(email, amount, merchant, callback) {
-  document.getElementById('rzp-email-display').innerText = email;
-  document.getElementById('rzp-amount').innerText = `?${amount}.00`;
-  document.getElementById('rzp-merchant').innerText = merchant;
-  
-  // Set pay buttons amount
-  const upiBtn = document.getElementById('rzp-upi-pay-btn');
-  const cardBtn = document.getElementById('rzp-card-pay-btn');
-  if (upiBtn) upiBtn.innerText = `Pay ?${amount}.00`;
-  if (cardBtn) cardBtn.innerText = `Pay ?${amount}.00`;
-  
-  // Reset Views
-  document.getElementById('rzp-methods-view').style.display = 'flex';
-  document.getElementById('rzp-upi-view').style.display = 'none';
-  document.getElementById('rzp-card-view').style.display = 'none';
-  document.getElementById('rzp-netbanking-view').style.display = 'none';
-  document.getElementById('rzp-processing-view').style.display = 'none';
-  
+  // Razorpay expects amount in paise (1 INR = 100 paise)
+  const amountInPaise = Math.round(amount * 100);
+
   rzpPaymentSuccessCallback = callback;
-  
-  // Display Modal
-  const modal = document.getElementById('razorpay-modal');
-  modal.style.display = 'flex';
-}
 
-function closeRzpModal() {
-  document.getElementById('razorpay-modal').style.display = 'none';
-  pendingRegistrationPayment = null;
-}
+  const options = {
+    key: RZP_KEY_ID,
+    amount: amountInPaise,
+    currency: 'INR',
+    name: 'InternX by UTX',
+    description: merchant,
+    image: 'robot_avatar.png', // Your logo shown in checkout popup
 
-function selectRzpMethod(method) {
-  rzpActiveMethod = method;
-  document.getElementById('rzp-methods-view').style.display = 'none';
-  
-  if (method === 'upi') {
-    document.getElementById('rzp-upi-view').style.display = 'flex';
-  } else if (method === 'card') {
-    document.getElementById('rzp-card-view').style.display = 'flex';
-  } else if (method === 'netbanking') {
-    document.getElementById('rzp-netbanking-view').style.display = 'flex';
+    // Prefill customer info
+    prefill: {
+      email: email,
+      contact: ''
+    },
+
+    // Checkout theme matching InternX
+    theme: {
+      color: '#8327ec'
+    },
+
+    // Called when payment is successful
+    handler: function (response) {
+      // response.razorpay_payment_id  â€” real Razorpay payment ID
+      // response.razorpay_order_id    â€” present if server-side order was created
+      // response.razorpay_signature   â€” present if server-side order was created
+      playPaymentChime();
+      showToast('âœ… Payment Successful!', 2500);
+
+      const paymentId = response.razorpay_payment_id || `pay_rzp_${Date.now()}`;
+
+      if (typeof rzpPaymentSuccessCallback === 'function') {
+        // Pass paymentId as the "method" arg so it gets stored as reference
+        rzpPaymentSuccessCallback(paymentId);
+      }
+    },
+
+    // Called when user closes/dismisses the checkout
+    modal: {
+      ondismiss: function () {
+        pendingRegistrationPayment = null;
+        showToast('Payment cancelled.', 2000);
+      }
+    }
+  };
+
+  try {
+    const rzp = new Razorpay(options);
+
+    // Handle payment failure (wrong card, bank decline, etc.)
+    rzp.on('payment.failed', function (response) {
+      console.error('Razorpay payment failed:', response.error);
+      showToast(`âŒ Payment failed: ${response.error.description}`, 3500);
+      pendingRegistrationPayment = null;
+    });
+
+    rzp.open();
+  } catch (err) {
+    console.error('Razorpay could not be initialised:', err);
+    alert('Razorpay failed to load. Make sure you are on a live server (not file://) and have internet access.');
   }
 }
 
-function backToRzpMethods() {
-  document.getElementById('rzp-upi-view').style.display = 'none';
-  document.getElementById('rzp-card-view').style.display = 'none';
-  document.getElementById('rzp-netbanking-view').style.display = 'none';
-  document.getElementById('rzp-methods-view').style.display = 'flex';
+// Kept for backward compatibility â€” no-op since real Razorpay manages its own modal
+function closeRzpModal() {
+  pendingRegistrationPayment = null;
 }
 
-function submitRzpPayment(method) {
-  // Hide details
-  document.getElementById('rzp-upi-view').style.display = 'none';
-  document.getElementById('rzp-card-view').style.display = 'none';
-  document.getElementById('rzp-netbanking-view').style.display = 'none';
-  
-  // Show Loader
-  const procView = document.getElementById('rzp-processing-view');
-  procView.style.display = 'flex';
-  
-  document.getElementById('rzp-loader').style.display = 'flex';
-  document.getElementById('rzp-success-checkmark').classList.add('hidden');
-  document.getElementById('rzp-status-title').innerText = "Processing Secure Payment...";
-  document.getElementById('rzp-status-desc').innerText = `Verifying details via Razorpay ${method}...`;
-  
-  // Simulate network delay
-  setTimeout(() => {
-    document.getElementById('rzp-loader').style.display = 'none';
-    document.getElementById('rzp-success-checkmark').classList.remove('hidden');
-    document.getElementById('rzp-status-title').innerText = "Payment Successful!";
-    document.getElementById('rzp-status-desc').innerText = "Redirecting back to finalize application...";
-    
-    // Play success chime sound
-    playPaymentChime();
-    
-    setTimeout(() => {
-      closeRzpModal();
-      if (typeof rzpPaymentSuccessCallback === 'function') {
-        rzpPaymentSuccessCallback(method);
-      }
-    }, 1500);
-  }, 2000);
-}
+// These are no longer needed but kept so any lingering HTML onclick= calls don't throw errors
+function selectRzpMethod(method) {}
+function backToRzpMethods() {}
+function submitRzpPayment(method) {}
 
 function playPaymentChime() {
   try {
     const context = new (window.AudioContext || window.webkitAudioContext)();
     const osc = context.createOscillator();
     const gain = context.createGain();
-    
+
     osc.connect(gain);
     gain.connect(context.destination);
-    
+
     // Pleasant double chime: C5 -> E5
     osc.type = 'sine';
     osc.frequency.setValueAtTime(523.25, context.currentTime); // C5
     gain.gain.setValueAtTime(0.15, context.currentTime);
     osc.start();
-    
+
     setTimeout(() => {
       osc.frequency.setValueAtTime(659.25, context.currentTime); // E5
     }, 150);
-    
+
     setTimeout(() => {
       gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.3);
       setTimeout(() => osc.stop(), 400);
     }, 300);
   } catch (err) {
-    console.warn("Audio Context blocked or unsupported:", err);
+    console.warn('Audio Context blocked or unsupported:', err);
   }
 }
 window.handleLogoSecretClick = handleLogoSecretClick;
@@ -14373,7 +14399,7 @@ function renderStudentLedger() {
       <td style="font-family: monospace; font-size: 11px; color: var(--text-muted);">${tx.id}</td>
       <td style="font-weight:600; text-transform:uppercase;">${tx.type}</td>
       <td>${dateStr}</td>
-      <td>${tx.notes || '—'}</td>
+      <td>${tx.notes || 'ï¿½'}</td>
       <td style="font-weight:700; color: ${tx.type === 'withdrawal' ? 'var(--danger)' : 'var(--success)'};">
         ${tx.type === 'withdrawal' ? '-' : '+'}${symb}${parseFloat(tx.amount).toFixed(2)}
       </td>
@@ -14523,8 +14549,8 @@ function renderMentorLedger(myInternsEmails) {
       </td>
       <td style="text-transform:uppercase; font-size:11px;">${tx.type}</td>
       <td>${dateStr}</td>
-      <td style="font-family: monospace; font-size: 11px; color: var(--text-muted);">${tx.referenceId || '—'}</td>
-      <td>${tx.notes || '—'}</td>
+      <td style="font-family: monospace; font-size: 11px; color: var(--text-muted);">${tx.referenceId || 'ï¿½'}</td>
+      <td>${tx.notes || 'ï¿½'}</td>
     `;
     tableBody.appendChild(row);
   });
@@ -14624,14 +14650,14 @@ function handleMentorLogPaymentSubmit(event) {
 function upgradeToPremiumFromDashboard() {
   if (!currentUser) return;
   
-  openRzpModal(currentUser.email, 499, 'UTX Premium Registry Upgrade Fee', (method) => {
+  openRzpModal(currentUser.email, 499, 'UTX Premium Registry Upgrade Fee', (razorpayPaymentId) => {
     currentUser.internshipType = 'paid';
     currentUser.stipendAmount = 15000;
     currentUser.stipendCurrency = 'INR';
     currentUser.stipendFrequency = 'monthly';
     currentUser.stipendBalance = 0;
     currentUser.totalPaid = 0;
-    currentUser.paymentRef = 'pay_rzp_upg_' + Math.random().toString(36).substring(2, 10).toUpperCase();
+    currentUser.paymentRef = razorpayPaymentId; // Real Razorpay payment ID
     
     // Add transaction record
     if (!db.payments) db.payments = [];
@@ -14679,11 +14705,164 @@ window.addEventListener('beforeunload', () => {
 
 
 // ============================================================
-// GROUP CALL FEATURE — Google Meet Group Sessions
+// GROUP CALL FEATURE ï¿½ Google Meet Group Sessions
 // Mentor schedules a session, students see and join the link
 // ============================================================
 
 // ---- Helpers ----
+
+// ---- Auto-Notify students when mentor starts or schedules a meeting ----
+
+function sendMeetingNotificationToStudents(meeting, isLive) {
+  if (!currentUser || currentUser.role !== 'mentor') return;
+
+  const invitees = Array.isArray(meeting.invitees) && meeting.invitees.length
+    ? meeting.invitees
+    : (Array.isArray(meeting.invitedStudents) ? meeting.invitedStudents : []);
+
+  if (!invitees || invitees.length === 0) return;
+
+  const mentorName = currentUser.name || 'Your Mentor';
+  const meetLink = (meeting.meetLink && meeting.meetLink !== 'https://meet.new')
+    ? meeting.meetLink
+    : null;
+  const title = meeting.title || (isLive ? 'Group Call' : 'Upcoming Session');
+
+  let msgText;
+  if (isLive) {
+    msgText = '\uD83D\uDCF9 ' + mentorName + ' has started a group call: "' + title + '"' + (meetLink ? ' \u2014 Join now: ' + meetLink : '. Check the Group Call tab to join.');
+  } else {
+    const when = meeting.scheduledAt ? ' scheduled at ' + formatMeetDateTime(meeting.scheduledAt) : '';
+    msgText = '\uD83D\uDCC5 ' + mentorName + ' has scheduled a meeting: "' + title + '"' + when + (meetLink ? ' \u2014 Link: ' + meetLink : '') + '. Open the Group Call tab to see details.';
+  }
+
+  // Send chat notification to each invited student
+  invitees.forEach(function(studentEmail) {
+    if (!studentEmail) return;
+    const notifMsg = {
+      type: 'meeting_notification',
+      id: 'msg-meet-notif-' + meeting.id + '-' + Date.now() + '-' + Math.random().toString(36).slice(2),
+      from: currentUser.email,
+      to: studentEmail.trim().toLowerCase(),
+      message: msgText,
+      timestamp: new Date().toISOString(),
+      meetingId: meeting.id,
+      meetLink: meetLink || null,
+      isLive: isLive
+    };
+    if (!db.chats) db.chats = [];
+    db.chats.push(notifMsg);
+    syncRecordToSupabase('chats', notifMsg).catch(function() {});
+  });
+
+  saveDatabase(true);
+
+  // Broadcast via BroadcastChannel so open student tabs react instantly
+  try {
+    if (!window.__apexMeetingChannel) initMeetingBroadcastSync();
+    if (window.__apexMeetingChannel) {
+      window.__apexMeetingChannel.postMessage({
+        type: isLive ? 'meeting_live_alert' : 'meeting_scheduled_alert',
+        meeting: meeting,
+        mentorName: mentorName
+      });
+    }
+  } catch (e) {}
+
+  // Also broadcast via chat channel
+  try {
+    if (window.__apexChatChannel) {
+      window.__apexChatChannel.postMessage({ type: 'meeting_notification', meeting: meeting, isLive: isLive });
+    }
+  } catch (e) {}
+}
+
+// ---- Show meeting alert popup on student side ----
+
+function showStudentMeetingAlert(meeting, isLive, mentorName) {
+  if (!currentUser || currentUser.role !== 'student') return;
+
+  const link = (meeting.meetLink && meeting.meetLink !== 'https://meet.new') ? meeting.meetLink : null;
+  const title = meeting.title || (isLive ? 'Group Call' : 'Upcoming Session');
+  const host = mentorName || meeting.mentorName || 'Your Mentor';
+
+  // Remove existing alert if any
+  const existing = document.getElementById('_student-meeting-alert');
+  if (existing) existing.remove();
+
+  const alertEl = document.createElement('div');
+  alertEl.id = '_student-meeting-alert';
+  alertEl.style.cssText = [
+    'position:fixed', 'top:20px', 'left:50%', 'transform:translateX(-50%)',
+    'z-index:99999', 'min-width:320px', 'max-width:90vw',
+    'background:linear-gradient(135deg,rgba(0,182,108,0.18),rgba(66,133,244,0.18))',
+    'border:1.5px solid rgba(0,182,108,0.6)',
+    'border-radius:16px', 'padding:18px 22px',
+    'box-shadow:0 8px 40px rgba(0,182,108,0.25),0 2px 16px rgba(0,0,0,0.5)',
+    'backdrop-filter:blur(16px)',
+    "font-family:'Outfit',sans-serif",
+    'animation:_meetAlertSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards'
+  ].join(';');
+
+  if (!document.getElementById('_meet-alert-style')) {
+    const style = document.createElement('style');
+    style.id = '_meet-alert-style';
+    style.textContent = '@keyframes _meetAlertSlideIn{from{opacity:0;transform:translateX(-50%) translateY(-24px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+    document.head.appendChild(style);
+  }
+
+  const badge = isLive
+    ? '<span style="background:#ef4444;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;letter-spacing:0.06em;">\uD83D\uDD34 LIVE NOW</span>'
+    : '<span style="background:rgba(0,182,108,0.3);color:#00b66c;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;letter-spacing:0.06em;">\uD83D\uDCC5 SCHEDULED</span>';
+
+  const joinBtn = link
+    ? '<a href="' + link + '" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;font-size:12px;font-weight:700;padding:8px 18px;border-radius:8px;text-decoration:none;margin-right:8px;">\uD83D\uDCF9 Join Now</a>'
+    : '<button onclick="switchTab(\'student\',\'groupcall\');var a=document.getElementById(\'_student-meeting-alert\');if(a)a.remove();" style="background:rgba(66,133,244,0.2);border:1px solid rgba(66,133,244,0.5);color:#4285f4;font-size:12px;font-weight:700;padding:8px 18px;border-radius:8px;cursor:pointer;margin-right:8px;">Open Group Call Tab</button>';
+
+  const scheduledTime = (meeting.scheduledAt && !isLive) ? ' \u00B7 ' + formatMeetDateTime(meeting.scheduledAt) : '';
+
+  alertEl.innerHTML = '<div style="display:flex;align-items:flex-start;gap:12px;">'
+    + '<div style="font-size:28px;line-height:1;">\uD83D\uDCF9</div>'
+    + '<div style="flex:1;">'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' + badge + '</div>'
+    + '<div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:2px;">' + title + '</div>'
+    + '<div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:12px;">Hosted by <strong>' + host + '</strong>' + scheduledTime + '</div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">'
+    + joinBtn
+    + '<button onclick="var a=document.getElementById(\'_student-meeting-alert\');if(a)a.remove();" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer;">Dismiss</button>'
+    + '</div></div>'
+    + '<button onclick="var a=document.getElementById(\'_student-meeting-alert\');if(a)a.remove();" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0;">\u2715</button>'
+    + '</div>';
+
+  document.body.appendChild(alertEl);
+
+  // Auto-dismiss after 30 seconds for scheduled; live stays until dismissed
+  if (!isLive) {
+    setTimeout(function() {
+      var el = document.getElementById('_student-meeting-alert');
+      if (el) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(-50%) translateY(-16px)';
+        el.style.transition = 'all 0.4s ease';
+        setTimeout(function() { if (el.parentNode) el.remove(); }, 400);
+      }
+    }, 30000);
+  }
+
+  // Browser notification
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      new Notification(isLive ? '\uD83D\uDCF9 Group Call Started!' : '\uD83D\uDCC5 Meeting Scheduled!', {
+        body: host + ': ' + title + (link ? ' \u2014 Click to join' : ''),
+        icon: 'robot_avatar.png',
+        tag: 'meeting-alert-' + meeting.id
+      });
+    } catch (e) {}
+  }
+
+  // Refresh badge
+  checkStudentGroupCallBadge();
+}
 
 function generateMeetRoomCode() {
   const chars = 'abcdefghijklmnopqrstuvwxyz';
@@ -14750,7 +14929,7 @@ function getMeetingStatus(meeting) {
 }
 
 function formatMeetDateTime(isoStr) {
-  if (!isoStr) return '—';
+  if (!isoStr) return 'ï¿½';
   try {
     const d = new Date(isoStr);
     return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) +
@@ -14898,7 +15077,10 @@ function handleScheduleMeetingSubmit(e) {
   }
 
   closeScheduleMeetingModal();
-  showToast(`? Meeting scheduled! Link shared with ${invitees.length} student(s).`, 2500);
+  showToast('Meeting scheduled! Link shared with ' + invitees.length + ' student(s).', 2500);
+
+  // Auto-notify all invited students
+  sendMeetingNotificationToStudents(meeting, false);
 
   // Refresh the view
   renderMentorGroupCallTab();
@@ -14923,7 +15105,7 @@ function launchInstantMeeting() {
     scheduledAt: now,
     duration: 60,
     meetLink: 'https://meet.new',
-    notes: 'Instant session — mentor will share the exact Meet link shortly.',
+    notes: 'Instant session ï¿½ mentor will share the exact Meet link shortly.',
     mentorEmail: currentUser?.email || '',
     mentorName: currentUser?.name || 'Mentor',
     domain: currentUser?.domain || '',
@@ -14939,6 +15121,9 @@ function launchInstantMeeting() {
   if (supabaseActive && supabaseClient) {
     syncRecordToFirestore('meetings', meeting).catch(() => {});
   }
+
+  // Notify students about instant meeting
+  sendMeetingNotificationToStudents(meeting, true);
 
   renderMentorGroupCallTab();
 }
@@ -15002,11 +15187,11 @@ function renderMentorGroupCallTab() {
         <tr>
           <td style="font-weight:600; color:#fff;">${m.title || 'Untitled'}</td>
           <td style="color:var(--text-muted); font-size:12px;">${formatMeetDateTime(m.scheduledAt)}</td>
-          <td><span style="font-size:11px; background:rgba(131,39,236,0.15); color:var(--primary); padding:2px 8px; border-radius:6px;">${m.domain || '—'}</span></td>
+          <td><span style="font-size:11px; background:rgba(131,39,236,0.15); color:var(--primary); padding:2px 8px; border-radius:6px;">${m.domain || 'ï¿½'}</span></td>
           <td style="color:var(--text-muted); font-size:12px;">${formatDuration(m.duration)}</td>
           <td style="font-size:12px;">${(m.invitees || []).length} students</td>
-          <td>${m.meetLink ? `<a href="${m.meetLink}" target="_blank" class="gc-meet-badge">&#x1F4F9; Rejoin</a>` : '—'}</td>
-          <td style="font-size:11px; color:var(--text-muted); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.notes || '—'}</td>
+          <td>${m.meetLink ? `<a href="${m.meetLink}" target="_blank" class="gc-meet-badge">&#x1F4F9; Rejoin</a>` : 'ï¿½'}</td>
+          <td style="font-size:11px; color:var(--text-muted); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.notes || 'ï¿½'}</td>
           <td>
             <button onclick="showMeetingDetail('${m.id}')" style="background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:var(--text-muted); padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer;">Details</button>
             <button onclick="deleteMeeting('${m.id}')" style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); color:#ef4444; padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer; margin-left:4px;">Delete</button>
@@ -15066,7 +15251,7 @@ function renderStudentGroupCallTab() {
       liveBanner.style.display = 'flex';
       const titleEl = document.getElementById('student-gc-live-title');
       const linkEl = document.getElementById('student-gc-live-link');
-      if (titleEl) titleEl.textContent = `?? LIVE — ${liveMeeting.title}`;
+      if (titleEl) titleEl.textContent = `?? LIVE ï¿½ ${liveMeeting.title}`;
       if (linkEl) linkEl.href = liveMeeting.meetLink || '#';
       // Hide NEW badge when they see the tab
       const badge = document.getElementById('student-groupcall-badge');
@@ -15107,10 +15292,10 @@ function renderStudentGroupCallTab() {
         <tr>
           <td style="font-weight:600; color:#fff;">${m.title || 'Untitled'}</td>
           <td style="color:var(--text-muted); font-size:12px;">${formatMeetDateTime(m.scheduledAt)}</td>
-          <td style="font-size:12px;">${m.mentorName || m.mentorEmail || '—'}</td>
+          <td style="font-size:12px;">${m.mentorName || m.mentorEmail || 'ï¿½'}</td>
           <td style="color:var(--text-muted); font-size:12px;">${formatDuration(m.duration)}</td>
-          <td>${m.meetLink ? `<a href="${m.meetLink}" target="_blank" class="gc-meet-badge">&#x1F4F9; Rejoin</a>` : '—'}</td>
-          <td style="font-size:11px; color:var(--text-muted); max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.notes || '—'}</td>
+          <td>${m.meetLink ? `<a href="${m.meetLink}" target="_blank" class="gc-meet-badge">&#x1F4F9; Rejoin</a>` : 'ï¿½'}</td>
+          <td style="font-size:11px; color:var(--text-muted); max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.notes || 'ï¿½'}</td>
         </tr>
       `).join('');
     }
@@ -15258,8 +15443,11 @@ window.cancelMentorDialing = cancelMentorDialing;
 window.proceedToMeetingRoom = proceedToMeetingRoom;
 window.launchJitsiCall = launchJitsiCall;
 window.closeJitsiCall = closeJitsiCall;
+window.startMentorGroupCall = startMentorGroupCall;
+window.acceptIncomingCall = acceptIncomingCall;
+window.declineIncomingCall = declineIncomingCall;
 
-// ====== MISSING WINDOW EXPORTS — Student & Mentor core functions ======
+// ====== MISSING WINDOW EXPORTS ï¿½ Student & Mentor core functions ======
 window.handleLogSubmit = handleLogSubmit;
 window.loadStudentLogs = loadStudentLogs;
 window.startFaceVerification = startFaceVerification;

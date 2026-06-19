@@ -14674,9 +14674,9 @@ function applyForExploreInternship(internId) {
   // Pre-select Duration
   const durationEl = document.getElementById('reg-duration');
   if (durationEl) {
-    if (intern.duration.includes(""6"")) durationEl.value = ""6"";
-    else if (intern.duration.includes(""3"")) durationEl.value = ""3"";
-    else durationEl.value = ""1"";
+    if (intern.duration.includes("6")) durationEl.value = "6";
+    else if (intern.duration.includes("3")) durationEl.value = "3";
+    else durationEl.value = "1";
   }
 
   window._appliedInternId = internId;

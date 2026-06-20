@@ -60,17 +60,46 @@
       <!-- Hero Section -->
       <section class="hero-grid">
         <div class="hero-content">
-          <h1 style="font-size:52px; font-weight:900; line-height:1.12; margin-bottom:24px; font-family:'Outfit',sans-serif; letter-spacing:-0.02em;">
-            <span id="hero-word1" style="display:block; background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:4px; opacity:0; transform:translateY(20px); transition:all 0.6s cubic-bezier(0.34,1.56,0.64,1);">Empower</span>
-            <span id="hero-word2" style="display:block; background:linear-gradient(135deg,#e01a8b 0%,#8327ec 50%,#2a6bf2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; background-size:200% auto; filter:drop-shadow(0 2px 16px rgba(224,26,139,0.35)); margin-bottom:4px; opacity:0; transform:translateY(20px); transition:all 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.2s; animation:shimmerGrad 4s linear infinite;">Your Team's</span>
-            <span id="hero-word3" style="display:block; background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; opacity:0; transform:translateY(20px); transition:all 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.4s;">Potential</span>
+          <h1 style="font-size:72px; font-weight:900; line-height:1.35; margin-bottom:24px; font-family:'Orbitron',sans-serif; letter-spacing:0.02em; text-transform:uppercase; position:relative; -webkit-text-stroke:0.5px rgba(255,255,255,0.15); margin-top:-40px; padding-top:0;">
+            <span id="hero-word1" style="display:block; margin-bottom:2px; opacity:0; transform:translateX(-40px) skewX(-4deg); transition:all 0.7s cubic-bezier(0.34,1.56,0.64,1); font-size:72px; white-space:nowrap;">Empower</span>
+            <span id="hero-word2" style="display:block; margin-bottom:2px; opacity:0; transform:translateX(-40px) skewX(-4deg); transition:all 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.18s; font-size:72px; white-space:nowrap;">Your Team's</span>
+            <span id="hero-word3" style="display:block; opacity:0; transform:translateX(-40px) skewX(-4deg); transition:all 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.36s; font-size:72px; white-space:nowrap;">Potential</span>
           </h1>
           <style>
+            /* ===== NEON GLITCH KEYFRAMES ===== */
             @keyframes shimmerGrad{0%{background-position:0% center}100%{background-position:200% center}}
-            .hero-cursor{display:inline-block;width:3px;height:0.8em;background:#e01a8b;border-radius:2px;margin-left:4px;vertical-align:middle;animation:cursorBlink 0.9s step-end infinite;}
+            @keyframes neonPulse{0%,100%{filter:drop-shadow(0 0 8px rgba(167,139,250,0.6)) drop-shadow(0 0 20px rgba(167,139,250,0.3))}50%{filter:drop-shadow(0 0 18px rgba(167,139,250,0.9)) drop-shadow(0 0 40px rgba(167,139,250,0.5))}}
+            @keyframes neonPulsePink{0%,100%{filter:drop-shadow(0 0 8px rgba(224,26,139,0.7)) drop-shadow(0 0 22px rgba(224,26,139,0.4))}50%{filter:drop-shadow(0 0 22px rgba(224,26,139,1)) drop-shadow(0 0 50px rgba(224,26,139,0.6))}}
+            @keyframes glitchSkew{0%,95%,100%{transform:skewX(0deg)}96%{transform:skewX(-3deg) translateX(3px)}97%{transform:skewX(3deg) translateX(-3px)}98%{transform:skewX(-1deg)}}
+            .hero-cursor{display:inline-block;width:3px;height:0.8em;background:#00f0ff;border-radius:2px;margin-left:4px;vertical-align:middle;animation:cursorBlink 0.9s step-end infinite;box-shadow:0 0 8px #00f0ff;}
             @keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
-            [data-theme="dark"] #hero-word1,[data-theme="dark"] #hero-word3{background:linear-gradient(135deg,#e2e8f0 0%,#c4b5fd 100%);-webkit-background-clip:text;background-clip:text;}
-          </style>
+
+            /* DARK MODE */
+            [data-theme="dark"] #hero-word1,
+            [data-theme="dark"] #hero-word3 {
+              background: linear-gradient(135deg, #00f0ff 0%, #a78bfa 50%, #ffffff 100%);
+              -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+              animation: neonPulse 3s ease-in-out infinite, glitchSkew 8s ease-in-out infinite;
+            }
+            [data-theme="dark"] #hero-word2 {
+              background: linear-gradient(135deg, #e01a8b 0%, #c084fc 50%, #00f0ff 100%);
+              -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+              background-size:200% auto;
+              animation: shimmerGrad 2.5s linear infinite, neonPulsePink 2.5s ease-in-out infinite, glitchSkew 8s ease-in-out infinite 0.4s;
+            }
+
+            /* LIGHT MODE */
+            #hero-word1, #hero-word3 {
+              background: linear-gradient(135deg,#1e0a3c 0%,#4c1d95 55%,#6d28d9 100%);
+              -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+              animation: glitchSkew 8s ease-in-out infinite;
+            }
+            #hero-word2 {
+              background: linear-gradient(135deg,#e01a8b 0%,#8327ec 50%,#2a6bf2 100%);
+              -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+              background-size:200% auto;
+              animation: shimmerGrad 2.5s linear infinite, glitchSkew 8s ease-in-out infinite 0.4s;
+            }          </style>
           <script>
             (function(){
               function revealHeroWords(){
@@ -78,93 +107,188 @@
                 var w2=document.getElementById('hero-word2');
                 var w3=document.getElementById('hero-word3');
                 if(!w1)return;
-                setTimeout(function(){w1.style.opacity='1';w1.style.transform='translateY(0)';},100);
-                setTimeout(function(){w2.style.opacity='1';w2.style.transform='translateY(0)';},350);
-                setTimeout(function(){w3.style.opacity='1';w3.style.transform='translateY(0)';var c=document.createElement('span');c.className='hero-cursor';w3.appendChild(c);},620);
+                setTimeout(function(){
+                  w1.style.opacity='1';
+                  w1.style.transform='translateX(0) skewX(0deg)';
+                },120);
+                setTimeout(function(){
+                  w2.style.opacity='1';
+                  w2.style.transform='translateX(0) skewX(0deg)';
+                },320);
+                setTimeout(function(){
+                  w3.style.opacity='1';
+                  w3.style.transform='translateX(0) skewX(0deg)';
+                },520);
               }
               if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',revealHeroWords);}
               else{setTimeout(revealHeroWords,100);}
             })();
           </script>
-          <p>A next-generation, glassmorphic monitoring and progress tracking system designed for student interns, professional mentors, and cohort coordinators.</p>
-          <div class="hero-actions">
+          <p style="font-weight:600; font-style:italic; font-size:15px; line-height:1.7; margin-top:28px;">A Next-Generation, Glassmorphic Monitoring And Progress Tracking System Designed For Student Interns, Professional Mentors, And Cohort Coordinators.</p>
+          <div class="hero-actions" style="margin-top:36px;">
             <button class="btn btn-primary" onclick="showAuthPage('register')">Launch Portal</button>
             <a href="#features" class="btn btn-secondary">Explore Features</a>
           </div>
-        </div>
-        <div class="hero-spline-container" style="display:flex;align-items:center;justify-content:flex-start;padding-left:20px;position:relative;overflow:visible;">
+
+          <!-- Feature highlight chips -->
+          <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:32px;">
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:99px;backdrop-filter:blur(8px);animation:floatChip2 3s ease-in-out infinite;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:700;color:#10b981;letter-spacing:0.03em;white-space:nowrap;">Face Verified Attendance</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(224,26,139,0.08);border:1px solid rgba(224,26,139,0.3);border-radius:99px;backdrop-filter:blur(8px);animation:floatChip2 3.5s ease-in-out infinite 0.5s;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#e01a8b;box-shadow:0 0 8px #e01a8b;flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:700;color:#e01a8b;letter-spacing:0.03em;white-space:nowrap;">AI Powered Tracking</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(131,39,236,0.08);border:1px solid rgba(131,39,236,0.3);border-radius:99px;backdrop-filter:blur(8px);animation:floatChip2 4s ease-in-out infinite 1s;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#8327ec;box-shadow:0 0 8px #8327ec;flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:700;color:#8327ec;letter-spacing:0.03em;white-space:nowrap;">Real-Time Mentor Chat</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(42,107,242,0.08);border:1px solid rgba(42,107,242,0.3);border-radius:99px;backdrop-filter:blur(8px);animation:floatChip2 3.8s ease-in-out infinite 1.5s;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#2a6bf2;box-shadow:0 0 8px #2a6bf2;flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:700;color:#2a6bf2;letter-spacing:0.03em;white-space:nowrap;">Auto Certificates</span>
+            </div>
+          </div>
           <style>
-            @keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
-            @keyframes heroPulse{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
-            @keyframes heroOrbit{from{transform:rotate(0deg) translateX(150px) rotate(0deg)}to{transform:rotate(360deg) translateX(150px) rotate(-360deg)}}
-            @keyframes heroOrbit2{from{transform:rotate(120deg) translateX(120px) rotate(-120deg)}to{transform:rotate(480deg) translateX(120px) rotate(-480deg)}}
-            @keyframes heroOrbit3{from{transform:rotate(240deg) translateX(165px) rotate(-240deg)}to{transform:rotate(600deg) translateX(165px) rotate(-600deg)}}
-            @keyframes heroBlink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(0.05)}}
-            @keyframes heroScanBar{0%{width:4px}50%{width:60px}100%{width:4px}}
+            @keyframes floatChip2{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
           </style>
-          <div style="position:relative;width:min(460px,45vw);height:min(480px,45vw);display:flex;align-items:center;justify-content:center;">
-            <!-- Glow rings -->
-            <div style="position:absolute;width:min(300px,38vw);height:min(300px,38vw);border-radius:50%;border:1px solid rgba(224,26,139,0.18);animation:heroPulse 3s ease-in-out infinite;pointer-events:none;"></div>
-            <div style="position:absolute;width:min(370px,46vw);height:min(370px,46vw);border-radius:50%;border:1px solid rgba(131,39,236,0.12);animation:heroPulse 3s ease-in-out infinite 0.6s;pointer-events:none;"></div>
-            <div style="position:absolute;width:min(440px,54vw);height:min(440px,54vw);border-radius:50%;border:1px solid rgba(42,107,242,0.07);animation:heroPulse 3s ease-in-out infinite 1.2s;pointer-events:none;"></div>
-            <!-- Orbiting dots -->
-            <div style="position:absolute;width:0;height:0;animation:heroOrbit 6s linear infinite;pointer-events:none;">
-              <div style="width:10px;height:10px;border-radius:50%;background:#e01a8b;box-shadow:0 0 12px #e01a8b;margin:-5px 0 0 -5px;"></div>
+        </div>
+        <div class="hero-spline-container" style="display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:visible;">
+          <style>
+            @keyframes heroFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(-2deg)}}
+            @keyframes heroFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+            @keyframes heroPulse{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+            @keyframes dashBarGrow{from{width:0}to{width:var(--bar-w)}}
+            @keyframes dashFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+            @keyframes dashPing{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.5)}}
+            @keyframes dashCount{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+            @keyframes floatChip{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+            @keyframes glowPulseCard{0%,100%{box-shadow:0 8px 40px rgba(131,39,236,0.25),0 2px 12px rgba(224,26,139,0.1)}50%{box-shadow:0 12px 60px rgba(131,39,236,0.45),0 4px 24px rgba(224,26,139,0.25)}}
+            @keyframes progressAnim{from{width:0%}to{width:100%}}
+          </style>
+
+          <!-- DASHBOARD MOCKUP -->
+          <div style="position:relative;width:100%;max-width:480px;animation:heroFloat 5s ease-in-out infinite;filter:drop-shadow(0 20px 60px rgba(131,39,236,0.35));">
+
+            <!-- Main Card -->
+            <div style="
+              background:rgba(12,10,22,0.82);
+              border:1px solid rgba(131,39,236,0.35);
+              border-radius:20px;
+              padding:20px;
+              backdrop-filter:blur(20px);
+              animation:glowPulseCard 4s ease-in-out infinite;
+              transform:rotate(-2deg);
+            ">
+              <!-- Top bar -->
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:#e01a8b;box-shadow:0 0 8px #e01a8b;animation:dashPing 2s infinite;"></div>
+                  <span style="font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:0.1em;">INTERNX DASHBOARD</span>
+                </div>
+                <div style="display:flex;gap:5px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:#ef4444;opacity:0.7;"></div>
+                  <div style="width:8px;height:8px;border-radius:50%;background:#f59e0b;opacity:0.7;"></div>
+                  <div style="width:8px;height:8px;border-radius:50%;background:#10b981;opacity:0.7;"></div>
+                </div>
+              </div>
+
+              <!-- Stat row -->
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
+                <div style="background:rgba(224,26,139,0.08);border:1px solid rgba(224,26,139,0.2);border-radius:12px;padding:12px 10px;text-align:center;animation:dashFadeUp 0.6s ease both;">
+                  <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#e01a8b;line-height:1;margin-bottom:4px;">120</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,0.45);font-weight:600;letter-spacing:0.05em;">INTERNS</div>
+                </div>
+                <div style="background:rgba(131,39,236,0.08);border:1px solid rgba(131,39,236,0.2);border-radius:12px;padding:12px 10px;text-align:center;animation:dashFadeUp 0.6s ease 0.1s both;">
+                  <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#a78bfa;line-height:1;margin-bottom:4px;">94%</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,0.45);font-weight:600;letter-spacing:0.05em;">TASKS</div>
+                </div>
+                <div style="background:rgba(0,240,255,0.06);border:1px solid rgba(0,240,255,0.18);border-radius:12px;padding:12px 10px;text-align:center;animation:dashFadeUp 0.6s ease 0.2s both;">
+                  <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#00f0ff;line-height:1;margin-bottom:4px;">4.8k</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,0.45);font-weight:600;letter-spacing:0.05em;">HOURS</div>
+                </div>
+              </div>
+
+              <!-- Progress section -->
+              <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:14px;animation:dashFadeUp 0.6s ease 0.3s both;">
+                <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.08em;margin-bottom:12px;">PROGRESS OVERVIEW</div>
+
+                <div style="margin-bottom:10px;">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                    <span style="font-size:11px;color:rgba(255,255,255,0.7);">Web Development</span>
+                    <span style="font-size:11px;color:#e01a8b;font-weight:700;">87%</span>
+                  </div>
+                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+                    <div style="height:100%;width:87%;background:linear-gradient(90deg,#e01a8b,#8327ec);border-radius:99px;animation:dashBarGrow 1.2s ease 0.5s both;--bar-w:87%;"></div>
+                  </div>
+                </div>
+
+                <div style="margin-bottom:10px;">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                    <span style="font-size:11px;color:rgba(255,255,255,0.7);">Data Science</span>
+                    <span style="font-size:11px;color:#a78bfa;font-weight:700;">72%</span>
+                  </div>
+                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+                    <div style="height:100%;width:72%;background:linear-gradient(90deg,#8327ec,#2a6bf2);border-radius:99px;animation:dashBarGrow 1.2s ease 0.7s both;--bar-w:72%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                    <span style="font-size:11px;color:rgba(255,255,255,0.7);">UI/UX Design</span>
+                    <span style="font-size:11px;color:#00f0ff;font-weight:700;">95%</span>
+                  </div>
+                  <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+                    <div style="height:100%;width:95%;background:linear-gradient(90deg,#2a6bf2,#00f0ff);border-radius:99px;animation:dashBarGrow 1.2s ease 0.9s both;--bar-w:95%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Task cards row -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;animation:dashFadeUp 0.6s ease 0.4s both;">
+                <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:10px;">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                    <div style="width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></div>
+                    <span style="font-size:9px;color:#10b981;font-weight:700;letter-spacing:0.06em;">COMPLETED</span>
+                  </div>
+                  <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:#fff;">48</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,0.35);">tasks done</div>
+                </div>
+                <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:10px;">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                    <div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;box-shadow:0 0 6px #f59e0b;animation:dashPing 1.5s infinite;"></div>
+                    <span style="font-size:9px;color:#f59e0b;font-weight:700;letter-spacing:0.06em;">IN PROGRESS</span>
+                  </div>
+                  <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:#fff;">12</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,0.35);">active now</div>
+                </div>
+              </div>
             </div>
-            <div style="position:absolute;width:0;height:0;animation:heroOrbit2 9s linear infinite;pointer-events:none;">
-              <div style="width:7px;height:7px;border-radius:50%;background:#8327ec;box-shadow:0 0 10px #8327ec;margin:-3.5px 0 0 -3.5px;"></div>
+
+            <!-- Floating chip 1 — top right -->
+            <div style="position:absolute;top:-18px;right:-18px;background:rgba(0,240,255,0.1);border:1px solid rgba(0,240,255,0.4);border-radius:10px;padding:7px 12px;backdrop-filter:blur(12px);animation:floatChip 3s ease-in-out infinite;white-space:nowrap;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div style="width:7px;height:7px;border-radius:50%;background:#00f0ff;box-shadow:0 0 8px #00f0ff;animation:dashPing 1.8s infinite;"></div>
+                <span style="font-size:10px;font-weight:700;color:#00f0ff;letter-spacing:0.05em;">FACE VERIFIED ✓</span>
+              </div>
             </div>
-            <div style="position:absolute;width:0;height:0;animation:heroOrbit3 12s linear infinite;pointer-events:none;">
-              <div style="width:6px;height:6px;border-radius:50%;background:#2a6bf2;box-shadow:0 0 10px #2a6bf2;margin:-3px 0 0 -3px;"></div>
+
+            <!-- Floating chip 2 — bottom left -->
+            <div style="position:absolute;bottom:-16px;left:-16px;background:rgba(224,26,139,0.1);border:1px solid rgba(224,26,139,0.4);border-radius:10px;padding:7px 12px;backdrop-filter:blur(12px);animation:floatChip 3.5s ease-in-out infinite 0.8s;white-space:nowrap;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div style="width:7px;height:7px;border-radius:50%;background:#e01a8b;box-shadow:0 0 8px #e01a8b;animation:dashPing 2s infinite;"></div>
+                <span style="font-size:10px;font-weight:700;color:#e01a8b;letter-spacing:0.05em;">AI POWERED ⚡</span>
+              </div>
             </div>
-            <!-- Robot SVG -->
-            <svg width="240" height="310" viewBox="0 0 230 300" fill="none" xmlns="http://www.w3.org/2000/svg"
-              style="animation:heroFloat 4s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(224,26,139,0.45));width:min(240px,42vw);height:auto;">
-              <defs>
-                <linearGradient id="hg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2a0a3e"/><stop offset="100%" stop-color="#0d0d1e"/></linearGradient>
-                <linearGradient id="hg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1c0a30"/><stop offset="100%" stop-color="#0a0a18"/></linearGradient>
-                <linearGradient id="hg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#180828"/><stop offset="100%" stop-color="#080816"/></linearGradient>
-              </defs>
-              <!-- Antenna -->
-              <line x1="115" y1="6" x2="115" y2="36" stroke="#e01a8b" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="115" cy="5" r="6" fill="#e01a8b"/>
-              <circle cx="115" cy="5" r="10" fill="none" stroke="rgba(224,26,139,0.3)" stroke-width="1.5" style="animation:heroPulse 1.5s ease-in-out infinite;"/>
-              <!-- Head -->
-              <rect x="55" y="36" width="120" height="82" rx="22" fill="url(#hg1)" stroke="rgba(224,26,139,0.55)" stroke-width="1.5"/>
-              <!-- Eyes -->
-              <rect x="72" y="57" width="28" height="26" rx="7" fill="#050510" stroke="#e01a8b" stroke-width="1.5"/>
-              <rect x="130" y="57" width="28" height="26" rx="7" fill="#050510" stroke="#e01a8b" stroke-width="1.5"/>
-              <rect x="77" y="62" width="18" height="16" rx="5" fill="#e01a8b" style="animation:heroBlink 4s ease-in-out infinite;" opacity="0.95"/>
-              <rect x="135" y="62" width="18" height="16" rx="5" fill="#e01a8b" style="animation:heroBlink 4s ease-in-out infinite 0.3s;" opacity="0.95"/>
-              <!-- Mouth scan bar -->
-              <rect x="80" y="98" width="70" height="9" rx="4.5" fill="#050510" stroke="rgba(224,26,139,0.35)" stroke-width="1"/>
-              <rect x="82" y="100" width="4" height="5" rx="2.5" fill="#e01a8b" opacity="0.9" style="animation:heroScanBar 2s ease-in-out infinite;"/>
-              <!-- Neck -->
-              <rect x="101" y="118" width="28" height="16" rx="5" fill="rgba(131,39,236,0.35)" stroke="rgba(131,39,236,0.55)" stroke-width="1"/>
-              <!-- Body -->
-              <rect x="38" y="134" width="154" height="112" rx="24" fill="url(#hg2)" stroke="rgba(131,39,236,0.5)" stroke-width="1.5"/>
-              <!-- Chest panel -->
-              <rect x="64" y="154" width="102" height="60" rx="12" fill="rgba(5,5,18,0.7)" stroke="rgba(42,107,242,0.4)" stroke-width="1"/>
-              <line x1="72" y1="168" x2="158" y2="168" stroke="rgba(42,107,242,0.55)" stroke-width="1" stroke-dasharray="5 3"/>
-              <line x1="72" y1="180" x2="142" y2="180" stroke="rgba(224,26,139,0.5)" stroke-width="1" stroke-dasharray="5 3"/>
-              <line x1="72" y1="192" x2="150" y2="192" stroke="rgba(131,39,236,0.45)" stroke-width="1" stroke-dasharray="5 3"/>
-              <!-- Left arm -->
-              <rect x="10" y="138" width="28" height="76" rx="14" fill="url(#hg2)" stroke="rgba(131,39,236,0.4)" stroke-width="1"/>
-              <circle cx="24" cy="220" r="11" fill="rgba(224,26,139,0.15)" stroke="#e01a8b" stroke-width="1.5"/>
-              <!-- Right arm -->
-              <rect x="192" y="138" width="28" height="76" rx="14" fill="url(#hg2)" stroke="rgba(131,39,236,0.4)" stroke-width="1"/>
-              <circle cx="206" cy="220" r="11" fill="rgba(224,26,139,0.15)" stroke="#e01a8b" stroke-width="1.5"/>
-              <!-- Legs -->
-              <rect x="70" y="246" width="36" height="48" rx="14" fill="url(#hg3)" stroke="rgba(131,39,236,0.4)" stroke-width="1"/>
-              <rect x="124" y="246" width="36" height="48" rx="14" fill="url(#hg3)" stroke="rgba(131,39,236,0.4)" stroke-width="1"/>
-              <!-- Feet -->
-              <rect x="62" y="284" width="50" height="14" rx="7" fill="rgba(224,26,139,0.2)" stroke="rgba(224,26,139,0.5)" stroke-width="1"/>
-              <rect x="118" y="284" width="50" height="14" rx="7" fill="rgba(224,26,139,0.2)" stroke="rgba(224,26,139,0.5)" stroke-width="1"/>
-            </svg>
-            <!-- Floating badges -->
-            <div style="position:absolute;top:10%;right:0;background:rgba(224,26,139,0.1);border:1px solid rgba(224,26,139,0.4);border-radius:8px;padding:4px 8px;font-size:9px;font-weight:700;color:#e01a8b;letter-spacing:0.05em;backdrop-filter:blur(8px);animation:heroFloat 5s ease-in-out infinite 0.4s;white-space:nowrap;">AI Powered</div>
-            <div style="position:absolute;bottom:15%;left:0;background:rgba(42,107,242,0.1);border:1px solid rgba(42,107,242,0.4);border-radius:8px;padding:4px 8px;font-size:9px;font-weight:700;color:#2a6bf2;letter-spacing:0.05em;backdrop-filter:blur(8px);animation:heroFloat 5.5s ease-in-out infinite 1s;white-space:nowrap;">Face Verified</div>
-            <div style="position:absolute;top:35%;left:0;background:rgba(131,39,236,0.1);border:1px solid rgba(131,39,236,0.4);border-radius:8px;padding:4px 8px;font-size:9px;font-weight:700;color:#8327ec;letter-spacing:0.05em;backdrop-filter:blur(8px);animation:heroFloat 4.5s ease-in-out infinite 1.6s;white-space:nowrap;">Live Tracking</div>
+
+            <!-- Floating chip 3 — middle left -->
+            <div style="position:absolute;top:40%;left:-22px;background:rgba(131,39,236,0.1);border:1px solid rgba(131,39,236,0.4);border-radius:10px;padding:7px 12px;backdrop-filter:blur(12px);animation:floatChip 4s ease-in-out infinite 1.4s;white-space:nowrap;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div style="width:7px;height:7px;border-radius:50%;background:#8327ec;box-shadow:0 0 8px #8327ec;"></div>
+                <span style="font-size:10px;font-weight:700;color:#a78bfa;letter-spacing:0.05em;">LIVE TRACKING</span>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -341,6 +465,89 @@
     </div>
   </main>
 
+  <!-- ==================== FOOTER ==================== -->
+  <footer style="
+    background: rgba(7,7,10,0.95);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    backdrop-filter: blur(20px);
+    padding: 28px 0 16px 0;
+    margin-top: 40px;
+  " id="main-footer">
+    <div class="container">
+      <div style="display:grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap:28px; margin-bottom:24px;">
+
+        <!-- Brand col -->
+        <div>
+          <a href="#" class="logo" onclick="showLandingPage(); return false;" style="margin-bottom:16px; display:inline-flex;">
+            <div class="logo-dot"></div>
+            <span>InternX <span class="logo-by">by UTX</span></span>
+          </a>
+          <p style="color:var(--text-muted); font-size:12px; line-height:1.6; margin-top:10px; max-width:260px;">
+            A next-generation internship monitoring & progress tracking platform for student interns, mentors, and coordinators.
+          </p>
+          <!-- Contact -->
+          <div style="margin-top:14px; display:flex; flex-direction:column; gap:7px;">
+            <a href="tel:8087412366" style="display:flex;align-items:center;gap:8px;color:var(--text-muted);text-decoration:none;font-size:12px;transition:color 0.2s;" onmouseover="this.style.color='#e01a8b'" onmouseout="this.style.color='var(--text-muted)'">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e01a8b" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.57 3.47 2 2 0 0 1 3.54 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.46a16 16 0 0 0 5.55 5.55l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              +91 8087412366
+            </a>
+            <a href="mailto:utkarshdharm977@gmail.com" style="display:flex;align-items:center;gap:8px;color:var(--text-muted);text-decoration:none;font-size:12px;transition:color 0.2s;" onmouseover="this.style.color='#e01a8b'" onmouseout="this.style.color='var(--text-muted)'">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e01a8b" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              utkarshdharm977@gmail.com
+            </a>
+            <a href="https://djutkarshoffical-prog.github.io/internx-portal/" target="_blank" style="display:flex;align-items:center;gap:8px;color:var(--text-muted);text-decoration:none;font-size:12px;transition:color 0.2s;" onmouseover="this.style.color='#e01a8b'" onmouseout="this.style.color='var(--text-muted)'">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e01a8b" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              internx-portal.github.io
+            </a>
+          </div>
+        </div>
+
+        <!-- Platform links -->
+        <div>
+          <h4 style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;">Platform</h4>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+            <li><a href="#explore" style="color:var(--text-muted);text-decoration:none;font-size:13px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Explore Internships</a></li>
+            <li><a href="#features" style="color:var(--text-muted);text-decoration:none;font-size:13px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Features</a></li>
+            <li><a href="#verification-hub" style="color:var(--text-muted);text-decoration:none;font-size:13px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Verify Certificate</a></li>
+            <li><a href="#faqs" style="color:var(--text-muted);text-decoration:none;font-size:13px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">FAQs</a></li>
+          </ul>
+        </div>
+
+        <!-- Portals -->
+        <div>
+          <h4 style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;">Portals</h4>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+            <li><a href="#" onclick="showAuthPage('login');return false;" style="color:var(--text-muted);text-decoration:none;font-size:13px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Student Login</a></li>
+            <li><a href="#" onclick="showAuthPage('login');return false;" style="color:var(--text-muted);text-decoration:none;font-size:13px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Mentor Login</a></li>
+            <li><a href="#" onclick="showAuthPage('login');return false;" style="color:var(--text-muted);text-decoration:none;font-size:13px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Admin Login</a></li>
+            <li><a href="#" onclick="showAuthPage('register');return false;" style="color:var(--text-muted);text-decoration:none;font-size:13px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Register Now</a></li>
+          </ul>
+        </div>
+
+        <!-- Built by -->
+        <div>
+          <h4 style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;">Built By</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="font-size:16px;font-weight:800;font-family:'Orbitron',sans-serif;background:linear-gradient(135deg,#e01a8b,#8327ec);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">UTX Team</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.7;">Utkarsh Dharmik</div>
+            <div style="font-size:12px;color:var(--text-muted);opacity:0.7;">Full-Stack Developer</div>
+            <div style="font-size:12px;color:var(--text-muted);opacity:0.7;">Internship Tech Platform</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <p style="font-size:12px;color:var(--text-muted);">© 2026 InternX by UTX. All rights reserved.</p>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></div>
+          <span style="font-size:12px;color:var(--text-muted);">All systems operational</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
   <!-- ==================== AUTHENTICATION PAGE ==================== -->
   <section id="auth-page" class="auth-section hidden">
     <div class="auth-card glass-panel">
@@ -357,7 +564,7 @@
           </div>
           <div class="form-group">
             <label for="login-password">Password</label>
-            <input type="password" id="login-password" class="form-control pwd-input" placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢" required autocomplete="current-password">
+            <input type="password" id="login-password" class="form-control pwd-input" placeholder="ꄗ Passwords" required autocomplete="current-password">
             <span class="pwd-toggle" onclick="togglePasswordVisibility('login-password')">
               <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               <svg class="eye-closed hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
@@ -645,7 +852,7 @@
     <div class="portal-content">
       
       <!-- ==================== STUDENT PORTAL VIEWS ==================== -->
-      <div id="student-workspace" class="hidden" style="position: relative; min-height: 500px;">
+      <div id="student-workspace" class="hidden" style="position: relative; min-height: calc(100vh - 80px);">
         
         <div id="student-daily-lock-overlay" class="glass-panel" style="position: absolute; top: 0; left: 0; width: 100%; min-height: 100%; overflow-y: auto; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; background: var(--face-gate-bg, rgba(7,7,10,0.96)); backdrop-filter: blur(20px); border-radius: 16px;">
           <h2 style="color: var(--primary-magenta); font-size: 32px; margin-bottom: 8px; font-family: 'Outfit', sans-serif;"><span style="display:inline-flex;align-items:center;gap:14px;justify-content:center;">
@@ -1010,7 +1217,7 @@ AI Face Authentication Gate</span></h2>
                 <img src="" alt="Mentor" class="user-avatar" id="student-chat-mentor-avatar" style="cursor: pointer;" onclick="openChatImageLightbox(this.src)">
                 <div>
                   <h4 id="student-chat-mentor-name">Vikram Sharma</h4>
-                  <span style="font-size: 11px; color: var(--success); font-weight: 600;">Ã¢â€”Â Online</span>
+                  <span style="font-size: 11px; color: var(--success); font-weight: 600;">Ã¢â€”Â Online</span>
                 </div>
               </div>
 
@@ -1110,9 +1317,9 @@ AI Face Authentication Gate</span></h2>
             </div>
 
             <!-- Start Quiz Landing View -->
-            <div id="quiz-start-view" class="hidden" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; text-align: center; padding: 20px 0;">
-              <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(219,39,119,0.1); border: 2px solid var(--primary-magenta); display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 0 15px var(--primary-glow); animation: pulse 2s infinite;">
-                Ã°Å¸Å½Â¯
+            <div id="quiz-start-view" class="hidden" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; text-align: center; padding: 20px 40px;">
+              <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(219,39,119,0.1); border: 2px solid var(--primary-magenta); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px var(--primary-glow);">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#e01a8b" stroke-width="1.5" stroke-linecap="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
               </div>
               <div>
                 <h3 style="color: #fff; font-size: 22px; margin-bottom: 8px; font-family: 'Outfit', sans-serif;">Daily Technical Mastery Challenge</h3>
@@ -1141,7 +1348,7 @@ AI Face Authentication Gate</span></h2>
               </div>
 
               <button class="btn btn-primary" onclick="proceedToStartQuiz()" style="margin: 0; padding: 14px 40px; font-size: 15px; font-weight: bold; border-radius: 10px; box-shadow: 0 4px 20px var(--primary-glow); display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                Ã¢Å¡Â¡ Start Daily Quiz
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Start Daily Quiz
               </button>
             </div>
 
@@ -2455,6 +2662,7 @@ AI Face Authentication Gate</span></h2>
         </div>
       </div>
     </div>
+  </div>
   <!-- Internship Certificate Modal -->
   <div class="modal-overlay" id="certificate-modal" onclick="if(event.target === this) closeModal('certificate-modal')">
     <div class="modal-content glass-panel" style="max-width: 1050px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
@@ -2968,64 +3176,54 @@ AI Face Authentication Gate</span></h2>
       <button class="btn btn-secondary btn-sm" onclick="resetDatabaseForDemo()" style="padding: 4px 8px; font-size: 10px; border-color: var(--danger); color: var(--danger); cursor: pointer;">Ã°Å¸â€”â€˜Ã¯Â¸Â Reset DB</button>
     </div>
   </div>
-  <!-- ==================== APEX AI COPILOT FLOATING PANEL ==================== -->
-  <button id="ai-copilot-trigger" class="hidden" title="InternX AI Assistant" onclick="toggleAICopilot()">
-    <img src="robot_avatar.png" alt="AI Assistant">
-  </button>
-
-  <div id="ai-copilot-panel">
-    <div class="ai-copilot-header">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div class="ai-header-avatar">
-          <img src="robot_avatar.png" alt="AI Assistant">
-          <div class="ai-status-indicator"></div>
+  <!-- ==================== NEW IX CHATBOT ==================== -->
+  <div id="ix-chat-btn" onclick="ixToggleChat()" style="position:fixed;top:calc(100vh - 120px);right:24px;z-index:99999;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#e01a8b,#8327ec);box-shadow:0 4px 20px rgba(224,26,139,0.5);display:none;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s;border:2px solid rgba(255,255,255,0.3);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </div>
+  <div id="ix-chat-panel" style="position:fixed;top:calc(100vh - 640px);right:24px;z-index:99998;width:360px;height:520px;border-radius:20px;background:rgba(10,8,20,0.97);border:1px solid rgba(131,39,236,0.4);box-shadow:0 8px 40px rgba(131,39,236,0.3);backdrop-filter:blur(20px);display:none;flex-direction:column;overflow:hidden;">
+    <div style="padding:16px 18px;background:linear-gradient(135deg,rgba(224,26,139,0.15),rgba(131,39,236,0.15));border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#e01a8b,#8327ec);display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
         <div>
-          <h4 style="margin: 0; font-size: 13px; font-weight: 700; color: #fff; font-family: 'Outfit'; line-height: 1.2;">InternX AI Assistant</h4>
-          <span style="font-size: 9px; color: var(--success); display: flex; align-items: center; gap: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px;">
-            <span style="display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--success); box-shadow: 0 0 4px var(--success);"></span> Online
-          </span>
+          <div style="font-size:13px;font-weight:700;color:#fff;font-family:'Outfit',sans-serif;">InternX AI</div>
+          <div style="font-size:10px;color:#10b981;">&#9679; Online</div>
         </div>
       </div>
-      <div class="ai-copilot-actions">
-        <button class="ai-copilot-action-btn" onclick="toggleAICopilotSettings()" title="Gemini API Key Settings">Ã¢Å¡â„¢Ã¯Â¸Â</button>
-        <button class="ai-copilot-action-btn" onclick="toggleAICopilot()" title="Close Panel" style="font-size: 20px;">&times;</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="ixShowKeyInput()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:5px 8px;cursor:pointer;color:#aaa;font-size:11px;">API Key</button>
+        <button onclick="ixToggleChat()" style="background:none;border:none;color:#aaa;font-size:20px;cursor:pointer;line-height:1;">&times;</button>
       </div>
     </div>
-
-    <!-- Settings slide drawer -->
-    <div id="ai-copilot-settings">
-      <div class="ai-settings-inner">
-        <label for="ai-gemini-key">Enter Google Gemini API Key:</label>
-        <input type="password" id="ai-gemini-key" class="form-control" style="padding: 6px 12px; font-size: 12px; background: rgba(0,0,0,0.3);" placeholder="AIzaSy...">
-        <div style="display: flex; gap: 8px; margin-top: 4px;">
-          <button class="btn btn-primary btn-sm" onclick="saveGeminiKey()" style="padding: 4px 10px; font-size: 10px; border-radius: 4px; background: var(--primary-magenta); border-color: var(--primary-magenta);">Save Key</button>
-          <button class="btn btn-secondary btn-sm" onclick="clearGeminiKey()" style="padding: 4px 10px; font-size: 10px; border-radius: 4px; color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1);">Clear Key</button>
-        </div>
+    <div id="ix-key-box" style="display:none;padding:12px 16px;background:rgba(131,39,236,0.08);border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+      <div style="font-size:11px;color:#aaa;margin-bottom:6px;">Enter your Google Gemini API Key:</div>
+      <div style="display:flex;gap:8px;">
+        <input type="password" id="ix-key-input" placeholder="AIzaSy..." style="flex:1;padding:7px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:12px;outline:none;">
+        <button onclick="ixSaveKey()" style="padding:7px 14px;background:linear-gradient(135deg,#e01a8b,#8327ec);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;">Save</button>
       </div>
     </div>
-
-    <!-- Suggestion FAQ Chips -->
-    <div class="ai-copilot-suggestions">
-      <div class="ai-suggestion-chip" onclick="askCopilotFAQ('structure')">Ã°Å¸â€œâ€š Project Structure</div>
-      <div class="ai-suggestion-chip" onclick="askCopilotFAQ('db')">Ã°Å¸â€”â€žÃ¯Â¸Â Database Collections</div>
-      <div class="ai-suggestion-chip" onclick="askCopilotFAQ('attendance')">Ã°Å¸â€œÅ  Attendance Flow</div>
-      <div class="ai-suggestion-chip" onclick="askCopilotFAQ('features')">Ã¢Å“Â¨ Core Features</div>
+    <div id="ix-chat-msgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;gap:8px;align-items:flex-start;">
+        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#e01a8b,#8327ec);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">&#129302;</div>
+        <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px 12px 12px 2px;padding:10px 14px;font-size:13px;color:#e2e8f0;line-height:1.5;max-width:85%;">Namaste! Main InternX AI hoon. API Key set karo aur kuch bhi pucho!</div>
+      </div>
     </div>
-
-    <!-- Scrollable Chat History -->
-    <div class="ai-copilot-history" id="ai-copilot-history-list">
-      <!-- Injected via JS -->
+    <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.07);display:flex;gap:8px;flex-shrink:0;">
+      <input type="text" id="ix-chat-input" placeholder="Kuch bhi pucho..." autocomplete="off" style="flex:1;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:13px;outline:none;" onkeydown="if(event.key==='Enter')ixSendMsg()">
+      <button onclick="ixSendMsg()" style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#e01a8b,#8327ec);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
     </div>
-
-    <!-- Input Composer -->
-    <form class="ai-copilot-composer" onsubmit="handleSendAICopilot(event)">
-      <input type="text" id="ai-copilot-input" class="form-control" style="margin: 0; padding: 10px 14px; font-size: 12px; background: rgba(0,0,0,0.3);" placeholder="Ask about project structure, collections..." autocomplete="off">
-      <button type="submit" class="btn btn-primary" style="margin: 0; padding: 10px 16px; font-size: 12px; height: 38px; background: var(--primary-magenta); border-color: var(--primary-magenta);">Send</button>
-    </form>
   </div>
-
-  <button id="debug-panel-trigger" onclick="toggleDebugPanel()" style="position: fixed; bottom: 15px; right: 15px; z-index: 9998; background: var(--primary-magenta); color: #fff; border: none; padding: 8px 14px; border-radius: 20px; font-family: sans-serif; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px rgba(217, 4, 181, 0.5);">Ã°Å¸â€Â§ Inspect Database</button>
+  <script>
+    function ixToggleChat(){var p=document.getElementById('ix-chat-panel');p.style.display=p.style.display==='flex'?'none':'flex';}
+    function ixShowKeyInput(){var b=document.getElementById('ix-key-box');b.style.display=b.style.display==='none'?'block':'none';if(b.style.display==='block'){document.getElementById('ix-key-input').value=localStorage.getItem('ix_gemini_key')||'';}}
+    function ixSaveKey(){var k=document.getElementById('ix-key-input').value.trim();if(k){localStorage.setItem('ix_gemini_key',k);document.getElementById('ix-key-box').style.display='none';ixAddMsg('bot','API key save ho gaya! Ab pucho kuch bhi. OK');}}
+    async function ixSendMsg(){var inp=document.getElementById('ix-chat-input');var msg=inp.value.trim();if(!msg)return;inp.value='';ixAddMsg('user',msg);var key=localStorage.getItem('ix_gemini_key');if(!key){ixAddMsg('bot','Pehle API Key set karo - upar API Key button click karo.');return;}var tid='t'+Date.now();ixAddMsg('bot','...',tid);try{var r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'You are InternX AI Assistant for an internship portal. Answer helpfully and concisely. User: '+msg}]}]})});var d=await r.json();var rep=d?.candidates?.[0]?.content?.parts?.[0]?.text||'Jawab nahi mila.';var te=document.getElementById(tid);if(te)te.remove();ixAddMsg('bot',rep);}catch(e){var te=document.getElementById(tid);if(te)te.remove();ixAddMsg('bot','Error: '+e.message);}}
+    function ixAddMsg(role,text,id){var c=document.getElementById('ix-chat-msgs');var w=document.createElement('div');w.style.cssText='display:flex;gap:8px;align-items:flex-start;'+(role==='user'?'flex-direction:row-reverse;':'');if(id)w.id=id;var av=document.createElement('div');av.style.cssText='width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;'+(role==='user'?'background:rgba(255,255,255,0.1);':'background:linear-gradient(135deg,#e01a8b,#8327ec);');av.textContent=role==='user'?'U':'AI';var b=document.createElement('div');b.style.cssText=role==='user'?'background:linear-gradient(135deg,rgba(224,26,139,0.2),rgba(131,39,236,0.2));border:1px solid rgba(224,26,139,0.3);border-radius:12px 12px 2px 12px;padding:10px 14px;font-size:13px;color:#e2e8f0;line-height:1.5;max-width:85%;white-space:pre-wrap;':'background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px 12px 12px 2px;padding:10px 14px;font-size:13px;color:#e2e8f0;line-height:1.5;max-width:85%;white-space:pre-wrap;';b.textContent=text;w.appendChild(av);w.appendChild(b);c.appendChild(w);c.scrollTop=c.scrollHeight;}
+  </script>
+  <button id="debug-panel-trigger" onclick="toggleDebugPanel()" style="position:fixed;bottom:15px;left:15px;z-index:9998;background:var(--primary-magenta);color:#fff;border:none;padding:8px 14px;border-radius:20px;font-family:sans-serif;font-size:11px;font-weight:bold;cursor:pointer;box-shadow:0 0 15px rgba(217,4,181,0.5);">Inspect DB</button>
 
   <!-- ==================== INCOMING VIDEO CALL SCREEN ==================== -->
   <div id="incoming-call-overlay" class="modal-overlay hidden" style="z-index: 10001; background: rgba(5, 5, 8, 0.97); backdrop-filter: blur(20px);">
@@ -3240,6 +3438,179 @@ AI Face Authentication Gate</span></h2>
         </div>
       </div>
 
+  <!-- ==================== WHATSAPP POPUP VIDEO CALL ==================== -->
+  <div id="wa-call-popup" style="display:none;position:fixed;z-index:10006;bottom:32px;right:32px;width:820px;max-width:calc(100vw - 40px);height:560px;max-height:calc(100vh - 80px);background:#1a1a2e;border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,0.85),0 0 0 1px rgba(255,255,255,0.08);flex-direction:column;overflow:hidden;font-family:Outfit,sans-serif;resize:both;">
+
+    <!-- Title Bar (draggable) -->
+    <div id="wa-popup-titlebar" style="display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:42px;background:#111120;border-bottom:1px solid rgba(255,255,255,0.07);cursor:grab;flex-shrink:0;user-select:none;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;flex-shrink:0;"></div>
+        <span style="font-size:13px;font-weight:700;color:#fff;letter-spacing:0.01em;">InternX Group Call</span>
+        <span id="wa-popup-timer" style="font-size:11px;color:rgba(255,255,255,0.4);font-family:monospace;margin-left:4px;">00:00</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.05);padding:3px 10px;border-radius:20px;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span id="wa-popup-pcount" style="font-size:11px;color:#a78bfa;font-weight:700;">1</span>
+        </div>
+        <!-- Minimise -->
+        <button onclick="waPopupMinimise()" title="Minimise" style="width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;font-size:15px;line-height:26px;display:flex;align-items:center;justify-content:center;">&#x2212;</button>
+        <!-- Close/End -->
+        <button onclick="waEndCall()" title="End Call" style="width:26px;height:26px;border-radius:50%;border:none;background:#ef4444;color:#fff;cursor:pointer;font-size:13px;line-height:26px;display:flex;align-items:center;justify-content:center;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="white"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.01L6.6 10.8z" transform="rotate(135 12 12)"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body: video grid + optional chat panel -->
+    <div style="flex:1;display:flex;min-height:0;overflow:hidden;">
+      <!-- Video grid -->
+      <div id="wa-video-grid" data-count="1" style="flex:1;padding:10px;overflow:hidden;display:grid;gap:8px;align-content:center;min-height:0;">
+        <!-- tiles injected by JS -->
+      </div>
+      <!-- In-call chat panel -->
+      <div id="wa-call-chat-panel" style="display:none;width:240px;flex-shrink:0;background:#111120;border-left:1px solid rgba(255,255,255,0.07);flex-direction:column;">
+        <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12px;font-weight:700;color:#fff;">Chat</span>
+          <button onclick="waToggleCallChat()" style="background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:16px;">&times;</button>
+        </div>
+        <div id="wa-call-chat-msgs" style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px;"></div>
+        <form onsubmit="waSendCallChat(event)" style="padding:8px;border-top:1px solid rgba(255,255,255,0.07);display:flex;gap:6px;">
+          <input type="text" id="wa-call-chat-input" placeholder="Message..." autocomplete="off" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:6px 12px;color:#fff;font-size:11px;outline:none;">
+          <button type="submit" style="background:#e01a8b;border:none;border-radius:50%;width:30px;height:30px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div style="display:flex;justify-content:center;align-items:center;gap:14px;padding:10px 16px 14px;background:#111120;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;">
+      <!-- Mic -->
+      <button id="wa-btn-mic" onclick="waToggleMic()" title="Mute/Unmute" style="width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;">
+        <svg id="wa-mic-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        <svg id="wa-mic-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <!-- Camera -->
+      <button id="wa-btn-cam" onclick="waToggleCam()" title="Camera On/Off" style="width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;">
+        <svg id="wa-cam-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <svg id="wa-cam-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34m-7.72-2.06A4 4 0 0 1 8.56 8.56"/></svg>
+      </button>
+      <!-- Screen Share -->
+      <button id="wa-btn-share" onclick="waToggleShare()" title="Share Screen" style="width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </button>
+      <!-- Chat -->
+      <button id="wa-btn-chat" onclick="waToggleCallChat()" title="Chat" style="position:relative;width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span id="wa-chat-badge" style="display:none;position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:#e01a8b;font-size:8px;font-weight:800;color:#fff;line-height:14px;text-align:center;"></span>
+      </button>
+      <!-- Participants -->
+      <button onclick="waToggleParticipants()" title="Participants" style="width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </button>
+      <!-- End Call -->
+      <button onclick="waEndCall()" title="End Call" style="width:50px;height:50px;border-radius:50%;border:none;background:#ef4444;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(239,68,68,0.5);transition:all 0.18s;" onmouseover="this.style.transform='scale(1.07)'" onmouseout="this.style.transform='scale(1)'">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.01L6.6 10.8z" transform="rotate(135 12 12)"/></svg>
+      </button>
+    </div>
+
+    <!-- Participants Side Panel (slides in from left inside popup) -->
+    <div id="wa-participants-panel" style="display:none;position:absolute;left:0;top:42px;bottom:0;width:220px;background:#111120;border-right:1px solid rgba(255,255,255,0.07);z-index:10;flex-direction:column;">
+      <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12px;font-weight:700;color:#fff;">People (<span id="wa-panel-count">1</span>)</span>
+        <button onclick="waToggleParticipants()" style="background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:16px;">&times;</button>
+      </div>
+      <div id="wa-participants-list" style="flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+  </div>
+
+  <!-- Minimised pill (shows when minimised) -->
+  <div id="wa-call-pill" style="display:none;position:fixed;bottom:24px;right:24px;z-index:10007;background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:50px;padding:8px 16px 8px 10px;display:none;align-items:center;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6);cursor:pointer;" onclick="waPopupRestore()">
+    <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:waPulse 1.5s infinite;"></div>
+    <span style="font-size:12px;font-weight:700;color:#fff;">Group Call</span>
+    <span id="wa-pill-timer" style="font-size:11px;color:rgba(255,255,255,0.5);font-family:monospace;">00:00</span>
+    <button onclick="event.stopPropagation();waEndCall()" style="width:28px;height:28px;border-radius:50%;border:none;background:#ef4444;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:4px;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.01L6.6 10.8z" transform="rotate(135 12 12)"/></svg>
+    </button>
+  </div>
+
+  <!-- WA Popup CSS -->
+  <style>
+    @keyframes waPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+    @keyframes waPopupIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    @keyframes waTileIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
+    @keyframes waSpeakPulse{0%,100%{box-shadow:0 0 0 2px rgba(34,197,94,0.4)}50%{box-shadow:0 0 0 4px rgba(34,197,94,0.8),0 0 16px rgba(34,197,94,0.3)}}
+
+    #wa-call-popup { animation: waPopupIn 0.28s cubic-bezier(0.34,1.56,0.64,1); }
+
+    .wa-video-tile {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0d0d1a;
+      border: 2px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      animation: waTileIn 0.25s ease;
+      min-height: 80px;
+    }
+    .wa-video-tile.speaking {
+      border-color: #22c55e;
+      animation: waSpeakPulse 1.2s ease-in-out infinite;
+    }
+    .wa-video-tile video {
+      width:100%; height:100%; object-fit:cover; transform:scaleX(-1);
+    }
+    .wa-video-tile .wa-avatar-fallback {
+      display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px;
+    }
+    .wa-initials-circle {
+      border-radius:50%; background:linear-gradient(135deg,#8327ec,#e01a8b);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; color:#fff; font-family:Outfit,sans-serif; flex-shrink:0;
+    }
+    .wa-tile-name {
+      position:absolute; bottom:7px; left:8px;
+      background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+      padding:2px 8px; border-radius:5px; font-size:10px; font-weight:600; color:#fff;
+      display:flex; align-items:center; gap:4px; z-index:5;
+    }
+    .wa-tile-muted {
+      position:absolute; top:7px; right:7px;
+      background:rgba(239,68,68,0.9); width:22px; height:22px;
+      border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:5;
+    }
+    /* Grid layouts */
+    #wa-video-grid[data-count="1"] { grid-template-columns:1fr; }
+    #wa-video-grid[data-count="2"] { grid-template-columns:1fr 1fr; }
+    #wa-video-grid[data-count="3"] { grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; }
+    #wa-video-grid[data-count="4"] { grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; }
+    #wa-video-grid[data-count="5"],
+    #wa-video-grid[data-count="6"] { grid-template-columns:1fr 1fr 1fr; }
+    #wa-video-grid[data-count="7"],
+    #wa-video-grid[data-count="8"],
+    #wa-video-grid[data-count="9"] { grid-template-columns:1fr 1fr 1fr; }
+    /* For 3 tiles: make first one span full width */
+    #wa-video-grid[data-count="3"] .wa-video-tile:first-child { grid-column: span 2; }
+
+    #wa-btn-mic.muted { background:rgba(239,68,68,0.25) !important; border:1px solid rgba(239,68,68,0.5) !important; }
+    #wa-btn-cam.off { background:rgba(239,68,68,0.25) !important; border:1px solid rgba(239,68,68,0.5) !important; }
+    #wa-btn-share.active { background:rgba(42,107,242,0.3) !important; border:1px solid rgba(42,107,242,0.6) !important; }
+    #wa-btn-chat.active { background:rgba(224,26,139,0.25) !important; border:1px solid rgba(224,26,139,0.5) !important; }
+    .wa-ctrl-btn:hover { background:rgba(255,255,255,0.2) !important; }
+    .wa-call-chat-msg { padding:5px 9px; background:rgba(255,255,255,0.06); border-radius:8px; font-size:10px; color:#fff; }
+    .wa-call-chat-msg .wa-csender { font-size:9px; font-weight:700; color:#e01a8b; margin-bottom:1px; }
+    .wa-call-chat-msg.mine { background:rgba(224,26,139,0.15); }
+    .wa-p-item { display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:7px; background:rgba(255,255,255,0.03); }
+    .wa-p-item img, .wa-p-item .wa-p-initial { width:30px; height:30px; border-radius:50%; flex-shrink:0; object-fit:cover; }
+    .wa-p-item .wa-p-initial { background:linear-gradient(135deg,#8327ec,#e01a8b); display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff; }
+    .wa-participants-item { display:flex;align-items:center;gap:8px;padding:7px;border-radius:8px;background:rgba(255,255,255,0.03); }
+    .wa-participants-item img,.wa-participants-item .wa-p-initial{width:30px;height:30px;border-radius:50%;flex-shrink:0;object-fit:cover;}
+    .wa-participants-item .wa-p-initial{background:linear-gradient(135deg,#8327ec,#e01a8b);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+  </style>
   <!-- ==================== JITSI GROUP CALL OVERLAY ==================== -->
   <div id="jitsi-call-overlay" class="modal-overlay hidden" style="z-index:10005;background:#07070a;flex-direction:column;">
     <!-- Header bar -->
@@ -3384,3 +3755,9 @@ AI Face Authentication Gate</span></h2>
   </style>
 </body>
 </html>
+
+
+
+
+
+

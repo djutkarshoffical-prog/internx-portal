@@ -5719,13 +5719,16 @@ async function captureRegistrationFace() {
     document.getElementById('reg-capture-btn').style.display = 'none';
     regWebcamActive = false;
 
-    // ===== PAID TIER: Go to payment page Step 2 =====
+    // ===== PAID TIER: Directly open Razorpay =====
     const tierEl = document.getElementById('reg-tier');
     if (tierEl && tierEl.value === 'paid') {
-      showToast('? Face enrolled! Proceeding to payment...', 2000);
-      setTimeout(() => showRegStep(2), 600);
+      showToast('✅ Face enrolled! Opening payment...', 2000);
+      setTimeout(() => {
+        const submitBtn = document.querySelector('#register-form button[type="submit"]');
+        if (submitBtn) submitBtn.click();
+      }, 800);
     } else {
-      // FREE tier � highlight Sign Up button
+      // FREE tier — highlight Sign Up button
       const submitBtn = document.querySelector('#register-form button[type="submit"]');
       if (submitBtn) {
         setTimeout(() => { submitBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 200);
@@ -5733,7 +5736,7 @@ async function captureRegistrationFace() {
         submitBtn.style.boxShadow = '0 0 0 4px rgba(224,26,139,0.4)';
         setTimeout(() => { submitBtn.style.boxShadow = ''; }, 1500);
       }
-      showToast('? Face enrolled! Click Sign Up to complete registration.', 3000);
+      showToast('✅ Face enrolled! Click Sign Up to complete registration.', 3000);
     }
   } catch (err) {
     console.error("Face analysis error:", err);
@@ -5787,11 +5790,14 @@ function handleRegistrationFileUpload(event) {
       document.getElementById('reg-capture-btn').style.display = 'none';
       regWebcamActive = false;
 
-      // Navigate to payment page or highlight submit
+      // Navigate to Razorpay or highlight submit
       const tierEl2 = document.getElementById('reg-tier');
       if (tierEl2 && tierEl2.value === 'paid') {
-        showToast('? Face enrolled! Proceeding to payment...', 2000);
-        setTimeout(() => showRegStep(2), 600);
+        showToast('✅ Face enrolled! Opening payment...', 2000);
+        setTimeout(() => {
+          const submitBtn = document.querySelector('#register-form button[type="submit"]');
+          if (submitBtn) submitBtn.click();
+        }, 800);
       } else {
         const submitBtn = document.querySelector('#register-form button[type="submit"]');
         if (submitBtn) {
@@ -5800,7 +5806,7 @@ function handleRegistrationFileUpload(event) {
           submitBtn.style.boxShadow = '0 0 0 4px rgba(224,26,139,0.4)';
           setTimeout(() => { submitBtn.style.boxShadow = ''; }, 1500);
         }
-        showToast('? Face enrolled! Click Sign Up to complete registration.', 3000);
+        showToast('✅ Face enrolled! Click Sign Up to complete registration.', 3000);
       }
     } catch (err) {
       console.error("Uploaded photo analysis error:", err);

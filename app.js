@@ -14871,7 +14871,8 @@ function openRzpModal(email, amount, merchant, callback) {
     currency: 'INR',
     name: 'InternX by UTX',
     description: merchant,
-    image: 'robot_avatar.png', // Your logo shown in checkout popup
+    image: 'robot_avatar.png',
+    payment_capture: 1,  // Auto-capture — money instantly moves to settlement
 
     // Prefill customer info
     prefill: {

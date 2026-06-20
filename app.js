@@ -14816,44 +14816,16 @@ function handleRegisterTierChange(value) {
   if (!infoEl) return;
 
   if (value === 'paid') {
-    const feeToShow = _selectedInternFee > 0 ? `?${_selectedInternFee}` : '&#x20B9;99';
-    infoEl.innerHTML = `&#x1F4B0; <strong style='color:var(--primary-magenta);'>Registration Fee ${feeToShow}</strong> � Stipend + premium mentorship included.`;
+    const feeToShow = _selectedInternFee > 0 ? `₹${_selectedInternFee}` : '&#x20B9;99';
+    infoEl.innerHTML = `&#x1F4B0; <strong style='color:var(--primary-magenta);'>Registration Fee ${feeToShow}</strong> — Stipend + premium mentorship included.`;
 
-    // Update the QR amount display
-    const displayAmt = document.getElementById('reg-payment-display-amount');
-    if (displayAmt) displayAmt.innerHTML = `&#x20B9;${_selectedInternFee > 0 ? _selectedInternFee : 99}`;
-
-    // Also update the amount input placeholder
-    const amtInput = document.getElementById('reg-payment-amount');
-    if (amtInput) amtInput.placeholder = `${_selectedInternFee > 0 ? _selectedInternFee : 99}`;
-    
-    // For paid: show face scan first, payment section shows AFTER face capture
+    // Show face scan + Razorpay info box
     if (faceScanSection) faceScanSection.style.display = 'block';
-    // Payment section will appear automatically after face capture (see captureRegistrationFace logic)
-    // But also show it now if face already captured
-    const faceData = document.getElementById('reg-face-data');
-    if (faceData && faceData.value) {
-      if (paymentSection) paymentSection.style.display = 'block';
-    } else {
-      if (paymentSection) paymentSection.style.display = 'none';
-    }
-    
-    // Reset payment verification state
-    regPaymentVerified = false;
-    const qrStep = document.getElementById('reg-payment-qr-step');
-    const verifiedStep = document.getElementById('reg-payment-verified');
-    const statusEl = document.getElementById('reg-payment-status');
-    const verifyBtn = document.getElementById('reg-verify-btn');
-    if (qrStep) { qrStep.style.display = 'block'; qrStep.style.opacity = '1'; }
-    if (verifiedStep) verifiedStep.style.display = 'none';
-    if (statusEl) statusEl.innerText = '';
-    if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerHTML = '&#x1F50D; Verify &amp; Match UTR'; }
-    const fillEl = document.getElementById('reg-utr-match-fill');
-    if (fillEl) { fillEl.style.width = '0%'; }
+    if (paymentSection) paymentSection.style.display = 'block';
 
-    // Start 10-minute timer
-    startRegPaymentTimer(600);
-    stopRegPaymentTimer(); // pause until payment section is shown
+    // Reset payment state
+    regPaymentVerified = false;
+    pendingRegistrationPayment = null;
   } else {
     infoEl.innerText = "Standard registration is free. Experience letter & Certificate included.";
     infoEl.style.color = "var(--text-dark)";
@@ -14864,6 +14836,7 @@ function handleRegisterTierChange(value) {
     stopRegPaymentTimer();
     
     regPaymentVerified = false;
+    pendingRegistrationPayment = null;
   }
 }
 

@@ -99,7 +99,15 @@
               -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
               background-size:200% auto;
               animation: shimmerGrad 2.5s linear infinite, glitchSkew 8s ease-in-out infinite 0.4s;
-            }          </style>
+            }          
+.attendance-row { cursor: pointer; transition: all 0.2s; }
+.attendance-row.selected td { background-color: rgba(217, 4, 181, 0.15) !important; }
+.attendance-row:hover td { background-color: rgba(217, 4, 181, 0.08) !important; }
+
+html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness(2); }
+</style>
+
+
           <script>
             (function(){
               function revealHeroWords(){
@@ -151,7 +159,15 @@
           </div>
           <style>
             @keyframes floatChip2{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-          </style>
+          
+.attendance-row { cursor: pointer; transition: all 0.2s; }
+.attendance-row.selected td { background-color: rgba(217, 4, 181, 0.15) !important; }
+.attendance-row:hover td { background-color: rgba(217, 4, 181, 0.08) !important; }
+
+html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness(2); }
+</style>
+
+
         </div>
         <div class="hero-spline-container" style="display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:visible;">
           <style>
@@ -165,7 +181,15 @@
             @keyframes floatChip{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
             @keyframes glowPulseCard{0%,100%{box-shadow:0 8px 40px rgba(131,39,236,0.25),0 2px 12px rgba(224,26,139,0.1)}50%{box-shadow:0 12px 60px rgba(131,39,236,0.45),0 4px 24px rgba(224,26,139,0.25)}}
             @keyframes progressAnim{from{width:0%}to{width:100%}}
-          </style>
+          
+.attendance-row { cursor: pointer; transition: all 0.2s; }
+.attendance-row.selected td { background-color: rgba(217, 4, 181, 0.15) !important; }
+.attendance-row:hover td { background-color: rgba(217, 4, 181, 0.08) !important; }
+
+html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness(2); }
+</style>
+
+
 
           <!-- DASHBOARD MOCKUP -->
           <div style="position:relative;width:100%;max-width:480px;animation:heroFloat 5s ease-in-out infinite;filter:drop-shadow(0 20px 60px rgba(131,39,236,0.35));">
@@ -876,7 +900,15 @@
     @keyframes fsGlow{0%,100%{opacity:0.15}50%{opacity:0.35}}
     .fs-dot{animation:fsDot 2.5s ease-in-out infinite;}
     @keyframes fsDot{0%,100%{opacity:0.9}50%{opacity:0.2}}
-  </style>
+  
+.attendance-row { cursor: pointer; transition: all 0.2s; }
+.attendance-row.selected td { background-color: rgba(217, 4, 181, 0.15) !important; }
+.attendance-row:hover td { background-color: rgba(217, 4, 181, 0.08) !important; }
+
+html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness(2); }
+</style>
+
+
   <!-- Face glow bg -->
   <rect x="13" y="9" width="26" height="31" rx="9" fill="rgba(224,26,139,0.1)" class="fs-glow"/>
   <!-- Face outline -->
@@ -1666,7 +1698,7 @@ AI Face Authentication Gate</span></h2>
           <!-- Row for Mentor Meetings & AI Summaries -->
           <div class="dash-row full" style="margin-top: 24px;">
             <div class="dash-panel glass-panel">
-              <h3>ðŸ“¹ Group Meeting Logs & AI Summaries</h3>
+              <h3 style="display: flex; align-items: center; justify-content: flex-start; gap: 12px;"><img src="https://img.icons8.com/?size=100&id=2JJEHEgEVYDN&format=png&color=000000" alt="meeting-icon" class="theme-invert-icon" style="width: 36px; height: 36px;"> Group Meeting Logs & AI Summaries</h3>
               <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Past group sessions you hosted, with AI-generated summaries of what was discussed.</p>
               <div class="attendance-table-wrap" style="max-height: 250px; overflow-y: auto;">
                 <table class="custom-table" id="mentor-meetings-summary-table">
@@ -1818,7 +1850,7 @@ AI Face Authentication Gate</span></h2>
                   <span style="font-size: 11px; color: var(--text-dark);" id="mentor-chat-student-status">Offline</span>
                 </div>
                 <button class="btn btn-primary btn-sm hidden" id="mentor-start-call-btn" onclick="startMentorGroupCall()" style="margin-left: auto; font-size: 11px; padding: 6px 12px; gap: 4px;">
-                  Ã°Å¸Å½Â¥ Start Group Call
+                  🎥 Start Group Call
                 </button>
               </div>
               
@@ -1859,10 +1891,10 @@ AI Face Authentication Gate</span></h2>
               <p>Monitor your interns' daily check-ins, monthly calendars, and weekly performance percentages.</p>
               <div style="margin-top: 14px; display: flex; gap: 10px;">
                 <button class="btn btn-primary" onclick="exportAttendanceCSV()" style="font-size: 12px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; background: var(--primary-magenta); border-color: var(--primary-magenta); font-weight: 600; border-radius: 6px; height: 34px;">
-                  Ã°Å¸â€œÂ¥ Download CSV
+                    &#x1F4E5; Download CSV
                 </button>
-                <button class="btn btn-secondary" onclick="exportAttendancePDF()" style="font-size: 12px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border-color: var(--accent-blue); color: #fff; background: rgba(42, 107, 242, 0.15); font-weight: 600; border-radius: 6px; height: 34px;">
-                  Ã°Å¸â€œâ€ž Download PDF
+                <button class="btn btn-secondary" onclick="exportAttendancePDF()" style="font-size: 12px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(42, 107, 242, 0.15); font-weight: 600; border-radius: 6px; height: 34px;">
+                    &#x1F4C4; Download PDF
                 </button>
               </div>
             </div>
@@ -1874,7 +1906,7 @@ AI Face Authentication Gate</span></h2>
               <div style="margin-bottom: 16px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                   <div>
-                    <h3 style="display: flex; align-items: center; gap: 6px; margin: 0;">Ã°Å¸â€œÅ  Interns Attendance Spreadsheet</h3>
+                      <h3 style="display: flex; align-items: center; gap: 6px; margin: 0;">&#x1F4C5; Interns Attendance Spreadsheet</h3>
                     <p style="font-size:12px; color:var(--text-muted); margin: 4px 0 0 0;">Real-time spreadsheet matrix mapping daily check-ins and weekly performance percentages.</p>
                   </div>
                   <div>
@@ -1892,7 +1924,7 @@ AI Face Authentication Gate</span></h2>
               </div>
               
               <!-- Spreadsheet View Table -->
-              <div class="calendar-wrapper" style="background: rgba(0,0,0,0.15); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color); overflow-x: auto;">
+              <div class="calendar-wrapper" style="background: rgba(0,0,0,0.15); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color); overflow: scroll; max-height: 250px;">
                 <table class="custom-table" id="mentor-attendance-sheet-table" style="min-width: 1000px; font-size: 11px; width: 100%; border-collapse: collapse;">
                   <thead>
                     <tr id="mentor-attendance-sheet-header">
@@ -1907,12 +1939,12 @@ AI Face Authentication Gate</span></h2>
             </div>
           </div>
 
-          <!-- AI Face Attendance Logs (My Interns) -->
+                <!-- AI Face Attendance Logs (My Interns) -->
           <div class="dash-row full mt-4">
             <div class="dash-panel glass-panel">
-              <h3>Ã°Å¸Â¤â€“ AI Face Attendance Logs (My Interns)</h3>
+                <h3>&#x1F916; AI Face Attendance Logs (My Interns)</h3>
               <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Real-time face verification records for tasks and log reports submitted by your interns.</p>
-              <div class="attendance-table-wrap">
+                <div class="attendance-table-wrap" style="overflow: scroll; max-height: 250px;">
                 <table class="custom-table" id="mentor-attendance-table">
                   <thead>
                     <tr>
@@ -3299,7 +3331,15 @@ AI Face Authentication Gate</span></h2>
     .dialing-avatar-wrap { border-radius: 50%; animation: dialingRing 1.6s ease-in-out infinite; }
     .dialing-avatar-wrap.joined { animation: none !important; box-shadow: 0 0 0 3px #22c55e !important; }
     .dialing-avatar-wrap.declined { animation: none !important; box-shadow: 0 0 0 3px #ef4444 !important; opacity: 0.6; }
-  </style>
+  
+.attendance-row { cursor: pointer; transition: all 0.2s; }
+.attendance-row.selected td { background-color: rgba(217, 4, 181, 0.15) !important; }
+.attendance-row:hover td { background-color: rgba(217, 4, 181, 0.08) !important; }
+
+html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness(2); }
+</style>
+
+
 
   <!-- ==================== VIDEO MEETING ROOM SCREEN ==================== -->
   <div id="meeting-room-overlay" class="modal-overlay hidden" style="z-index: 10002; background: rgba(3, 3, 5, 0.98); backdrop-filter: blur(25px); overflow: hidden;">
@@ -3610,7 +3650,15 @@ AI Face Authentication Gate</span></h2>
     .wa-participants-item { display:flex;align-items:center;gap:8px;padding:7px;border-radius:8px;background:rgba(255,255,255,0.03); }
     .wa-participants-item img,.wa-participants-item .wa-p-initial{width:30px;height:30px;border-radius:50%;flex-shrink:0;object-fit:cover;}
     .wa-participants-item .wa-p-initial{background:linear-gradient(135deg,#8327ec,#e01a8b);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
-  </style>
+  
+.attendance-row { cursor: pointer; transition: all 0.2s; }
+.attendance-row.selected td { background-color: rgba(217, 4, 181, 0.15) !important; }
+.attendance-row:hover td { background-color: rgba(217, 4, 181, 0.08) !important; }
+
+html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness(2); }
+</style>
+
+
   <!-- ==================== JITSI GROUP CALL OVERLAY ==================== -->
   <div id="jitsi-call-overlay" class="modal-overlay hidden" style="z-index:10005;background:#07070a;flex-direction:column;">
     <!-- Header bar -->
@@ -3752,7 +3800,15 @@ AI Face Authentication Gate</span></h2>
     .gc-session-card.upcoming { border-color: rgba(0,182,108,0.3); background: linear-gradient(135deg,rgba(0,182,108,0.06),rgba(42,107,242,0.04)); }
     .gc-session-card.live { border-color: rgba(239,68,68,0.6); background: linear-gradient(135deg,rgba(239,68,68,0.10),rgba(239,68,68,0.04)); animation: gcPulse 2s ease-in-out infinite; }
     .gc-meet-badge { display:inline-flex; align-items:center; gap:5px; background:linear-gradient(135deg,#4285f4,#34a853); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:6px; }
-  </style>
+  
+.attendance-row { cursor: pointer; transition: all 0.2s; }
+.attendance-row.selected td { background-color: rgba(217, 4, 181, 0.15) !important; }
+.attendance-row:hover td { background-color: rgba(217, 4, 181, 0.08) !important; }
+
+html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness(2); }
+</style>
+
+
 </body>
 </html>
 

@@ -1,4 +1,4 @@
-/* styles.css - Premium Glassmorphic Neon Theme */
+﻿/* styles.css - Premium Glassmorphic Neon Theme */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Orbitron:wght@700;800;900&family=Rajdhani:wght@600;700&family=Caveat:wght@400;700&family=Pinyon+Script&family=Alex+Brush&display=swap');
 
 /* Prevent white flash on overscroll */
@@ -1274,6 +1274,7 @@ header nav {
 
 /* MODALS */
 .modal-overlay {
+    z-index: 9999;
   position: fixed;
   top: 0;
   left: 0;
@@ -1309,6 +1310,7 @@ header nav {
 }
 
 .modal-close {
+    z-index: 10000;
   position: absolute;
   top: 20px;
   right: 20px;
@@ -3704,6 +3706,7 @@ spline-viewer::part(logo) {
 }
 
 [data-theme="light"] .modal-overlay {
+    z-index: 9999;
   background: rgba(30, 27, 75, 0.35);
   backdrop-filter: blur(10px);
 }

@@ -2097,8 +2097,8 @@ function handleLogout() {
 
   // Shut off cameras
   stopWebcam('reg-webcam');
-  stopWebcam('edit-webcam');
-  stopWebcam('ver-webcam');
+  try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
+  try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
   stopWebcam('daily-webcam');
   
   if (dailyScanningInterval) {
@@ -4279,7 +4279,7 @@ function loadAdminRelations() {
       
       let stipendInfo = '�';
       if (isPaid) {
-        const symb = student.stipendCurrency === 'USD' ? '$' : '?';
+        const symb = student.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
         const freqLabel = student.stipendFrequency === 'streaming' ? '/ hr active' : (student.stipendFrequency === 'task' ? '/ completed task' : '/ month');
         stipendInfo = `<strong style="color:var(--success);">${symb}${student.stipendAmount || 15000}</strong> ${freqLabel}`;
       }
@@ -5043,10 +5043,10 @@ function openModal(modalId) {
 function closeModal(modalId) {
   document.getElementById(modalId).classList.remove('active');
   if (modalId === 'edit-profile-modal') {
-    stopWebcam('edit-webcam');
+    try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
     editWebcamActive = false;
   } else if (modalId === 'face-verification-modal') {
-    stopWebcam('ver-webcam');
+    try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
     verWebcamActive = false;
     if (scanningInterval) {
       clearTimeout(scanningInterval);
@@ -5939,7 +5939,7 @@ function handleEditFileUpload(event) {
       statusEl.innerText = "Face photo uploaded and updated successfully!";
       statusEl.style.color = "var(--success)";
 
-      stopWebcam('edit-webcam');
+      try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
       document.getElementById('edit-webcam-toggle-btn').innerText = "?? Retake Face Profile";
       document.getElementById('edit-webcam-toggle-btn').style.borderColor = "var(--primary-magenta)";
       document.getElementById('edit-webcam-toggle-btn').style.color = "var(--primary-magenta)";
@@ -6101,7 +6101,7 @@ function handleVerificationFileUpload(event) {
       matchIndicator.innerText = "Match: 0%";
       progressBar.style.width = '0%';
       setTimeout(() => {
-        stopWebcam('ver-webcam');
+        try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
         closeModal('face-verification-modal');
         alert("No enrolled face template found. Please go to Edit Profile settings to register your face.");
       }, 1500);
@@ -6148,7 +6148,7 @@ function handleVerificationFileUpload(event) {
 
       setTimeout(() => {
         try {
-          stopWebcam('ver-webcam');
+          try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
         } catch (e) {}
         closeModal('face-verification-modal');
         if (verificationCallback) {
@@ -6180,7 +6180,7 @@ function handleVerificationFileUpload(event) {
       syncRecordToFirestore('attendance', newRecord);
 
       setTimeout(() => {
-        stopWebcam('ver-webcam');
+        try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
         closeModal('face-verification-modal');
         alert(`Face verification failed (${similarityScore}%).\n\nTry this:\n1. Run run_local_server.bat ? open http://localhost:8080/\n2. Edit Profile ? Retake face with CAMERA (not file upload)\n3. Scan in good lighting, face centered`);
       }, 2000);
@@ -6204,7 +6204,7 @@ function toggleEditWebcam() {
     toggleBtn.style.color = "var(--danger)";
     editWebcamActive = true;
   } else {
-    stopWebcam('edit-webcam');
+    try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
     toggleBtn.innerText = "?? Turn On Camera";
     toggleBtn.style.borderColor = "var(--primary-magenta)";
     toggleBtn.style.color = "var(--primary-magenta)";
@@ -6263,7 +6263,7 @@ async function captureEditFace() {
     statusEl.innerText = "Face profile updated successfully!";
     statusEl.style.color = "var(--success)";
 
-    stopWebcam('edit-webcam');
+    try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
     document.getElementById('edit-webcam-toggle-btn').innerText = "?? Retake Face Profile";
     document.getElementById('edit-webcam-toggle-btn').style.borderColor = "var(--primary-magenta)";
     document.getElementById('edit-webcam-toggle-btn').style.color = "var(--primary-magenta)";
@@ -6696,7 +6696,7 @@ function startFaceVerification(actionName, successCallback) {
 }
 
 function cancelFaceVerification() {
-  stopWebcam('ver-webcam');
+  try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
   verWebcamActive = false;
   if (scanningInterval) {
     clearTimeout(scanningInterval);
@@ -6792,7 +6792,7 @@ async function runFaceVerificationScan() {
         syncRecordToFirestore('attendance', newRecord);
 
         setTimeout(() => {
-          try { stopWebcam('ver-webcam'); } catch (e) {}
+          try { try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); } } catch (e) {}
           // Remove success overlay
           const fl = document.getElementById('ver-success-flash');
           if (fl) fl.remove();
@@ -6806,7 +6806,7 @@ async function runFaceVerificationScan() {
         statusText.style.color = "var(--danger)";
         
         setTimeout(() => {
-          try { stopWebcam('ver-webcam'); } catch (e) {}
+          try { try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); } } catch (e) {}
           closeModal('face-verification-modal');
           alert("Security failure: Profile vector properties mismatch.");
         }, 2200);
@@ -15173,7 +15173,7 @@ function loadStudentPayments() {
   if (typeof currentUser.stipendCurrency === 'undefined') currentUser.stipendCurrency = 'INR';
   if (typeof currentUser.stipendFrequency === 'undefined') currentUser.stipendFrequency = 'monthly';
   
-  const symb = currentUser.stipendCurrency === 'USD' ? '$' : '?';
+  const symb = currentUser.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
   const freqLabel = currentUser.stipendFrequency === 'streaming' ? '/ hr active' : (currentUser.stipendFrequency === 'task' ? '/ completed task' : '/ month');
   
   const rateDisplay = document.getElementById('student-stipend-rate-display');
@@ -15248,7 +15248,7 @@ function renderStudentLedger() {
   }
   
   myTxns.forEach(tx => {
-    const symb = tx.currency === 'USD' ? '$' : '?';
+    const symb = tx.currency === 'USD' ? '$' : '&#x20B9;';
     const dateStr = new Date(tx.date).toLocaleDateString('en-IN', {
       day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
     });
@@ -15276,7 +15276,7 @@ function triggerStudentWithdrawal() {
     return;
   }
   
-  const symb = currentUser.stipendCurrency === 'USD' ? '$' : '?';
+  const symb = currentUser.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
   const withdrawAmt = currentUser.stipendBalance;
   
   const confirmTransfer = confirm(`Confirm instant bank settlement of ${symb}${withdrawAmt.toFixed(2)} to your registered account?`);
@@ -15340,7 +15340,7 @@ function loadMentorPayments() {
       tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No active paid interns assigned under your supervision.</td></tr>`;
     } else {
       myPaidInterns.forEach(student => {
-        const symb = student.stipendCurrency === 'USD' ? '$' : '?';
+        const symb = student.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
         const pending = student.stipendBalance || 0;
         const scheme = student.stipendFrequency === 'streaming' ? 'Real-time Streaming' : (student.stipendFrequency === 'task' ? 'Milestone-based (Per Task)' : 'Monthly Milestone');
         
@@ -15374,7 +15374,7 @@ function loadMentorPayments() {
     
   const totalDisbursedDisplay = document.getElementById('mentor-total-disbursed-amt');
   if (totalDisbursedDisplay) {
-    totalDisbursedDisplay.innerText = `?${disbursedTotal.toFixed(2)}`;
+    totalDisbursedDisplay.innerHTML = `&#x20B9;${disbursedTotal.toFixed(2)}`;
   }
   
   // Load Global Ledger Table
@@ -15394,7 +15394,7 @@ function renderMentorLedger(myInternsEmails) {
   }
   
   cohortPayments.forEach(tx => {
-    const symb = tx.currency === 'USD' ? '$' : '?';
+    const symb = tx.currency === 'USD' ? '$' : '&#x20B9;';
     const dateStr = new Date(tx.date).toLocaleDateString('en-IN', {
       day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
     });
@@ -15419,7 +15419,7 @@ function approveMentorPayout(studentEmail) {
   const student = db.users.find(u => u.email && u.email.trim().toLowerCase() === studentEmail.trim().toLowerCase());
   if (!student) return;
   
-  const symb = student.stipendCurrency === 'USD' ? '$' : '?';
+  const symb = student.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
   const defaultAmt = student.stipendAmount || 15000;
   
   const amtStr = prompt(`Enter payout milestone release amount for ${student.name} (Suggested rate: ${symb}${defaultAmt.toLocaleString()}):`, defaultAmt);
@@ -15499,7 +15499,7 @@ function handleMentorLogPaymentSubmit(event) {
     syncRecordToFirestore('users', student);
     syncRecordToFirestore('payments', newTx);
     
-    alert(`Manual settlement of ${student.stipendCurrency === 'USD' ? '$' : '?'}${amt} logged successfully for ${student.name}.`);
+    alert(`Manual settlement of ${student.stipendCurrency === 'USD' ? '$' : '&#x20B9;'}${amt} logged successfully for ${student.name}.`);
     
     document.getElementById('mentor-log-amount').value = '';
     loadMentorPayments();

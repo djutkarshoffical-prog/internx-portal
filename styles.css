@@ -817,10 +817,13 @@ header nav {
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
   border: 2px solid var(--border-color);
 }
 
@@ -4039,9 +4042,13 @@ spline-viewer::part(logo) {
 }
 
 [data-theme="light"] .portal-content [style*="color: #fff"]:not(.btn):not(.btn-primary):not(.msg-bubble):not(#quiz-results-score-circle),
+[data-theme="light"] .portal-content [style*="color:#fff"]:not(.btn):not(.btn-primary):not(.msg-bubble):not(#quiz-results-score-circle),
 [data-theme="light"] .modal-content [style*="color: #fff"]:not(.btn):not(.btn-primary):not(.msg-bubble):not(#quiz-results-score-circle),
+[data-theme="light"] .modal-content [style*="color:#fff"]:not(.btn):not(.btn-primary):not(.msg-bubble):not(#quiz-results-score-circle),
 [data-theme="light"] .landing-section [style*="color: #fff"]:not(.btn):not(.btn-primary),
-[data-theme="light"] .auth-section [style*="color: #fff"]:not(.btn):not(.btn-primary) {
+[data-theme="light"] .landing-section [style*="color:#fff"]:not(.btn):not(.btn-primary),
+[data-theme="light"] .auth-section [style*="color: #fff"]:not(.btn):not(.btn-primary),
+[data-theme="light"] .auth-section [style*="color:#fff"]:not(.btn):not(.btn-primary) {
   color: var(--text-main) !important;
 }
 
@@ -4610,4 +4617,21 @@ body.portal-active #ai-copilot-trigger {
 }
 [data-theme="light"] .card-icon.green {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(16, 185, 129, 0.06) 100%);
+}
+
+/* Attendance Spreadsheet Row Highlight */
+tr.attendance-row {
+  transition: all var(--transition-fast);
+}
+tr.attendance-row:hover td {
+  background-color: var(--surface-muted) !important;
+}
+tr.attendance-row:hover td:first-child {
+  background-color: var(--bg-card-hover) !important;
+}
+tr.attendance-row.active-row td {
+  background-color: var(--surface-hover) !important;
+}
+tr.attendance-row.active-row td:first-child {
+  background-color: var(--bg-card-hover) !important;
 }

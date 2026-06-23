@@ -6012,9 +6012,16 @@ async function startWebcam(videoElId, statusElId, captureBtnId) {
     { video: true, audio: false }
   ];
 
+  const getUserMediaWithTimeout = (constraints, timeoutMs = 2500) => {
+    return Promise.race([
+      navigator.mediaDevices.getUserMedia(constraints),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout_Camera_Blocked")), timeoutMs))
+    ]);
+  };
+
   for (const constraints of constraintSets) {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await getUserMediaWithTimeout(constraints, 2500);
       videoEl.srcObject = stream;
       activeStreams[videoElId] = stream;
       videoEl.muted = true;
@@ -6039,6 +6046,11 @@ async function startWebcam(videoElId, statusElId, captureBtnId) {
       return true;
     } catch (err) {
       console.warn("Webcam attempt failed:", err);
+      // If it's a timeout error from the wrapper blocking permissions, break out to show fallback immediately
+      if (err.message === "Timeout_Camera_Blocked") {
+        console.warn("App Wrapper blocked camera permission. Showing manual upload fallback.");
+        break;
+      }
     }
   }
 

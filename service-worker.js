@@ -4,7 +4,7 @@ const urlsToCache = [
   './index.html',
   './styles.css',
   './app.js',
-  './robot_avatar.png'
+  './new_logo.png'
 ];
 
 // Install Event

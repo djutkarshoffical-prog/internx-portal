@@ -1830,7 +1830,7 @@ async function handleLoginSubmit(event) {
       await pullSupabaseCollections(['users', 'pairingRequests', 'tasks', 'attendance']);
 
       // Query "registration and login" table directly for authentication
-      const { data: userRow, error } = await supabaseClient
+      let { data: userRow, error } = await supabaseClient
         .from('registration and login')
         .select('*')
         .eq('Email Id', email)
@@ -1839,7 +1839,38 @@ async function handleLoginSubmit(event) {
 
       if (error) {
         console.error("Supabase authentication query error:", error);
-      } else if (userRow) {
+      } 
+      
+      // Secondary fallback: Check apex_sync if not found in custom table
+      if (!userRow) {
+        const { data: syncRows } = await supabaseClient
+          .from('apex_sync')
+          .select('data')
+          .eq('collection', 'users');
+          
+        if (syncRows) {
+          for (const row of syncRows) {
+            const parsed = typeof row.data === 'string' ? JSON.parse(row.data) : row.data;
+            if (parsed && parsed.email && parsed.email.trim().toLowerCase() === email && parsed.password === password) {
+              userRow = {
+                'Email Id': parsed.email,
+                'Password': parsed.password,
+                'Status': parsed.role || 'student',
+                'Full Name': parsed.name || '',
+                'Domain': parsed.domain || '',
+                'Mentor': parsed.mentorEmail || '',
+                'Face Scan': parsed.faceScanUrl || ''
+              };
+              if (supabaseHasMentorStatusColumn) {
+                userRow['Mentor Status'] = parsed.mentorStatus || '';
+              }
+              break;
+            }
+          }
+        }
+      }
+
+      if (userRow) {
         // Find if they exist in local db to keep session state like avatar, title, mentorStatus, etc.
         const localUser = db.users.find(u => u && u.email && u.email.trim().toLowerCase() === email);
         const mentorEmail = (localUser?.mentorEmail || userRow['Mentor'] || '').trim().toLowerCase();

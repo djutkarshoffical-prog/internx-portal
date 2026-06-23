@@ -4677,3 +4677,106 @@ tr.attendance-row.active-row td {
 tr.attendance-row.active-row td:first-child {
   background-color: var(--bg-card-hover) !important;
 }
+
+/* ======================================================== */
+/* 📱 COMPREHENSIVE MOBILE RESPONSIVENESS OVERHAUL */
+/* ======================================================== */
+
+@media (max-width: 768px) {
+  /* 1. Navbar Adjustments */
+  .nav-links {
+    display: none !important; /* Hide links to save space */
+  }
+  .nav-container nav {
+    padding: 10px 0;
+  }
+  .nav-actions {
+    gap: 8px !important;
+  }
+  .nav-actions .btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  #nav-theme-pill {
+    transform: scale(0.85); /* Make the toggle smaller */
+  }
+
+  /* 2. Hero Section */
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 30px;
+    margin-top: 20px;
+  }
+  .hero-content {
+    text-align: center;
+  }
+  .hero-content h1 {
+    font-size: 32px !important; /* Smaller heading */
+    line-height: 1.2;
+  }
+  .hero-spline-container {
+    height: auto !important;
+    padding: 20px 0 !important;
+  }
+  .hero-visual {
+    width: 100% !important;
+    transform: none !important; /* Remove heavy rotations that break bounds */
+    margin: 0 auto;
+  }
+  .hero-visual img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Badges positioning in hero */
+  .floating-badge {
+    position: static !important; /* Stack badges on mobile instead of absolute positioning overlapping */
+    display: inline-flex;
+    margin: 5px;
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  .hero-visual .floating-badge {
+    display: none !important; /* Hide floating badges over the image on mobile to save space */
+  }
+
+  /* 3. Stats Grid */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important; /* 2x2 instead of 1 column */
+    gap: 12px;
+    margin: 30px 0;
+  }
+  .stat-card {
+    padding: 16px;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* 4. Footer */
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+  .footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ultra small screens */
+  .hero-content h1 {
+    font-size: 26px !important;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr !important; /* 1 column on very tiny phones */
+  }
+  .logo span {
+    font-size: 18px !important;
+  }
+}

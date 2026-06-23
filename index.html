@@ -13,6 +13,30 @@
 </head> 
 <body>
 
+  <!-- ==================== SMART APP DOWNLOAD BANNER ==================== -->
+  <div id="smart-app-banner" class="smart-app-banner">
+    <div class="banner-content">
+      <div class="banner-text">
+        <span class="banner-badge">NEW</span>
+        <span id="banner-message">Experience InternX on our App for faster access! 🚀</span>
+      </div>
+      <div class="banner-actions">
+        <!-- Action container updated dynamically by JS -->
+        <div id="banner-action-container">
+          <!-- Default button -->
+          <a href="app.apk" download class="btn btn-primary btn-sm" id="banner-download-btn">Download APK</a>
+          
+          <!-- QR Code Popup (Hidden by default) -->
+          <div id="banner-qr-popup" class="qr-code-popup">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://internx.com/app.apk" alt="Scan to Download App">
+            <p>Scan with your phone to<br>download the App</p>
+          </div>
+        </div>
+        <button class="banner-close-btn" onclick="closeSmartBanner()">&times;</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Background Glowing Blobs -->
   <div class="glow-bg">
     <div class="glow-blob blob-1"></div>

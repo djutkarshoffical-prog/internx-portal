@@ -4780,3 +4780,123 @@ tr.attendance-row.active-row td:first-child {
     font-size: 18px !important;
   }
 }
+
+/* ==================== SMART APP BANNER ==================== */
+.smart-app-banner {
+  position: fixed;
+  top: -150px; /* Start hidden above screen */
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  background: rgba(12, 10, 22, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(131, 39, 236, 0.35);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(224, 26, 139, 0.2);
+  transition: top 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 14px 20px;
+}
+
+[data-theme="light"] .smart-app-banner {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(131, 39, 236, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 0 20px rgba(224, 26, 139, 0.1);
+}
+
+.smart-app-banner.show {
+  top: 0;
+}
+
+.smart-app-banner .banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.smart-app-banner .banner-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.smart-app-banner .banner-badge {
+  background: linear-gradient(135deg, #e01a8b 0%, #8327ec 100%);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.smart-app-banner .banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+.smart-app-banner .banner-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.smart-app-banner .banner-close-btn:hover {
+  color: var(--primary-magenta);
+}
+
+.qr-code-popup {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: rgba(12, 10, 22, 0.98);
+  border: 1px solid rgba(131, 39, 236, 0.4);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(20px);
+  text-align: center;
+  z-index: 10000;
+}
+
+[data-theme="light"] .qr-code-popup {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.qr-code-popup.show {
+  display: block;
+  animation: dashFadeUp 0.3s ease forwards;
+}
+
+.qr-code-popup img {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: white;
+  padding: 6px;
+}
+
+.qr-code-popup p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .smart-app-banner .banner-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}

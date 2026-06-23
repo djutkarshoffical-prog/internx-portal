@@ -19,6 +19,26 @@ const INITIAL_MOCK_DATA = {
       title: "Tech Lead, Web Engineering",
       domain: "Web Development",
       avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120"
+    },
+    {
+      id: "mentor-1780557167143",
+      email: "utkarsh.dharmik@gmail.com",
+      password: "mentor123",
+      role: "mentor",
+      name: "Utkarsh Dharmik",
+      title: "Senior Software Engineer",
+      domain: "Web Development",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=120"
+    },
+    {
+      id: "mentor-1780557167144",
+      email: "rahul.sharma@gmail.com",
+      password: "mentor123",
+      role: "mentor",
+      name: "Rahul Sharma",
+      title: "Full Stack Developer",
+      domain: "Web Development",
+      avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=120"
     }
   ],
   tasks: [],

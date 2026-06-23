@@ -3222,163 +3222,204 @@ spline-viewer::part(logo) {
 
 /* ==================== 15. INTERNSHIP CERTIFICATE & VERIFICATION CSS ==================== */
 
-.certificate-sheet {
+.certificate-sheet-premium {
   background: #ffffff;
   color: #1e293b;
   font-family: 'Inter', sans-serif;
   width: 100%;
   max-width: 950px;
-  min-height: 620px;
+  min-height: 650px;
   margin: 0 auto;
-  padding: 40px;
+  padding: 20px;
   position: relative;
   box-sizing: border-box;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
   border-radius: 8px;
-  border: 12px double #cbd5e1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   text-align: center;
+  background-image: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
 }
 
-/* Domain theme variations for certificate borders */
-.certificate-sheet.theme-webdev {
-  border-color: #e01a8b;
-}
-.certificate-sheet.theme-python {
-  border-color: #2a6bf2;
-}
-.certificate-sheet.theme-uiux {
-  border-color: #8327ec;
+.certificate-sheet-premium.theme-webdev { border: 2px solid #e01a8b; }
+.certificate-sheet-premium.theme-python { border: 2px solid #2a6bf2; }
+.certificate-sheet-premium.theme-uiux { border: 2px solid #8327ec; }
+
+.cert-premium-inner-border {
+  border: 10px solid #cbd5e1;
+  padding: 40px;
+  position: relative;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.cert-header {
-  margin-top: 10px;
-}
+.certificate-sheet-premium.theme-webdev .cert-premium-inner-border { border-color: rgba(224, 26, 139, 0.4); }
+.certificate-sheet-premium.theme-python .cert-premium-inner-border { border-color: rgba(42, 107, 242, 0.4); }
+.certificate-sheet-premium.theme-uiux .cert-premium-inner-border { border-color: rgba(131, 39, 236, 0.4); }
 
-.cert-title {
+.cert-premium-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.03;
+  width: 400px;
+  height: 400px;
+  pointer-events: none;
+}
+.cert-premium-watermark svg { width: 100%; height: 100%; }
+
+.cert-header-premium { margin-top: 10px; position: relative; z-index: 1; }
+
+.cert-title-premium {
   font-family: 'Outfit', serif;
-  font-size: 36px;
+  font-size: 44px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 5px 0;
+  letter-spacing: 0.15em;
+  margin: 10px 0;
   background: linear-gradient(135deg, #0f172a 30%, #475569 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.certificate-sheet.theme-webdev .cert-title {
+.certificate-sheet-premium.theme-webdev .cert-title-premium {
   background: linear-gradient(135deg, #e01a8b 0%, #8327ec 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.certificate-sheet.theme-python .cert-title {
+.certificate-sheet-premium.theme-python .cert-title-premium {
   background: linear-gradient(135deg, #2a6bf2 0%, #1e3a8a 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.certificate-sheet.theme-uiux .cert-title {
+.certificate-sheet-premium.theme-uiux .cert-title-premium {
   background: linear-gradient(135deg, #8327ec 0%, #ef4444 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.cert-subtitle {
-  font-size: 13px;
+.cert-subtitle-premium {
+  font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.35em;
   color: #64748b;
   font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.cert-body-premium {
+  position: relative;
+  z-index: 1;
+}
+
+.cert-recipient-label-premium {
+  font-size: 16px;
+  color: #64748b;
+  font-style: italic;
   margin-bottom: 20px;
 }
 
-.cert-recipient-label {
-  font-size: 15px;
-  color: #64748b;
-  font-style: italic;
-  margin-bottom: 5px;
-}
-
-.cert-recipient-name {
-  font-family: 'Outfit', serif;
-  font-size: 32px;
-  font-weight: 700;
+.cert-recipient-name-premium {
+  font-family: 'Pinyon Script', 'Alex Brush', cursive;
+  font-size: 64px;
+  font-weight: 400;
   color: #0f172a;
-  border-bottom: 1.5px solid #cbd5e1;
   display: inline-block;
-  padding: 0 30px 5px 30px;
-  margin-bottom: 15px;
+  padding: 0 40px;
+  margin-bottom: 25px;
+  line-height: 1.2;
 }
+.certificate-sheet-premium.theme-webdev .cert-recipient-name-premium { color: #e01a8b; border-bottom: 1px solid rgba(224, 26, 139, 0.2); }
+.certificate-sheet-premium.theme-python .cert-recipient-name-premium { color: #2a6bf2; border-bottom: 1px solid rgba(42, 107, 242, 0.2); }
+.certificate-sheet-premium.theme-uiux .cert-recipient-name-premium { color: #8327ec; border-bottom: 1px solid rgba(131, 39, 236, 0.2); }
 
-.cert-body-text {
-  font-size: 14px;
-  line-height: 1.7;
+.cert-body-text-premium {
+  font-size: 16px;
+  line-height: 1.8;
   color: #475569;
-  max-width: 750px;
-  margin: 0 auto 20px auto;
+  max-width: 800px;
+  margin: 0 auto 30px auto;
 }
 
-.cert-highlight {
+.cert-highlight-premium {
   font-weight: 700;
   color: #0f172a;
+  font-size: 17px;
 }
 
-.cert-footer-row {
+.cert-footer-row-premium {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 10px;
-  padding: 0 10px;
+  margin-top: 20px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
 }
 
-.cert-sig-col {
-  width: 180px;
+.cert-sig-col-premium {
+  width: 200px;
   text-align: center;
 }
 
-.cert-sig-line {
+.cert-sig-line-premium {
   height: 1px;
   background: #cbd5e1;
   margin-top: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
-.cert-sig-title {
-  font-size: 11px;
+.cert-sig-title-premium {
+  font-size: 12px;
   color: #64748b;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
-.cert-meta-col {
+.cert-meta-col-premium {
   text-align: left;
-  font-size: 11px;
+  font-size: 12px;
   color: #64748b;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
-.cert-meta-col strong {
+.cert-meta-col-premium strong {
   color: #0f172a;
+  margin-right: 4px;
 }
 
-.cert-seal-col {
+.cert-seal-col-premium {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
 
-.cert-official-seal {
-  width: 80px;
-  height: 80px;
+.cert-qr-wrap {
+  background: white;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.cert-official-seal-premium {
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.certificate-sheet.theme-webdev .cert-official-seal { color: #e01a8b; }
-.certificate-sheet.theme-python .cert-official-seal { color: #2a6bf2; }
-.certificate-sheet.theme-uiux .cert-official-seal { color: #8327ec; }
+.certificate-sheet-premium.theme-webdev .cert-official-seal-premium { color: #e01a8b; }
+.certificate-sheet-premium.theme-python .cert-official-seal-premium { color: #2a6bf2; }
+.certificate-sheet-premium.theme-uiux .cert-official-seal-premium { color: #8327ec; }
 
 /* Print Landscape layout overrides */
 @media print {

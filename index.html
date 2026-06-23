@@ -43,7 +43,7 @@
             </span>
           </button>
           <span id="supabase-status-badge-wrapper" style="display:none;">
-            <span id="supabase-status-badge" class="supabase-status-badge fallback" onclick="handleSupabaseBadgeClick()" title="Cloud database status â€” click to retry sync">
+            <span id="supabase-status-badge" class="supabase-status-badge fallback" onclick="handleSupabaseBadgeClick()" title="Cloud database status — click to retry sync">
               DB: Local Storage
             </span>
           </span>
@@ -760,9 +760,9 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
           <span>InternX <span class="logo-by">by UTX</span></span>
         </a>
       </div>
-      <!-- Supabase badge â€” hidden by default, revealed by 7-click easter egg on logo -->
+      <!-- Supabase badge 🟢 hidden by default, revealed by 7-click easter egg on logo -->
       <div id="supabase-sidebar-wrapper" style="padding: 0 16px 14px 16px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px; display: none; justify-content: center;">
-        <span id="supabase-status-badge-sidebar" class="supabase-status-badge fallback" onclick="handleSupabaseBadgeClick()" title="Cloud database status â€” click to retry sync" style="width: 100%; text-align: center; display: block;">
+        <span id="supabase-status-badge-sidebar" class="supabase-status-badge fallback" onclick="handleSupabaseBadgeClick()" title="Cloud database status — click to retry sync" style="width: 100%; text-align: center; display: block;">
           DB: Local Storage (Fallback)
         </span>
       </div>
@@ -860,7 +860,7 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
       <div class="sidebar-user" style="cursor: pointer; transition: background var(--transition-fast); border-radius: 12px; padding: 12px 10px;" title="Edit Profile Details">
         <img src="" alt="Avatar" class="user-avatar" id="sidebar-avatar" style="cursor: pointer;" onclick="event.stopPropagation(); var s=this.src; if(s && s.indexOf(window.location.href)<0 && s.length>10) openChatImageLightbox(s);">
         <div class="user-info" style="pointer-events:none;">
-          <div class="user-name" id="sidebar-name" style="display: flex; align-items: center; gap: 4px;">User Name <span style="font-size: 10px; opacity: 0.5;">Ã¢Å“ÂÃ¯Â¸Â</span></div>
+          <div class="user-name" id="sidebar-name" style="display: flex; align-items: center; gap: 4px;">User Name <span style="font-size: 10px; opacity: 0.5;">▼</span></div>
           <div class="user-role" id="sidebar-role">Role</div>
         </div>
         <div class="logout-btn" onclick="handleLogout(); event.stopPropagation();" title="Log out" style="padding: 4px;">
@@ -960,7 +960,7 @@ AI Face Authentication Gate</span></h2>
           
           <div style="display: flex; gap: 12px; flex-direction: column; align-items: center; width: 380px;">
             <div style="display: flex; gap: 12px; width: 100%;">
-              <button type="button" class="btn btn-primary" id="daily-scan-btn" onclick="startDailyAttendanceScan()" style="flex: 1; padding: 12px 20px; font-size: 14px; cursor: pointer;">&#128269; Scan & Face Verify</button>
+              <button type="button" class="btn btn-primary" id="daily-scan-btn" onclick="startDailyAttendanceScan()" style="flex: 1; padding: 12px 20px; font-size: 14px; cursor: pointer;">📷 Scan & Face Verify</button>
               <button type="button" class="btn btn-secondary" onclick="handleLogout()" style="flex: 1; border-color: var(--danger); color: var(--danger); padding: 12px 20px; font-size: 14px; cursor: pointer;">Log Out</button>
             </div>
           </div>
@@ -996,7 +996,7 @@ AI Face Authentication Gate</span></h2>
 
 
 
-              <div class="btn btn-secondary btn-sm" id="student-mentor-indicator" style="font-size: 11px; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mentor: â€”</div>
+              <div class="btn btn-secondary btn-sm" id="student-mentor-indicator" style="font-size: 11px; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mentor: —</div>
             </div>
           </div>
 
@@ -1037,6 +1037,22 @@ AI Face Authentication Gate</span></h2>
                 <h4>Quiz Mastery</h4>
                 <div class="value" id="student-dash-quiz-val">0%</div>
                 <div class="progress-container"><div class="progress-bar" id="student-dash-quiz-bar" style="width: 0%; background: var(--primary-magenta);"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-row" style="margin-top: 24px;">
+            <div class="dash-panel glass-panel" style="width: 100%;">
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; gap:8px; margin-bottom:16px;">
+                <div class="card-icon magenta" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(219,39,119,0.1); color: var(--primary-magenta);">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15l-2 5l9-5l-9-5l2 5z"/><circle cx="12" cy="8" r="4"/></svg>
+                </div>
+                Internship Milestones & Badges
+              </h3>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Claim all 4 weekly badges to unlock your final internship certificate. Obtain your badge URLs from your mentor upon completing weekly tasks.</p>
+              
+              <div id="student-badges-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <!-- Dynamically rendered badges -->
               </div>
             </div>
           </div>
@@ -1520,7 +1536,7 @@ AI Face Authentication Gate</span></h2>
                 </div>
                 
                 <div style="margin-top: 15px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; justify-content: left;">
-                  <span style="font-size: 14px;">ðŸ’¸</span> Payout Rate: <span id="student-stipend-rate-display" style="color: #fff; font-weight: 600;">â‚¹15,000 / month</span>
+                  <span style="font-size: 14px;">ðŸ’¸</span> Payout Rate: <span id="student-stipend-rate-display" style="color: #fff; font-weight: 600;">₹15,000 / month</span>
                 </div>
               </div>
               
@@ -1708,9 +1724,14 @@ AI Face Authentication Gate</span></h2>
           <!-- Incoming Pairing Requests Panel -->
           <div class="dash-row full hidden" id="mentor-pairing-requests-panel" style="margin-bottom: 24px;">
             <div class="dash-panel glass-panel" style="border-color: var(--primary-magenta); box-shadow: 0 0 15px rgba(217, 4, 181, 0.15); width: 100%;">
-              <h3 style="color: var(--primary-magenta); display: flex; align-items: center; gap: 8px;">
-                <span>Ã°Å¸â€œÂ¥ Incoming Student Pairing Requests</span>
-                <span class="col-count" id="mentor-pairing-req-count" style="background: var(--primary-magenta); color:#fff; font-size:11px; padding:2px 6px; border-radius:10px;">0</span>
+              <h3 style="color: var(--primary-magenta); display: flex; align-items: center; justify-content: flex-start; text-align: left; width: 100%; gap: 12px; margin-bottom: 16px;">
+                <div style="background: rgba(255, 165, 0, 0.15); width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <img src="https://img.icons8.com/?size=100&id=sW7a4gWdbRaX&format=png&color=000000" alt="pairing" class="theme-invert-icon" style="width: 32px; height: 32px;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span>Incoming Student Pairing Requests</span>
+                  <span class="col-count" id="mentor-pairing-req-count" style="background: var(--primary-magenta); color:#fff; font-size:11px; padding:2px 6px; border-radius:10px;">0</span>
+                </div>
               </h3>
               <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Students requesting you as their supervisor. Accept to pair and assign tasks.</p>
               <div style="overflow-x: auto;">
@@ -1805,9 +1826,9 @@ AI Face Authentication Gate</span></h2>
                     <!-- Injected options -->
                   </select>
                   <div id="no-interns-warning" class="hidden mt-2" style="background: rgba(245, 158, 11, 0.08); border: 1px dashed var(--warning); padding: 12px; border-radius: 8px; font-size: 12px; line-height: 1.4;">
-                    <p style="color: var(--warning); font-weight: 600; margin-bottom: 4px;">Ã¢Å¡Â Ã¯Â¸Â No Interns Paired Yet</p>
+                    <p style="color: var(--warning); font-weight: 600; margin-bottom: 4px;">⚠️ No Interns Paired Yet</p>
                     <p style="color: var(--text-muted); margin-bottom: 8px;">Please register a student and select your name as their Mentor, or click below to pair a demo intern for testing.</p>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="quickAssignDemoIntern()" style="font-size: 11px; padding: 4px 8px; border-color: var(--warning); color: var(--warning); cursor: pointer;">Ã¢Å¡Â¡ Quick-Pair Demo Intern to Me</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="quickAssignDemoIntern()" style="font-size: 11px; padding: 4px 8px; border-color: var(--warning); color: var(--warning); cursor: pointer;">⚡ Quick-Pair Demo Intern to Me</button>
                   </div>
                 </div>
                 <div class="form-group">
@@ -2809,69 +2830,84 @@ AI Face Authentication Gate</span></h2>
       </div>
 
       <div class="letter-scroll-wrapper" style="overflow-y: auto; max-height: 70vh; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.15);">
-        <div id="certificate-print-container" class="certificate-sheet">
-          <!-- Header Logo Block -->
-          <div class="cert-header">
-            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 5px;">
-              <div class="letter-logo-icon" style="width: 36px; height: 36px;">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                </svg>
-              </div>
-              <div class="letter-logo-text" style="text-align: left;">
-                <span class="logo-title" style="font-size: 20px;">InternX</span>
-                <span class="logo-sub" style="font-size: 10px;">by UTX</span>
-              </div>
+        <div id="certificate-print-container" class="certificate-sheet-premium">
+          <div class="cert-premium-inner-border">
+            <div class="cert-premium-watermark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+              </svg>
             </div>
-            <div class="cert-title" id="cert-title-text">Certificate of Completion</div>
-            <div class="cert-subtitle">Internship Credential Registry</div>
-          </div>
-
-          <div class="cert-recipient-label">This is to certify that</div>
-          <div class="cert-recipient-name" id="cert-holder-name">Student Name</div>
-
-          <div class="cert-body-text" id="cert-body-content">
-            has successfully completed a <span class="cert-highlight" id="cert-duration">3-Month</span> internship in <span class="cert-highlight" id="cert-domain">Web Development</span> under the mentorship of <span class="cert-highlight" id="cert-mentor">Vaishanavi Vhora</span> at InternX.
-          </div>
-
-          <div class="cert-footer-row">
-            <div class="cert-meta-col">
-              <strong>Certificate ID:</strong> <span id="cert-display-id">IX/CERT/WD/2026/00000</span><br>
-              <strong>Date of Issue:</strong> <span id="cert-issue-date">June 12, 2026</span><br>
-              <strong>Status:</strong> <span style="color: var(--success); font-weight: bold;">VERIFIED</span><br>
-              <span style="font-size: 9px; color: #94a3b8;">Verify online at: www.internx.in</span>
+            
+            <!-- Header Logo Block -->
+            <div class="cert-header-premium">
+              <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <div class="letter-logo-icon" style="width: 48px; height: 48px; color: var(--primary-magenta);">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                  </svg>
+                </div>
+                <div class="letter-logo-text" style="text-align: left;">
+                  <span class="logo-title" style="font-size: 28px; color: #0f172a;">InternX</span>
+                  <span class="logo-sub" style="font-size: 12px; color: #64748b;">by UTX</span>
+                </div>
+              </div>
+              <div class="cert-title-premium" id="cert-title-text">Certificate of Completion</div>
+              <div class="cert-subtitle-premium">Official Internship Credential Registry</div>
             </div>
 
-            <div class="cert-seal-col">
-              <!-- QR Code -->
-              <div style="background: white; padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                <img id="cert-qr-code" src="" alt="Verification QR Code" style="width: 76px; height: 76px; display: block;">
-              </div>
-              <!-- Official Seal -->
-              <div class="cert-official-seal">
-                <svg width="80" height="80" viewBox="0 0 100 100">
-                  <defs>
-                    <path id="cert-seal-text-path" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" />
-                  </defs>
-                  <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2,2" />
-                  <circle cx="50" cy="50" r="41" fill="none" stroke="currentColor" stroke-width="1" />
-                  <circle cx="50" cy="50" r="33" fill="none" stroke="currentColor" stroke-width="1.5" />
-                  <text font-size="7" font-weight="bold" fill="currentColor">
-                    <textPath href="#cert-seal-text-path" startOffset="0%">INTERNX &bull; CERTIFIED &bull; OFFICIAL CREDENTIAL &bull; </textPath>
-                  </text>
-                  <path d="M 42 50 L 47 55 L 58 43" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
+            <div class="cert-body-premium">
+              <div class="cert-recipient-label-premium">This is proudly presented to</div>
+              <div class="cert-recipient-name-premium" id="cert-holder-name">Student Name</div>
+
+              <div class="cert-body-text-premium" id="cert-body-content">
+                for successfully completing a <span class="cert-highlight-premium" id="cert-duration">3-Month</span> intensive internship program in the domain of <span class="cert-highlight-premium" id="cert-domain">Web Development</span> at InternX.
               </div>
             </div>
 
-            <div class="cert-sig-col">
-              <div style="height: 52px; display: flex; align-items: center; justify-content: center; margin-bottom: 2px;">
-                <img src="signature.png" alt="CEO Signature" style="height: 100%; max-height: 52px; object-fit: contain; filter: contrast(1.1) brightness(1.02); transform: rotate(-2deg);">
+            <div class="cert-footer-row-premium">
+              <div class="cert-meta-col-premium">
+                <div class="cert-meta-item"><strong>Certificate ID:</strong> <span id="cert-display-id" class="cert-id-val">IX/CERT/WD/2026/00000</span></div>
+                <div class="cert-meta-item"><strong>Date of Issue:</strong> <span id="cert-issue-date">June 12, 2026</span></div>
+                <div class="cert-meta-item" style="margin-top: 10px;">
+                  <span style="display: inline-flex; align-items: center; gap: 6px; color: #10b981; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 11px; background: rgba(16, 185, 129, 0.05);">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    VERIFIED
+                  </span>
+                </div>
+                <div style="font-size: 10px; color: #94a3b8; margin-top: 8px;">Verify online at: www.internx.in</div>
               </div>
-              <div class="cert-sig-line"></div>
-              <div class="cert-sig-title">
-                <strong>Utkarsh Dharmik</strong><br>
-                Founder & CEO, InternX by UTX
+
+              <div class="cert-seal-col-premium">
+                <!-- QR Code -->
+                <div class="cert-qr-wrap">
+                  <img id="cert-qr-code" src="" alt="Verification QR Code" style="width: 80px; height: 80px; display: block;">
+                </div>
+                <!-- Official Seal -->
+                <div class="cert-official-seal-premium">
+                  <svg width="90" height="90" viewBox="0 0 100 100">
+                    <defs>
+                      <path id="cert-seal-text-path-premium" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" />
+                    </defs>
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2,2" />
+                    <circle cx="50" cy="50" r="41" fill="none" stroke="currentColor" stroke-width="1" />
+                    <circle cx="50" cy="50" r="33" fill="none" stroke="currentColor" stroke-width="1.5" />
+                    <text font-size="7" font-weight="bold" fill="currentColor">
+                      <textPath href="#cert-seal-text-path-premium" startOffset="0%">INTERNX &bull; CERTIFIED &bull; OFFICIAL CREDENTIAL &bull; </textPath>
+                    </text>
+                    <path d="M 42 50 L 47 55 L 58 43" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="cert-sig-col-premium">
+                <div style="height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+                  <img src="signature.png" alt="CEO Signature" style="height: 100%; max-height: 60px; object-fit: contain; filter: contrast(1.2) brightness(0.9); transform: rotate(-3deg);">
+                </div>
+                <div class="cert-sig-line-premium"></div>
+                <div class="cert-sig-title-premium">
+                  <strong>Utkarsh Dharmik</strong><br>
+                  Founder & CEO, InternX by UTX
+                </div>
               </div>
             </div>
           </div>
@@ -2896,31 +2932,31 @@ AI Face Authentication Gate</span></h2>
       <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: var(--text-main); margin-bottom: 24px;">
         <div>
           <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Student Name</span>
-          <strong id="ver-student-name" style="color: #fff; font-size: 15px;">â€”</strong>
+          <strong id="ver-student-name" style="color: #fff; font-size: 15px;">—</strong>
         </div>
         <div style="display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
           <div>
             <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Internship Domain</span>
-            <strong id="ver-domain" style="color: #fff;">â€”</strong>
+            <strong id="ver-domain" style="color: #fff;">—</strong>
           </div>
           <div>
             <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Duration</span>
-            <strong id="ver-duration" style="color: #fff;">â€”</strong>
+            <strong id="ver-duration" style="color: #fff;">—</strong>
           </div>
         </div>
         <div style="display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
           <div>
             <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Mentor Supervisor</span>
-            <strong id="ver-mentor" style="color: #fff;">â€”</strong>
+            <strong id="ver-mentor" style="color: #fff;">—</strong>
           </div>
           <div>
             <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Date Issued</span>
-            <strong id="ver-issue-date" style="color: #fff;">â€”</strong>
+            <strong id="ver-issue-date" style="color: #fff;">—</strong>
           </div>
         </div>
         <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
           <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Certificate ID</span>
-          <code id="ver-cert-id" style="color: var(--success); font-weight: bold; font-family: monospace; font-size: 13px;">â€”</code>
+          <code id="ver-cert-id" style="color: var(--success); font-weight: bold; font-family: monospace; font-size: 13px;">—</code>
         </div>
       </div>
 
@@ -2991,13 +3027,13 @@ AI Face Authentication Gate</span></h2>
   <div class="modal-overlay" id="student-meeting-recap-modal" style="z-index: 10004;">
     <div class="modal-content glass-panel" style="max-width: 640px; width: 92%; padding: 28px; max-height: 90vh; overflow-y: auto;">
       <div class="modal-close" onclick="closeStudentMeetingSummary()">&times;</div>
-      <h3 style="color: var(--primary-magenta); margin-bottom: 6px; font-family: 'Outfit', sans-serif; font-size: 22px;">ðŸ¤– AI Group Call Recap</h3>
-      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px;">Everything that happened in your group video session â€” so you never forget what was discussed.</p>
+      <h3 style="color: var(--primary-magenta); margin-bottom: 6px; font-family: 'Outfit', sans-serif; font-size: 22px;">✨ AI Group Call Recap</h3>
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px;">Everything that happened in your group video session — so you never forget what was discussed.</p>
 
       <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px;">
-        <span style="font-size:11px; padding:6px 12px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:#fff;">ðŸ‘¤ <span id="student-recap-mentor">Mentor</span></span>
-        <span style="font-size:11px; padding:6px 12px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:#fff;">ðŸ“… <span id="student-recap-datetime">â€”</span></span>
-        <span style="font-size:11px; padding:6px 12px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:#fff;">â± <span id="student-recap-duration">â€”</span></span>
+        <span style="font-size:11px; padding:6px 12px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:#fff;">👤  <span id="student-recap-mentor">Mentor</span></span>
+        <span style="font-size:11px; padding:6px 12px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:#fff;">📅 <span id="student-recap-datetime">â€”</span></span>
+        <span style="font-size:11px; padding:6px 12px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:#fff;">⏱️ <span id="student-recap-duration">â€”</span></span>
       </div>
 
       <div style="margin-bottom:16px;">
@@ -3011,8 +3047,8 @@ AI Face Authentication Gate</span></h2>
       </div>
 
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a id="student-recap-recording-btn" href="#" target="_blank" class="btn btn-secondary hidden" style="flex:1; text-align:center; padding:10px; font-size:12px; text-decoration:none;">â–¶ Watch Recording</a>
-        <button type="button" class="btn btn-primary" onclick="closeStudentMeetingSummary()" style="flex:1; padding:10px; font-size:12px;">Got it â€” Close</button>
+        <a id="student-recap-recording-btn" href="#" target="_blank" class="btn btn-secondary hidden" style="flex:1; text-align:center; padding:10px; font-size:12px; text-decoration:none;">🎥 Watch Recording</a>
+        <button type="button" class="btn btn-primary" onclick="closeStudentMeetingSummary()" style="flex: 1; padding: 10px 16px; font-size: 12px; font-weight: 600; cursor: pointer;">✔ Close</button>
       </div>
     </div>
   </div>
@@ -3020,7 +3056,7 @@ AI Face Authentication Gate</span></h2>
   <!-- End Meeting Summary Modal -->
   <div class="modal-overlay" id="end-meeting-summary-modal" style="z-index: 10005;">
     <div class="modal-content glass-panel" style="max-width: 500px; padding: 25px;">
-      <h3 style="color: var(--primary-magenta); margin-bottom: 8px; font-family: 'Outfit', sans-serif;">ðŸ“ AI Meeting Summary</h3>
+      <h3 style="color: var(--primary-magenta); margin-bottom: 8px; font-family: 'Outfit', sans-serif;">📝 AI Meeting Summary</h3>
       <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">
         Generate an AI-powered summary of today's discussions using Gemini. You can also add notes about verbal discussions below.
       </p>
@@ -3038,8 +3074,8 @@ AI Face Authentication Gate</span></h2>
       </div>
       
       <div style="display: flex; gap: 8px;">
-        <button type="button" class="btn btn-secondary" id="btn-generate-ai-summary" onclick="generateMeetingSummary()" style="flex: 1; padding: 10px 16px; font-size: 12px; font-weight: 600; cursor: pointer; border-color: var(--primary-magenta); color: #fff; background: rgba(219, 39, 119, 0.1);">ðŸ¤– Generate AI Summary</button>
-        <button type="button" class="btn btn-primary" onclick="submitEndMeetingWithSummary()" style="flex: 1; padding: 10px 16px; font-size: 12px; font-weight: 600; cursor: pointer;">ðŸ’¾ End & Save Report</button>
+        <button type="button" class="btn btn-secondary" id="btn-generate-ai-summary" onclick="generateMeetingSummary()" style="flex: 1; padding: 10px 16px; font-size: 12px; font-weight: 600; cursor: pointer; border-color: var(--primary-magenta); color: #fff; background: rgba(219, 39, 119, 0.1);">✨ Generate AI Summary</button>
+        <button type="button" class="btn btn-primary" onclick="submitEndMeetingWithSummary()" style="flex: 1; padding: 10px 16px; font-size: 12px; font-weight: 600; cursor: pointer;">✅ End & Save Report</button>
       </div>
     </div>
   </div>
@@ -3192,7 +3228,7 @@ AI Face Authentication Gate</span></h2>
       <!-- UPI View -->
       <div style="padding: 24px; background: #07070a; display: none; flex-direction: column; gap: 16px;" id="rzp-upi-view">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-          <button type="button" onclick="backToRzpMethods()" style="background: none; border: none; color: #3399cc; cursor: pointer; font-size: 16px; padding: 0;">â†</button>
+          <button type="button" onclick="backToRzpMethods()" style="background: none; border: none; color: #3399cc; cursor: pointer; font-size: 16px; padding: 0;">⬅️</button>
           <h4 style="margin: 0; font-size: 13px; color: #fff; font-weight: 600;">Pay via UPI ID</h4>
         </div>
         <div class="form-group" style="text-align: left; width: 100%;">
@@ -3205,7 +3241,7 @@ AI Face Authentication Gate</span></h2>
       <!-- Card View -->
       <div style="padding: 24px; background: #07070a; display: none; flex-direction: column; gap: 16px;" id="rzp-card-view">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-          <button type="button" onclick="backToRzpMethods()" style="background: none; border: none; color: #3399cc; cursor: pointer; font-size: 16px; padding: 0;">â†</button>
+          <button type="button" onclick="backToRzpMethods()" style="background: none; border: none; color: #3399cc; cursor: pointer; font-size: 16px; padding: 0;">⬅️</button>
           <h4 style="margin: 0; font-size: 13px; color: #fff; font-weight: 600;">Card Details</h4>
         </div>
         <div class="form-group" style="text-align: left; margin-bottom: 10px; width: 100%;">
@@ -3228,7 +3264,7 @@ AI Face Authentication Gate</span></h2>
       <!-- Netbanking View -->
       <div style="padding: 24px; background: #07070a; display: none; flex-direction: column; gap: 16px;" id="rzp-netbanking-view">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-          <button type="button" onclick="backToRzpMethods()" style="background: none; border: none; color: #3399cc; cursor: pointer; font-size: 16px; padding: 0;">â†</button>
+          <button type="button" onclick="backToRzpMethods()" style="background: none; border: none; color: #3399cc; cursor: pointer; font-size: 16px; padding: 0;">⬅️</button>
           <h4 style="margin: 0; font-size: 13px; color: #fff; font-weight: 600;">Select Bank</h4>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;" id="rzp-banks-grid">
@@ -3267,7 +3303,7 @@ AI Face Authentication Gate</span></h2>
   <div class="modal-overlay" id="supabase-config-modal" style="z-index: 10002;">
     <div class="modal-content glass-panel" style="max-width: 480px; padding: 28px; border-color: var(--primary-magenta);">
       <div class="modal-close" onclick="closeModal('supabase-config-modal')">&times;</div>
-      <h3 style="color: var(--primary-magenta); margin-bottom: 8px; font-family: 'Outfit', sans-serif;">Ã°Å¸â€Â§ Supabase Database Settings</h3>
+      <h3 style="color: var(--primary-magenta); margin-bottom: 8px; font-family: 'Outfit', sans-serif;">⚙️ Supabase Database Settings</h3>
       <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">
         Connect this portal to a live Supabase database for real-time task allocations, chats, and attendance across different devices and browser tabs. Leaving fields empty will use the Local Storage fallback.
       </p>
@@ -3294,15 +3330,15 @@ AI Face Authentication Gate</span></h2>
   <!-- Temporary Database Inspector Panel for Testing & Debugging -->
   <div id="debug-panel" style="position: fixed; bottom: 10px; right: 10px; z-index: 9999; background: rgba(15, 15, 25, 0.98); border: 2px solid var(--primary-magenta); padding: 15px; border-radius: 12px; width: 450px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #fff; box-shadow: 0 0 25px rgba(0,0,0,0.95); display: none;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">
-      <strong style="color: var(--primary-magenta); font-size: 12px;">Ã°Å¸â€Â§ InternX by UTX Database Inspector</strong>
-      <button onclick="toggleDebugPanel()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 14px; font-weight: bold;">Ã¢Å“â€¢</button>
+      <strong style="color: var(--primary-magenta); font-size: 12px;">⚙️ InternX by UTX Database Inspector</strong>
+      <button onclick="toggleDebugPanel()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 14px; font-weight: bold;">✖️</button>
     </div>
     <div id="debug-panel-content">
       <!-- Injected via JS -->
     </div>
     <div style="margin-top: 12px; display: flex; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 8px;">
-      <button class="btn btn-secondary btn-sm" onclick="refreshDebugPanel()" style="padding: 4px 8px; font-size: 10px; cursor: pointer;">Ã°Å¸â€â€ž Refresh Data</button>
-      <button class="btn btn-secondary btn-sm" onclick="resetDatabaseForDemo()" style="padding: 4px 8px; font-size: 10px; border-color: var(--danger); color: var(--danger); cursor: pointer;">Ã°Å¸â€”â€˜Ã¯Â¸Â Reset DB</button>
+      <button class="btn btn-secondary btn-sm" onclick="refreshDebugPanel()" style="padding: 4px 8px; font-size: 10px; cursor: pointer;">🔄 Refresh Data</button>
+      <button class="btn btn-secondary btn-sm" onclick="resetDatabaseForDemo()" style="padding: 4px 8px; font-size: 10px; border-color: var(--danger); color: var(--danger); cursor: pointer;">🗑️ Reset DB</button>
     </div>
   </div>
   <!-- ==================== NEW IX CHATBOT ==================== -->
@@ -3786,7 +3822,7 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
   <script src="app.js"></script>
   <!-- Floating Runtime Error Debugger -->
   <div id="debug-error-console" style="position: fixed; bottom: 10px; left: 10px; background: rgba(239, 68, 68, 0.95); color: #fff; font-family: monospace; font-size: 11px; padding: 10px 14px; border-radius: 8px; max-width: 400px; max-height: 200px; overflow-y: auto; z-index: 10000; border: 1px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: none;">
-    <strong>âš ï¸ JS Runtime Error:</strong>
+    <strong>🚨 JS Runtime Error:</strong>
     <div id="debug-error-message" style="margin-top: 4px; white-space: pre-wrap;"></div>
   </div>
   <script>
@@ -3908,6 +3944,7 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
 
 </body>
 </html>
+
 
 
 

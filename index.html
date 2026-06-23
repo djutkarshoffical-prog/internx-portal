@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="styles.css">
   
   <!-- Spline viewer removed from head to improve page load performance -->
+  <!-- EmailJS Free Email Delivery SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head> 
 <body>
 
@@ -597,6 +599,7 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
           <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Sign In</button>
         </form>
         <div class="auth-footer" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+          <a href="#" onclick="openForgotPasswordModal(); return false;" style="font-size: 12px; color: var(--primary-magenta); text-decoration: underline; margin-bottom: 4px;">Forgot Password?</a>
           <p>Don't have an account? <a href="#" onclick="toggleAuthForms('register')">Register Now</a></p>
           <a href="#" onclick="openSupabaseConfigModal(); return false;" style="font-size: 11px; color: var(--text-muted); text-decoration: underline;">&#9881;&#65039; Supabase Connection Settings</a>
         </div>
@@ -631,6 +634,15 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
               <div class="form-group" style="margin-bottom:12px;">
                 <label for="reg-email">Email Address</label>
                 <input type="email" id="reg-email" class="form-control" placeholder="name@internship.com" required autocomplete="username">
+              </div>
+
+              <!-- Row 2.5: Email Verification OTP -->
+              <div class="form-group" style="margin-bottom:12px; display:flex; gap:8px; align-items:flex-end;">
+                <div style="flex: 1;">
+                  <label for="reg-inline-otp">Email Verification OTP</label>
+                  <input type="text" id="reg-inline-otp" class="form-control" placeholder="Enter OTP" maxlength="8" style="text-align:center; letter-spacing:4px;" required disabled>
+                </div>
+                <button type="button" class="btn btn-secondary" id="btn-send-inline-otp" onclick="sendInlineRegistrationOTP()" style="height: 42px; padding: 0 16px; font-size: 13px;">Send OTP</button>
               </div>
 
               <!-- Row 3: Domain + Duration side by side -->
@@ -1041,7 +1053,7 @@ AI Face Authentication Gate</span></h2>
             </div>
           </div>
 
-          <div class="dash-row" style="margin-top: 24px;">
+          <div class="dash-row full" style="margin-top: 24px;">
             <div class="dash-panel glass-panel" style="width: 100%;">
               <h3 style="display:flex; align-items:center; justify-content: flex-start; gap:8px; margin-bottom:16px;">
                 <div class="card-icon magenta" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(219,39,119,0.1); color: var(--primary-magenta);">
@@ -1051,7 +1063,7 @@ AI Face Authentication Gate</span></h2>
               </h3>
               <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Claim all 4 weekly badges to unlock your final internship certificate. Obtain your badge URLs from your mentor upon completing weekly tasks.</p>
               
-              <div id="student-badges-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div id="student-badges-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px;">
                 <!-- Dynamically rendered badges -->
               </div>
             </div>
@@ -3143,6 +3155,25 @@ AI Face Authentication Gate</span></h2>
         </div>
       </div>
       
+      <div style="margin-top: 24px; padding: 16px; background: rgba(219,39,119,0.05); border: 1px solid rgba(219,39,119,0.15); border-radius: 12px;">
+        <h4 style="margin-top: 0; color: var(--primary-magenta); font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+          🏆 Issue Weekly Badge
+        </h4>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Generate a badge link for this student and automatically send it to their registered email (via EmailJS) and Intern Chat.</p>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <select id="intern-modal-badge-week" class="form-control" style="font-size: 12px; max-width: 120px;">
+            <option value="1">Week 1</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="btn-generate-badge" onclick="generateAndSendBadge()" style="flex: 1; margin: 0; background: var(--primary-magenta); border-color: var(--primary-magenta);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            Generate & Send via Email
+          </button>
+        </div>
+      </div>
+      
       <div style="display: flex; gap: 10px; margin-top: 24px;">
         <button type="button" class="btn btn-secondary" onclick="closeModal('intern-details-modal')" style="flex: 1; margin: 0;">Close Details</button>
       </div>
@@ -3941,6 +3972,61 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
 html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness(2); }
 </style>
 
+
+  <!-- OTP Verification Modal -->
+  <div class="modal-overlay" id="otp-verification-modal" style="z-index: 10005;">
+    <div class="modal-content" style="max-width: 400px; text-align: center; border-radius: 16px; background: #0e0e15; border: 1px solid rgba(255, 255, 255, 0.1);">
+      <div class="modal-close" onclick="closeOTPModal()">&times;</div>
+      <h3 style="color: var(--primary-magenta); margin-bottom: 8px; font-family: 'Outfit', sans-serif;">Verify Email OTP</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+        We've sent a 6-digit code to <strong id="otp-display-email" style="color: #fff;"></strong>. Please enter it below to continue.
+      </p>
+      
+      <form id="otp-verification-form" onsubmit="handleOTPSubmit(event)">
+        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+          <input type="text" id="otp-input" maxlength="8" style="width: 200px; height: 50px; text-align: center; font-size: 24px; letter-spacing: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border-color);" required placeholder="OTP" autocomplete="one-time-code">
+        </div>
+        <button type="submit" class="btn btn-primary" id="btn-verify-otp" style="width: 100%; padding: 12px; font-size: 14px;">Verify & Continue</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal-overlay" id="forgot-password-modal" style="z-index: 10004;">
+    <div class="modal-content" style="max-width: 400px; border-radius: 16px; background: #0e0e15; border: 1px solid rgba(255, 255, 255, 0.1);">
+      <div class="modal-close" onclick="closeModal('forgot-password-modal')">&times;</div>
+      <h3 style="color: var(--primary-magenta); margin-bottom: 8px; font-family: 'Outfit', sans-serif; text-align: center;">Reset Password</h3>
+      
+      <!-- Step 1: Send Email -->
+      <div id="fp-step-1">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px; text-align: center;">Enter your registered email address to receive an OTP.</p>
+        <form onsubmit="handleForgotPasswordSendOTP(event)">
+          <div class="form-group">
+            <label for="fp-email">Email Address</label>
+            <input type="email" id="fp-email" class="form-control" placeholder="name@example.com" required>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btn-fp-send" style="width: 100%; margin-top: 10px;">Send OTP</button>
+        </form>
+      </div>
+
+      <!-- Step 2: Verify OTP & New Password -->
+      <div id="fp-step-2" style="display: none;">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px; text-align: center;">Enter the 6-digit OTP sent to your email and your new password.</p>
+        <form onsubmit="handleForgotPasswordSubmit(event)">
+          <div class="form-group">
+            <label for="fp-otp">6-Digit OTP</label>
+            <input type="text" id="fp-otp" class="form-control" maxlength="6" style="text-align: center; letter-spacing: 5px;" placeholder="------" required>
+          </div>
+          <div class="form-group">
+            <label for="fp-new-password">New Password</label>
+            <input type="password" id="fp-new-password" class="form-control" placeholder="Minimum 6 characters" required minlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary" id="btn-fp-reset" style="width: 100%; margin-top: 10px;">Reset Password</button>
+        </form>
+      </div>
+      
+    </div>
+  </div>
 
 </body>
 </html>

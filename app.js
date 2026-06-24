@@ -1317,6 +1317,8 @@ function showLandingPage() {
   document.getElementById('landing-page').classList.remove('hidden');
   document.getElementById('auth-page').classList.add('hidden');
   document.getElementById('portal-page').classList.add('hidden');
+  const banner = document.getElementById('smart-app-banner');
+  if(banner && !banner.classList.contains('user-closed')) banner.style.display = '';
   // Show footer on landing page
   const footer = document.getElementById('main-footer');
   if (footer) footer.classList.remove('hidden');
@@ -1429,6 +1431,8 @@ function showAuthPage(mode = 'login') {
   document.getElementById('landing-page').classList.add('hidden');
   document.getElementById('auth-page').classList.remove('hidden');
   document.getElementById('portal-page').classList.add('hidden');
+  const banner = document.getElementById('smart-app-banner');
+  if(banner) banner.style.display = 'none';
   // Hide footer on auth/portal pages
   const footer = document.getElementById('main-footer');
   if (footer) footer.classList.add('hidden');
@@ -1616,6 +1620,8 @@ function showPortalPage(role) {
   document.getElementById('landing-page').classList.add('hidden');
   document.getElementById('auth-page').classList.add('hidden');
   document.getElementById('portal-page').classList.remove('hidden');
+  const banner = document.getElementById('smart-app-banner');
+  if(banner) banner.style.display = 'none';
   // Hide footer inside portal
   const footer = document.getElementById('main-footer');
   if (footer) footer.classList.add('hidden');
@@ -17510,6 +17516,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div id="banner-qr-popup" class="qr-code-popup">
           <img src="${qrApiUrl}" alt="Scan to Download App">
           <p>Scan with your phone to<br>download the App</p>
+          <a href="${apkUrl}" download class="btn btn-primary btn-sm" style="margin-top: 10px; width: 100%;">Download App</a>
         </div>
       `;
       document.getElementById('banner-message').innerText = "Download our mobile App for on-the-go access! 🚀";

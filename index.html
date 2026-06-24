@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>InternX by UTX | Internship Monitoring & Progress Tracking System</title>
   <meta name="description" content="A premium glassmorphic portal for managing, tracking, and optimizing student internship progress.">
-  <link rel="stylesheet" href="styles.css?v=14.0">
+  <link rel="stylesheet" href="styles.css?v=15.0">
   
   <!-- PWA Setup -->
   <link rel="manifest" href="manifest.json">
@@ -17,21 +17,11 @@
 </head> 
 <body>
 
-  <!-- ==================== SMART APP BANNER ==================== -->
-  <div id="smart-app-banner" class="smart-app-banner">
-    <div class="banner-content">
-      <div class="banner-text">
-        <span class="banner-badge">NEW</span>
-        <span id="banner-message">Experience InternX on our App for faster access! 🚀</span>
-      </div>
-      <div class="banner-actions">
-        <!-- Action container updated dynamically by JS -->
-        <div id="banner-action-container">
-          <!-- Default button -->
-          <a href="app.apk" download class="btn btn-primary btn-sm" id="banner-download-btn">Download App</a>
-        </div>
-        <button class="banner-close-btn" onclick="closeSmartBanner()">&times;</button>
-      </div>
+  <!-- ==================== STANDALONE APP DOWNLOAD POPUP ==================== -->
+  <div id="app-download-popup" class="qr-code-popup standalone-popup">
+    <button class="popup-close-btn" onclick="closeAppPopup()">&times;</button>
+    <div id="popup-content-container">
+      <!-- JS fills this based on device type -->
     </div>
   </div>
 
@@ -3895,7 +3885,7 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
   <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="mockData.js"></script>
-  <script src="app.js?v=17.0" defer></script>
+  <script src="app.js?v=18.0" defer></script>
   <!-- Floating Runtime Error Debugger -->
   <div id="debug-error-console" style="position: fixed; bottom: 10px; left: 10px; background: rgba(239, 68, 68, 0.95); color: #fff; font-family: monospace; font-size: 11px; padding: 10px 14px; border-radius: 8px; max-width: 400px; max-height: 200px; overflow-y: auto; z-index: 10000; border: 1px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: none;">
     <strong>🚨 JS Runtime Error:</strong>

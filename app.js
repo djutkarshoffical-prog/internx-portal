@@ -17522,6 +17522,11 @@ window.closeSmartBanner = function() {
     banner.classList.remove('show');
     // Save to localStorage so it doesn't annoy the user
     // localStorage.setItem('smartBannerClosed', 'true');
+    
+    // Auto-reopen after 6 seconds
+    setTimeout(() => {
+      banner.classList.add('show');
+    }, 6000);
   }
 };
 

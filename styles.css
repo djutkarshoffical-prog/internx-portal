@@ -4941,3 +4941,15 @@ tr.attendance-row.active-row td:first-child {
     right: 15px !important;
   }
 }
+/* Fix for mobile keyboard auto-zoom issue */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  font-size: 16px !important;
+}

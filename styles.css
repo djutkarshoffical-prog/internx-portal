@@ -4897,7 +4897,7 @@ tr.attendance-row.active-row td:first-child {
 
 
 /* Float smart app banner on desktop instead of taking full width */
-@media (min-width: 992px) {
+@media (min-width: 769px) {
   .smart-app-banner.show {
     top: 110px !important;
     right: 5% !important;

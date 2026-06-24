@@ -17489,8 +17489,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const banner = document.getElementById('smart-app-banner');
     if (!banner) return;
     
-    // Check device type using screen width to match CSS media queries
-    const isMobile = window.innerWidth < 992;
+    // Check device type using screen width (<= 768px is mobile)
+    const isMobile = window.innerWidth <= 768;
     
     const actionContainer = document.getElementById('banner-action-container');
     

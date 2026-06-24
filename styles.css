@@ -86,8 +86,7 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-main);
-  min-width: 1200px; /* Forces desktop layout */
-  overflow-x: auto; /* Allows WebView to calculate true width */
+  overflow-x: hidden;
   min-height: 100vh;
   position: relative;
   line-height: 1.5;
@@ -4692,14 +4691,21 @@ tr.attendance-row.active-row td:first-child {
     padding: 10px 0;
   }
   .nav-actions {
-    gap: 8px !important;
+    gap: 6px !important;
   }
   .nav-actions .btn {
-    padding: 8px 12px;
+    padding: 6px 10px;
     font-size: 12px;
   }
   #nav-theme-pill {
-    transform: scale(0.85); /* Make the toggle smaller */
+    transform: scale(0.8); /* Make the toggle smaller */
+    padding: 2px;
+  }
+  .theme-pill-label {
+    display: none; /* Hide 'NIGHT MODE' text to save space */
+  }
+  .logo-by {
+    display: none !important; /* Hide 'BY UTX' on mobile */
   }
 
   /* 2. Hero Section */

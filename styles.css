@@ -4863,40 +4863,74 @@ tr.attendance-row.active-row td:first-child {
 .qr-code-popup {
   display: none;
   position: absolute;
-  top: 50px;
-  right: 0;
-  background: rgba(12, 10, 22, 0.98);
-  border: 1px solid rgba(131, 39, 236, 0.4);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  backdrop-filter: blur(20px);
+  top: 60px;
+  right: -10px;
+  width: 220px;
+  background: rgba(15, 12, 29, 0.85);
+  border: 1px solid rgba(131, 39, 236, 0.5);
+  border-radius: 16px;
+  padding: 24px 20px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 30px rgba(131, 39, 236, 0.15);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   text-align: center;
   z-index: 10000;
+  transform-origin: top right;
+}
+
+.qr-code-popup::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 50px;
+  width: 16px;
+  height: 16px;
+  background: rgba(15, 12, 29, 0.95);
+  border-top: 1px solid rgba(131, 39, 236, 0.5);
+  border-left: 1px solid rgba(131, 39, 236, 0.5);
+  transform: rotate(45deg);
 }
 
 [data-theme="light"] .qr-code-popup {
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.1), 0 0 30px rgba(131, 39, 236, 0.05);
+}
+
+[data-theme="light"] .qr-code-popup::before {
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .qr-code-popup.show {
   display: block;
-  animation: dashFadeUp 0.3s ease forwards;
+  animation: dashFadeUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .qr-code-popup img {
-  width: 120px;
-  height: 120px;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  margin-bottom: 16px;
   background: white;
-  padding: 6px;
+  padding: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  display: inline-block;
 }
 
 .qr-code-popup p {
-  font-size: 12px;
-  color: var(--text-muted);
+  font-size: 13px;
+  color: #fff;
+  font-weight: 500;
   margin-bottom: 0;
+  line-height: 1.5;
+}
+
+[data-theme="light"] .qr-code-popup p {
+  color: #333;
+}
+
+.qr-code-popup p span {
+  color: var(--primary-magenta);
+  font-weight: 800;
 }
 
 /* Fix for mobile keyboard auto-zoom issue */

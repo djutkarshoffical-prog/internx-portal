@@ -3535,9 +3535,11 @@ async function acceptPairingRequest(requestId) {
         console.log("Offer letter sent to", student.email);
       }).catch(err => {
         console.error("Failed to send offer letter email:", err);
+        alert("EmailJS Offer Letter Error: " + (err.message || JSON.stringify(err)));
       });
     } catch (e) {
       console.error("Error triggering EmailJS:", e);
+      alert("Error triggering EmailJS: " + e.message);
     }
   }
   // ------------------------------------------
@@ -17418,7 +17420,7 @@ async function generateAndSendBadge(studentEmail) {
     Go to emailjs.com -> Create Account -> Add Service -> Create Template -> Get Public Key
   */
   const SERVICE_ID = 'service_qjeb0oi';
-  const TEMPLATE_ID = 'template_n1kl1uo';
+  const TEMPLATE_ID = '5jo681i';
   const PUBLIC_KEY = '7bCd8tFi0ynS9hCMk';
 
   if (PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && window.emailjs) {
@@ -17433,9 +17435,11 @@ async function generateAndSendBadge(studentEmail) {
       console.log('EmailJS Success: Badge sent to', student.email);
     } catch (err) {
       console.error('EmailJS Error:', err);
+      alert("EmailJS Badge Error: " + (err.message || JSON.stringify(err)));
     }
   } else {
-    console.warn("EmailJS is not configured. Email was skipped, but Chat message will still be sent.");
+    console.warn("EmailJS is not configured. Email was skipped.");
+    alert("EmailJS is not configured properly or could not be loaded. Badge email skipped.");
   }
 
   // 2. Automated Chat Message (Fallback/In-Platform Delivery)

@@ -1,7 +1,7 @@
 {
   "id": "/internx-portal/",
   "name": "InternX by UTX",
-  "short_name": "InternX",
+  "short_name": "InternX by UTX",
   "description": "A premium glassmorphic portal for managing, tracking, and optimizing student internship progress.",
   "start_url": "/internx-portal/",
   "display": "standalone",

@@ -17489,28 +17489,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const banner = document.getElementById('smart-app-banner');
     if (!banner) return;
     
-    // Check device type
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Check device type using screen width to match CSS media queries
+    const isMobile = window.innerWidth < 992;
     
     const actionContainer = document.getElementById('banner-action-container');
     
+    let basePath = window.location.href;
+    if (!basePath.endsWith('/')) {
+      basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+    }
+    const apkUrl = basePath + 'app.apk';
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(apkUrl)}`;
+    
     if (isMobile) {
       // Mobile: direct download link
-      const downloadBtn = document.getElementById('banner-download-btn');
-      const qrPopup = document.getElementById('banner-qr-popup');
-      if (downloadBtn) downloadBtn.style.display = 'inline-block';
-      if (qrPopup) qrPopup.style.display = 'none';
+      actionContainer.innerHTML = `
+        <a href="${apkUrl}" download class="btn btn-primary btn-sm" id="banner-download-btn" style="width: 100%;">Download App</a>
+      `;
       document.getElementById('banner-message').innerText = "Experience InternX on our App for faster access! 🚀";
     } else {
       // Desktop: QR code approach
-      // Generate URL dynamically based on where the site is currently hosted
-      let basePath = window.location.href;
-      if (!basePath.endsWith('/')) {
-        basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
-      }
-      const apkUrl = basePath + 'app.apk';
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(apkUrl)}`;
-      
       actionContainer.innerHTML = `
         <button class="btn btn-primary btn-sm" id="banner-qr-toggle" onclick="toggleQRPopup()">Get App via QR</button>
         <div id="banner-qr-popup" class="qr-code-popup">
@@ -17522,8 +17520,10 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('banner-message').innerText = "Download our mobile App for on-the-go access! 🚀";
     }
     
-    // Show the banner
-    banner.classList.add('show');
+    // Show the banner only if we are on the landing page
+    if (!document.getElementById('landing-page').classList.contains('hidden')) {
+      banner.classList.add('show');
+    }
   }, 3500); // 3.5 seconds delay
 });
 

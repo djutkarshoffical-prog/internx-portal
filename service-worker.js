@@ -1,4 +1,4 @@
-const CACHE_NAME = 'internx-cache-v1';
+const CACHE_NAME = 'internx-cache-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const urlsToCache = [
 
 // Install Event
 self.addEventListener('install', event => {
+  self.skipWaiting(); // Force the waiting service worker to become the active service worker
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -17,22 +18,18 @@ self.addEventListener('install', event => {
   );
 });
 
-// Fetch Event
+// Fetch Event - Network First strategy for important files to prevent app caching old UI
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
   );
 });
 
 // Activate Event (Cleanup old caches)
 self.addEventListener('activate', event => {
+  event.waitUntil(clients.claim()); // Take control of all pages immediately
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {

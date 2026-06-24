@@ -17,13 +17,7 @@
 </head> 
 <body>
 
-  <!-- ==================== STANDALONE APP DOWNLOAD POPUP ==================== -->
-  <div id="app-download-popup" class="qr-code-popup standalone-popup">
-    <button class="popup-close-btn" onclick="closeAppPopup()">&times;</button>
-    <div id="popup-content-container">
-      <!-- JS fills this based on device type -->
-    </div>
-  </div>
+
 
   <!-- Background Glowing Blobs -->
   <div class="glow-bg">
@@ -70,6 +64,13 @@
 
   <!-- ==================== LANDING PAGE ==================== -->
   <main id="landing-page" class="landing-section">
+  <!-- ==================== STANDALONE APP DOWNLOAD POPUP ==================== -->
+  <div id="app-download-popup" class="qr-code-popup standalone-popup">
+    <button class="popup-close-btn" onclick="closeAppPopup()">&times;</button>
+    <div id="popup-content-container">
+      <!-- JS fills this based on device type -->
+    </div>
+  </div>
     <div class="container">
       <!-- Hero Section -->
       <section class="hero-grid">
@@ -3885,7 +3886,7 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
   <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="mockData.js"></script>
-  <script src="app.js?v=19.0" defer></script>
+  <script src="app.js?v=20.0" defer></script>
   <!-- Floating Runtime Error Debugger -->
   <div id="debug-error-console" style="position: fixed; bottom: 10px; left: 10px; background: rgba(239, 68, 68, 0.95); color: #fff; font-family: monospace; font-size: 11px; padding: 10px 14px; border-radius: 8px; max-width: 400px; max-height: 200px; overflow-y: auto; z-index: 10000; border: 1px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: none;">
     <strong>🚨 JS Runtime Error:</strong>

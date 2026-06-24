@@ -4900,3 +4900,43 @@ tr.attendance-row.active-row td:first-child {
     text-align: center;
   }
 }
+
+/* Float smart app banner on desktop instead of taking full width */
+@media (min-width: 992px) {
+  .smart-app-banner.show {
+    top: 110px !important;
+    right: 5% !important;
+    left: auto !important;
+    width: 280px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(131, 39, 236, 0.4) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(224, 26, 139, 0.2) !important;
+  }
+  .smart-app-banner .banner-content {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  .smart-app-banner .banner-text {
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+  .smart-app-banner .banner-actions {
+    justify-content: center !important;
+  }
+  #banner-qr-toggle {
+    display: none !important;
+  }
+  .qr-code-popup {
+    display: block !important;
+    position: static !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .smart-app-banner .banner-close-btn {
+    position: absolute !important;
+    top: 10px !important;
+    right: 15px !important;
+  }
+}

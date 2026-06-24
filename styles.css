@@ -5,12 +5,12 @@
 html {
   background-color: #07070a;
   overscroll-behavior: none;
+  min-width: 1200px !important;
 }
 :root[data-theme="light"],
 html[data-theme="light"] {
   background-color: #faf8ff !important;
 }
-
 
 :root {
   --bg-dark: #07070a;
@@ -86,7 +86,8 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-main);
-  overflow-x: hidden;
+  min-width: 1200px !important;
+  overflow-x: auto;
   min-height: 100vh;
   position: relative;
   line-height: 1.5;

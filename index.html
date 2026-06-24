@@ -602,6 +602,12 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
       <!-- Bottom bar -->
       <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
         <p style="font-size:12px;color:var(--text-muted);">© 2026 InternX by UTX. All rights reserved.</p>
+        
+        <a href="https://internx-portal.github.io/app/internx-app.apk" download style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--primary-magenta);font-weight:700;text-decoration:none;background:rgba(224, 26, 139, 0.1);padding:6px 14px;border-radius:20px;border:1px solid rgba(224, 26, 139, 0.3);transition:0.3s;" onmouseover="this.style.background='rgba(224, 26, 139, 0.2)';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='rgba(224, 26, 139, 0.1)';this.style.transform='none'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Install App
+        </a>
+        
         <div style="display:flex;align-items:center;gap:6px;">
           <div style="width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></div>
           <span style="font-size:12px;color:var(--text-muted);">All systems operational</span>
@@ -3886,7 +3892,7 @@ html:not([data-theme="light"]) .theme-invert-icon { filter: invert(1) brightness
   <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="mockData.js"></script>
-  <script src="app.js?v=20.0" defer></script>
+  <script src="app.js?v=21.0" defer></script>
   <!-- Floating Runtime Error Debugger -->
   <div id="debug-error-console" style="position: fixed; bottom: 10px; left: 10px; background: rgba(239, 68, 68, 0.95); color: #fff; font-family: monospace; font-size: 11px; padding: 10px 14px; border-radius: 8px; max-width: 400px; max-height: 200px; overflow-y: auto; z-index: 10000; border: 1px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: none;">
     <strong>🚨 JS Runtime Error:</strong>

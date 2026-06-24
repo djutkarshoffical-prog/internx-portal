@@ -17008,14 +17008,19 @@ function waGetOrCreatePC(peerEmail) {
       const vid = tileEl.querySelector('video');
       const fb = tileEl.querySelector('.wa-avatar-fallback');
       if (vid) {
-        if (vid.srcObject !== waCall.remoteStreams[key]) {
-          vid.srcObject = waCall.remoteStreams[key];
-        }
+        // Force re-assignment of srcObject to ensure WebViews pick up the newly added track
+        vid.srcObject = null;
+        vid.srcObject = waCall.remoteStreams[key];
+        vid.onloadedmetadata = () => { vid.play().catch(()=>{}); };
         vid.play().catch(()=>{});
-        if (waCall.remoteStreams[key].getVideoTracks().length > 0) {
-          vid.style.display = 'block';
-          if (fb) fb.style.display = 'none';
-        }
+        
+        // Wait a small tick before checking for video tracks, as they might take a ms to register
+        setTimeout(() => {
+          if (waCall.remoteStreams[key].getVideoTracks().length > 0) {
+            vid.style.display = 'block';
+            if (fb) fb.style.display = 'none';
+          }
+        }, 50);
       }
     } else { 
       waRenderAllTiles(); 

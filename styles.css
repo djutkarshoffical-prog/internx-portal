@@ -4864,7 +4864,7 @@ tr.attendance-row.active-row td:first-child {
   display: none;
   position: absolute;
   top: 60px;
-  right: -10px;
+  right: 250px; /* Shifted left deep into the empty space */
   width: 220px;
   background: rgba(15, 12, 29, 0.85);
   border: 1px solid rgba(131, 39, 236, 0.5);
@@ -4881,14 +4881,14 @@ tr.attendance-row.active-row td:first-child {
 .qr-code-popup::before {
   content: '';
   position: absolute;
-  top: -8px;
-  right: 50px;
+  top: 16px;
+  right: -8px; /* Stick out on the right edge */
   width: 16px;
   height: 16px;
   background: rgba(15, 12, 29, 0.95);
   border-top: 1px solid rgba(131, 39, 236, 0.5);
-  border-left: 1px solid rgba(131, 39, 236, 0.5);
-  transform: rotate(45deg);
+  border-right: 1px solid rgba(131, 39, 236, 0.5);
+  transform: rotate(45deg); /* Point straight right */
 }
 
 [data-theme="light"] .qr-code-popup {

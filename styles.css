@@ -4807,6 +4807,12 @@ tr.attendance-row.active-row td:first-child {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
+[data-theme="light"] .standalone-popup {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(131, 39, 236, 0.2);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.1), 0 0 30px rgba(131, 39, 236, 0.05);
+}
+
 .standalone-popup.show {
   display: block;
   opacity: 1;

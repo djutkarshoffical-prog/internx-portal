@@ -17534,10 +17534,13 @@ window.closeSmartBanner = function() {
     // Save to localStorage so it doesn't annoy the user
     // localStorage.setItem('smartBannerClosed', 'true');
     
-    // Auto-reopen after 6 seconds
+    // Auto-reopen after 8 seconds
     setTimeout(() => {
-      banner.classList.add('show');
-    }, 6000);
+      // Only add show class if we are still on the landing page
+      if (!document.getElementById('landing-page').classList.contains('hidden')) {
+        banner.classList.add('show');
+      }
+    }, 8000);
   }
 };
 

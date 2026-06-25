@@ -1183,13 +1183,8 @@ function mergeCollectionFromCloud(colName, cloudList) {
 
   if (colName === 'users') {
     const cloudEmails = new Set(cloudList.map(u => u.email && u.email.trim().toLowerCase()).filter(Boolean));
-    db.users = db.users.filter(u => {
-      if (!u || !u.email) return false;
-      const emailLower = u.email.trim().toLowerCase();
-      if (currentUser && currentUser.email.trim().toLowerCase() === emailLower) return true;
-      if (emailLower.endsWith('@internship.com')) return true;
-      return cloudEmails.has(emailLower);
-    });
+    // We intentionally DO NOT delete local users not found in the cloud 
+    // to prevent losing users whose cloud sync temporarily failed due to RLS or network issues.
 
     consolidateCloudUsersByEmail(cloudList).forEach(cloudUser => {
       const emailLower = cloudUser.email.trim().toLowerCase();

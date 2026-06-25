@@ -17436,6 +17436,21 @@ function submitBadgeUrl(week) {
   db.badges.push(newBadge);
   saveDatabase(true);
   
+  // AUTOMATED MESSAGE: From Mentor to Student acknowledging the claim
+  const mentorEmail = currentUser.mentorEmail;
+  if (mentorEmail) {
+    const autoMessage = {
+      id: `msg-${Date.now()}`,
+      from: normalizeChatEmail(mentorEmail),
+      to: normalizeChatEmail(currentUser.email),
+      message: `🎉 Great job ${currentUser.name || 'Intern'}! I see you have successfully unlocked your Week ${week} Badge by pasting the link. Keep up the excellent work!`,
+      timestamp: new Date().toISOString()
+    };
+    if (!db.chats) db.chats = [];
+    db.chats.push(autoMessage);
+    saveDatabase(true);
+  }
+  
   showToast('✅ Badge claimed successfully!', 3000);
   renderStudentBadges();
   
@@ -17474,7 +17489,7 @@ async function generateAndSendBadge(studentEmail) {
     Go to emailjs.com -> Create Account -> Add Service -> Create Template -> Get Public Key
   */
   const SERVICE_ID = 'service_qjeb0oi';
-  const TEMPLATE_ID = '5jo681i';
+  const TEMPLATE_ID = 'template_n1kl1uo';
   const PUBLIC_KEY = '7bCd8tFi0ynS9hCMk';
 
   if (PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && window.emailjs) {
@@ -17593,3 +17608,4 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+ 

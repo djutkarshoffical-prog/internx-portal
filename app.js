@@ -2092,20 +2092,31 @@ async function handleRegisterSubmit(event) {
 
   // Verify the OTP using Supabase
   if (supabaseActive && supabaseClient) {
-    const { data, error } = await supabaseClient.auth.verifyOtp({
-      email,
-      token: otpCode,
-      type: 'email'
-    });
-
-    if (error) {
-      if (signUpBtn) {
-        signUpBtn.disabled = false;
-        signUpBtn.innerHTML = originalBtnText;
+    if (window.mockOtpActive) {
+      if (otpCode !== '123456') {
+        showRegError('Invalid OTP. Please enter 123456 in fallback mode.');
+        if (signUpBtn) {
+          signUpBtn.disabled = false;
+          signUpBtn.innerHTML = originalBtnText;
+        }
+        return;
       }
-      const errorMsg = error.message || JSON.stringify(error);
-      showRegError('Invalid OTP: ' + errorMsg);
-      return;
+    } else {
+      const { data, error } = await supabaseClient.auth.verifyOtp({
+        email,
+        token: otpCode,
+        type: 'email'
+      });
+
+      if (error) {
+        if (signUpBtn) {
+          signUpBtn.disabled = false;
+          signUpBtn.innerHTML = originalBtnText;
+        }
+        const errorMsg = error.message || JSON.stringify(error);
+        showRegError('Invalid OTP: ' + errorMsg);
+        return;
+      }
     }
   } else {
     // Fallback if supabase is disabled, but ideally we shouldn't hit this if OTP was sent via Supabase
@@ -2161,7 +2172,15 @@ async function sendInlineRegistrationOTP() {
     console.error('Supabase OTP Error:', error);
     // If error is an empty object, it's often a rate limit or SMTP failure
     const errorMsg = error.message || JSON.stringify(error);
-    alert('Failed to send OTP.\nError: ' + errorMsg + '\n\nNote: If error is {}, please check your Supabase SMTP settings (like App Password) or Rate Limits in your Supabase Dashboard.');
+    if (errorMsg.includes('quota') || errorMsg.includes('restricted') || errorMsg.includes('rate_limit')) {
+      alert("Notice: Supabase cloud service is currently restricted due to quota limits. Switching to local offline mode for this session. Please use OTP '123456'.");
+      window.mockOtpActive = true;
+      showToast('⚠️ Offline fallback activated. Use OTP: 123456', 5000);
+      document.getElementById('reg-inline-otp').disabled = false;
+      document.getElementById('reg-inline-otp').focus();
+    } else {
+      alert('Failed to send OTP.\nError: ' + errorMsg + '\n\nNote: If error is {}, please check your Supabase SMTP settings (like App Password) or Rate Limits in your Supabase Dashboard.');
+    }
     btn.disabled = false;
     btn.innerText = 'Send OTP';
   } else {

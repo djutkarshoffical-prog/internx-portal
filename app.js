@@ -17489,7 +17489,7 @@ async function generateAndSendBadge(studentEmail) {
     Go to emailjs.com -> Create Account -> Add Service -> Create Template -> Get Public Key
   */
   const SERVICE_ID = 'service_qjeb0oi';
-  const TEMPLATE_ID = 'template_n1kl1uo';
+  const TEMPLATE_ID = '5jo681i';
   const PUBLIC_KEY = '7bCd8tFi0ynS9hCMk';
 
   if (PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && window.emailjs) {

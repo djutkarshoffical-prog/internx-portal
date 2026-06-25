@@ -1365,6 +1365,13 @@ function showLandingPage() {
   // Show footer on landing page
   const footer = document.getElementById('main-footer');
   if (footer) footer.classList.remove('hidden');
+
+  // Hide AI Copilot on landing page
+  const copilotBtn = document.getElementById('ai-copilot-trigger');
+  if (copilotBtn) {
+    copilotBtn.classList.add('hidden');
+    copilotBtn.style.display = 'none';
+  }
 }
 
 // Registration step navigation

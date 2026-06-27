@@ -2194,7 +2194,7 @@ async function sendInlineRegistrationOTP() {
     btn.disabled = false;
     btn.innerText = 'Send OTP';
   } else {
-    showToast('✅ OTP sent successfully via Supabase!', 3000);
+    showToast('OTP sent successfully!', 3000);
     document.getElementById('reg-inline-otp').disabled = false;
     document.getElementById('reg-inline-otp').focus();
     

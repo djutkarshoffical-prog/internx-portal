@@ -4922,6 +4922,7 @@ tr.attendance-row.active-row td:first-child {
   }
   .smart-app-banner.show .banner-actions {
     justify-content: center !important;
+    position: static !important;
   }
   .smart-app-banner.show #banner-qr-toggle {
     display: none !important;

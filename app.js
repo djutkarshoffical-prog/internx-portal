@@ -17495,11 +17495,13 @@ async function generateAndSendBadge(studentEmail) {
   if (PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && window.emailjs) {
     try {
       emailjs.init({ publicKey: PUBLIC_KEY });
+      const badgeImgUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}badge_week${week}.png`;
       await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
         to_email: student.email,
         student_name: student.name,
         week_number: week,
-        badge_url: badgeUrl
+        badge_url: badgeUrl,
+        badge_image_url: badgeImgUrl
       });
       console.log('EmailJS Success: Badge sent to', student.email);
     } catch (err) {

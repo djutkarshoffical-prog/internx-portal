@@ -9511,7 +9511,8 @@ function renderMeetingParticipants() {
     } else {
       if (isScreenSharing) currentMediaType = 'screenshare';
       else if (!isVideoOff) {
-        if (typeof remoteStreams !== 'undefined' && remoteStreams[email]) currentMediaType = 'video';
+        const emailKey = email.trim().toLowerCase();
+        if (typeof remoteStreams !== 'undefined' && remoteStreams[emailKey]) currentMediaType = 'video';
         else currentMediaType = 'simulated';
       }
     }
@@ -9599,9 +9600,10 @@ function renderMeetingParticipants() {
           localVid.srcObject = localMediaStream;
         }
       } else {
+        const emailKey = email.trim().toLowerCase();
         const remoteVid = document.getElementById(`remote-video-${email.replace(/[@.]/g, '-')}`);
-        if (remoteVid && remoteStreams[email] && remoteVid.srcObject !== remoteStreams[email]) {
-          remoteVid.srcObject = remoteStreams[email];
+        if (remoteVid && remoteStreams[emailKey] && remoteVid.srcObject !== remoteStreams[emailKey]) {
+          remoteVid.srcObject = remoteStreams[emailKey];
           remoteVid.play().catch(e => console.warn("Failed to autoplay remote video:", e));
         }
       }

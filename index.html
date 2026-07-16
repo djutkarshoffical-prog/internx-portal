@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1047,7 +1047,12 @@ AI Face Authentication Gate</span></h2>
 
           <div class="dash-row">
             <div class="dash-panel glass-panel">
-              <h3>Recent Deliverables & Tasks</h3>
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
+                <div class="card-icon blue" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <img src="https://img.icons8.com/?size=100&id=23178&format=png&color=000000" alt="Tasks" class="theme-invert-icon" style="width: 32px; height: 32px;">
+                </div>
+                Recent Deliverables & Tasks
+              </h3>
               <div style="overflow-x: auto;">
                 <table class="custom-table" id="student-dash-tasks-table">
                   <thead>
@@ -1065,7 +1070,12 @@ AI Face Authentication Gate</span></h2>
             </div>
 
             <div class="dash-panel glass-panel">
-              <h3>Your Progress Log</h3>
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
+                <div class="card-icon purple" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <img src="https://img.icons8.com/?size=100&id=108535&format=png&color=000000" alt="Progress Log" class="theme-invert-icon" style="width: 32px; height: 32px;">
+                </div>
+                Your Progress Log
+              </h3>
               <div class="chart-container" id="student-dash-chart">
                 <!-- SVG/HTML Bars Injected via JS -->
               </div>
@@ -1075,7 +1085,12 @@ AI Face Authentication Gate</span></h2>
 
           <div class="dash-row mt-4">
             <div class="dash-panel glass-panel">
-              <h3>Achievements & Progress Milestones</h3>
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
+                <div class="card-icon pink" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <img src="https://img.icons8.com/?size=100&id=Nz1fntXl8lGL&format=png&color=000000" alt="Milestones" class="theme-invert-icon" style="width: 32px; height: 32px;">
+                </div>
+                Achievements & Progress Milestones
+              </h3>
               <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Locked and unlocked milestones based on task accomplishments and effort logs.</p>
               <div class="badges-grid" id="student-badges-grid">
                 <!-- Badges injected dynamically via JS -->
@@ -1083,7 +1098,12 @@ AI Face Authentication Gate</span></h2>
             </div>
 
             <div class="dash-panel glass-panel">
-              <h3>Quick Sync Notes & Reminders</h3>
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
+                <div class="card-icon green" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <img src="https://img.icons8.com/?size=100&id=spI43Cg8MTCV&format=png&color=000000" alt="Notes" class="theme-invert-icon" style="width: 32px; height: 32px;">
+                </div>
+                Quick Sync Notes & Reminders
+              </h3>
               <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Jot down items to discuss in your next weekly call with your mentor.</p>
               <div style="display:flex; flex-direction:column; gap:12px;">
                 <textarea id="student-sync-notes" class="form-control" rows="4" placeholder="Mention design ideas, blockers faced, pull requests to review..." style="resize:none; background:rgba(0,0,0,0.2);"></textarea>
@@ -1095,7 +1115,7 @@ AI Face Authentication Gate</span></h2>
           <!-- Row for Student Meetings & AI Summaries -->
           <div class="dash-row mt-4 full">
             <div class="dash-panel glass-panel">
-              <h3 style="display:flex; align-items:center; gap:10px;">
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:10px; margin-bottom:16px;">
                 <span style="display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg, rgba(224,26,139,0.2), rgba(131,39,236,0.2)); border:1px solid rgba(224,26,139,0.35); flex-shrink:0;">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e01a8b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -1107,7 +1127,7 @@ AI Face Authentication Gate</span></h2>
                 </span>
                 Group Call Meeting Recap
               </h3>
-              <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Forgot what happened in a group video call? Click <strong>View Full Recap</strong> â€” AI summary, chat notes, and recording in one place.</p>
+              <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Forgot what happened in a group video call? Click <strong>View Full Recap</strong> &mdash; AI summary, chat notes, and recording in one place.</p>
 
               <div id="student-latest-meeting-recap-card" class="hidden" style="margin-bottom:16px; padding:16px 18px; border-radius:12px; border:1px solid var(--primary-magenta); background:linear-gradient(135deg, rgba(217,4,181,0.14), rgba(99,102,241,0.08)); display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
                 <div>
@@ -1150,7 +1170,12 @@ AI Face Authentication Gate</span></h2>
           <div class="kanban-board">
             <div class="kanban-col" id="col-todo" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Todo')">
               <div class="col-header">
-                <span>Todo</span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div class="card-icon pink" style="width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <img src="https://img.icons8.com/?size=100&id=25717&format=png&color=000000" alt="Task" class="theme-invert-icon" style="width: 18px; height: 18px;">
+                  </div>
+                  <span>Task</span>
+                </div>
                 <span class="col-count" id="count-todo">0</span>
               </div>
               <!-- Cards dynamic -->
@@ -1158,7 +1183,12 @@ AI Face Authentication Gate</span></h2>
             
             <div class="kanban-col" id="col-inprogress" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'In Progress')">
               <div class="col-header">
-                <span>In Progress</span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div class="card-icon blue" style="width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <img src="https://img.icons8.com/?size=100&id=39323&format=png&color=000000" alt="In Progress" class="theme-invert-icon" style="width: 18px; height: 18px;">
+                  </div>
+                  <span>In Progress</span>
+                </div>
                 <span class="col-count" id="count-inprogress">0</span>
               </div>
               <!-- Cards dynamic -->
@@ -1166,7 +1196,12 @@ AI Face Authentication Gate</span></h2>
 
             <div class="kanban-col" id="col-pending" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Pending Approval')">
               <div class="col-header">
-                <span>Review / Verification</span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div class="card-icon purple" style="width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <img src="https://img.icons8.com/?size=100&id=iWXaTX0OHmpB&format=png&color=000000" alt="Review / Verification" class="theme-invert-icon" style="width: 18px; height: 18px;">
+                  </div>
+                  <span>Review / Verification</span>
+                </div>
                 <span class="col-count" id="count-pending">0</span>
               </div>
               <!-- Cards dynamic -->
@@ -1174,7 +1209,12 @@ AI Face Authentication Gate</span></h2>
 
             <div class="kanban-col" id="col-completed" ondragover="allowDrop(event)" ondrop="handleDrop(event, 'Completed')">
               <div class="col-header">
-                <span>Completed</span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div class="card-icon green" style="width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <img src="https://img.icons8.com/?size=100&id=zKNwvghCDWbw&format=png&color=000000" alt="Completed" class="theme-invert-icon" style="width: 18px; height: 18px;">
+                  </div>
+                  <span>Completed</span>
+                </div>
                 <span class="col-count" id="count-completed">0</span>
               </div>
               <!-- Cards dynamic -->
@@ -1193,7 +1233,12 @@ AI Face Authentication Gate</span></h2>
 
           <div class="report-grid">
             <div class="dash-panel glass-panel">
-              <h3>Submit Weekly Report</h3>
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
+                <div class="card-icon blue" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <img src="https://img.icons8.com/?size=100&id=31203&format=png&color=000000" alt="Submit Weekly Report" class="theme-invert-icon" style="width: 32px; height: 32px;">
+                </div>
+                Submit Weekly Report
+              </h3>
               <form id="submit-log-form" onsubmit="handleLogSubmit(event)">
                 <div class="form-group">
                   <label for="log-week-num">Week Number</label>
@@ -1226,14 +1271,18 @@ AI Face Authentication Gate</span></h2>
             </div>
 
             <div class="dash-panel glass-panel">
-              <h3>Historical Submissions</h3>
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
+                <div class="card-icon purple" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <img src="https://img.icons8.com/?size=100&id=11559&format=png&color=000000" alt="Historical Submissions" class="theme-invert-icon" style="width: 32px; height: 32px;">
+                </div>
+                Historical Submissions
+              </h3>
               <div class="logs-history-list" id="student-logs-list">
                 <!-- Injected via JS -->
               </div>
             </div>
           </div>
         </div>
-
         <!-- Tab: Chat with Mentor -->
         <div id="student-tab-chat" class="portal-tab-content hidden">
           <div class="top-nav">
@@ -1249,7 +1298,7 @@ AI Face Authentication Gate</span></h2>
                 <img src="" alt="Mentor" class="user-avatar" id="student-chat-mentor-avatar" style="cursor: pointer;" onclick="openChatImageLightbox(this.src)">
                 <div>
                   <h4 id="student-chat-mentor-name">Vikram Sharma</h4>
-                  <span style="font-size: 11px; color: var(--success); font-weight: 600;">Ã¢â€”Â Online</span>
+                  <span style="font-size: 11px; color: var(--success); font-weight: 600;">&bull; Online</span>
                 </div>
               </div>
 
@@ -1263,7 +1312,6 @@ AI Face Authentication Gate</span></h2>
                   <button type="button" class="btn btn-secondary btn-sm" onclick="declineIncomingCall()" style="padding: 8px 14px; font-size: 12px; border-color: var(--danger); color: var(--danger);">Decline</button>
                 </div>
               </div>
-              
               <div class="chat-history" id="student-chat-history">
                 <!-- Messages dynamic -->
               </div>
@@ -1302,7 +1350,9 @@ AI Face Authentication Gate</span></h2>
           <div class="report-grid">
             <!-- Left: Competencies checklist -->
             <div class="dash-panel glass-panel">
-              <h3>Skills Checklist Progress</h3>
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
+                <div class="card-icon blue" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://img.icons8.com/?size=100&id=fZ5Vka2rfii4&format=png&color=000000" alt="checklist" class="theme-invert-icon" style="width: 32px; height: 32px;"></div> Skills Checklist Progress
+              </h3>
               <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Tick off completed concepts to update your mastery levels.</p>
               
               <div class="flex-between mb-2" style="font-weight:600;">
@@ -1318,7 +1368,9 @@ AI Face Authentication Gate</span></h2>
 
             <!-- Right: Learning guides -->
             <div class="dash-panel glass-panel">
-              <h3>Curated Tech Syllabus Modules</h3>
+              <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
+                <div class="card-icon purple" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://img.icons8.com/?size=100&id=59164&format=png&color=000000" alt="syllabus" class="theme-invert-icon" style="width: 32px; height: 32px;"></div> Curated Tech Syllabus Modules
+              </h3>
               <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Step-by-step reading guides, templates, and reference materials.</p>
               <div style="display:flex; flex-direction:column; gap:16px; max-height:450px; overflow-y:auto;" id="student-learning-resources">
                 <!-- Injected dynamically via JS -->
@@ -1351,10 +1403,10 @@ AI Face Authentication Gate</span></h2>
             <!-- Start Quiz Landing View -->
             <div id="quiz-start-view" class="hidden" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; text-align: center; padding: 20px 40px;">
               <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(219,39,119,0.1); border: 2px solid var(--primary-magenta); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px var(--primary-glow);">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#e01a8b" stroke-width="1.5" stroke-linecap="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
+                <img src="https://img.icons8.com/?size=100&id=gyH3K97oAVko&format=gif&color=000000" alt="Accuracy" class="theme-invert-icon" style="width: 48px; height: 48px;">
               </div>
               <div>
-                <h3 style="color: #fff; font-size: 22px; margin-bottom: 8px; font-family: 'Outfit', sans-serif;">Daily Technical Mastery Challenge</h3>
+                <h3 style="color: #fff; font-size: 22px; margin-bottom: 8px; font-family: 'Outfit', sans-serif; text-align: center; width: 100%; display: block;">Daily Technical Mastery Challenge</h3>
                 <p style="color: var(--text-muted); font-size: 13px; max-width: 450px; margin: 0 auto;">Test your domain skills and level up your metrics profile with daily AI-generated conceptual assessments.</p>
               </div>
               
@@ -1440,10 +1492,10 @@ AI Face Authentication Gate</span></h2>
 
           <!-- Unpaid Warning -->
           <div id="student-unpaid-warning" class="dash-panel glass-panel" style="padding: 32px; text-align: center; display: none; flex-direction: column; align-items: center; justify-content: center;">
-            <div style="font-size: 48px; margin-bottom: 16px;">ðŸ’¡</div>
+            <div style="margin-bottom: 24px; width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, rgba(224,26,139,0.15), rgba(131,39,236,0.15)); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(131,39,236,0.2);"><img width="64" height="64" src="https://img.icons8.com/?size=100&id=eCAaVwJjRkEx&format=gif" alt="idea"/></div>
             <h3 style="color: #fff; font-size: 20px; margin-bottom: 8px; font-family: 'Outfit';">Standard Tier Internship</h3>
-            <p style="color: var(--text-muted); font-size: 13px; max-width: 500px; margin: 0 auto 24px auto; line-height: 1.5;">You are currently enrolled under the Standard (Unpaid) Internship. Upgrade to Premium Registry to activate a monthly stipend of <strong>â‚¹15,000</strong>, verified attendance tracker, and senior 1-on-1 mentorship mappings.</p>
-            <button type="button" class="btn btn-primary" onclick="upgradeToPremiumFromDashboard()" style="background: var(--primary-magenta); border-color: var(--primary-magenta); font-weight: 600; padding: 12px 24px; font-size: 13px; cursor: pointer;">Upgrade to Premium Registry (â‚¹499)</button>
+            <p style="color: var(--text-muted); font-size: 13px; max-width: 500px; margin: 0 auto 24px auto; line-height: 1.5;">You are currently enrolled under the Standard (Unpaid) Internship. Upgrade to Premium Registry to activate a monthly stipend of <strong>₹15,000</strong>, verified attendance tracker, and senior 1-on-1 mentorship mappings.</p>
+            <button type="button" class="btn btn-primary" onclick="upgradeToPremiumFromDashboard()" style="background: var(--primary-magenta); border-color: var(--primary-magenta); font-weight: 600; padding: 12px 24px; font-size: 13px; cursor: pointer;">Upgrade to Premium Registry (₹499)</button>
           </div>
 
           <!-- Paid Content View -->
@@ -1542,7 +1594,7 @@ AI Face Authentication Gate</span></h2>
           <div class="dash-row full" style="margin-bottom:24px;">
             <div class="dash-panel glass-panel" style="width:100%;">
               <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
-                <span style="color:#00b66c;">📅</span> Upcoming Sessions from Your Mentor
+                <div class="card-icon blue" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://img.icons8.com/?size=100&id=58346&format=png&color=000000" alt="scheduled" class="theme-invert-icon" style="width: 32px; height: 32px;"></div> Upcoming Sessions from Your Mentor
                 <span id="student-gc-upcoming-badge" style="background:#00b66c; color:#fff; font-size:10px; padding:2px 7px; border-radius:8px; font-weight:700;">0</span>
               </h3>
               <div id="student-gc-upcoming-list" style="display:flex; flex-direction:column; gap:12px;">
@@ -1551,13 +1603,13 @@ AI Face Authentication Gate</span></h2>
                 </div>
               </div>
             </div>
-          </div>
+</div>
 
           <!-- Past Session History -->
           <div class="dash-row full">
             <div class="dash-panel glass-panel" style="width:100%;">
               <h3 style="display:flex; align-items:center; justify-content: flex-start; text-align: left; width: 100%; gap:8px; margin-bottom:16px;">
-                <span>🕐</span> Past Sessions
+                <div class="card-icon purple" style="width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://img.icons8.com/?size=100&id=6904&format=png&color=000000" alt="history" class="theme-invert-icon" style="width: 32px; height: 32px;"></div> Past Sessions
               </h3>
               <div style="overflow-x:auto;">
                 <table class="custom-table" id="student-gc-history-table">
@@ -2832,9 +2884,9 @@ AI Face Authentication Gate</span></h2>
   </div>
 
   <!-- Edit Profile Modal -->
-  <div class="modal-overlay" id="edit-profile-modal" onclick="if(event.target === this) { document.getElementById('edit-profile-modal').classList.remove('active'); try{stopWebcam('edit-webcam')}catch(e){} }">
+  <div class="modal-overlay" id="edit-profile-modal" onclick="if(event.target === this) closeModal('edit-profile-modal')">
     <div class="modal-content glass-panel" style="max-width: 400px; padding: 25px;">
-      <div class="modal-close" onclick="document.getElementById('edit-profile-modal').classList.remove('active'); try{stopWebcam('edit-webcam')}catch(e){}">&times;</div>
+      <div class="modal-close" onclick="closeModal('edit-profile-modal')">&times;</div>
       <h3 class="mb-4">Edit Profile Settings</h3>
       <form id="edit-profile-form" onsubmit="handleEditProfileSubmit(event)">
         <div class="form-group" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 24px;">
@@ -3215,7 +3267,7 @@ AI Face Authentication Gate</span></h2>
   <div id="ix-chat-panel" style="position:fixed;top:calc(100vh - 640px);right:24px;z-index:99998;width:360px;height:520px;border-radius:20px;background:rgba(10,8,20,0.97);border:1px solid rgba(131,39,236,0.4);box-shadow:0 8px 40px rgba(131,39,236,0.3);backdrop-filter:blur(20px);display:none;flex-direction:column;overflow:hidden;">
     <div style="padding:16px 18px;background:linear-gradient(135deg,rgba(224,26,139,0.15),rgba(131,39,236,0.15));border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#e01a8b,#8327ec);display:flex;align-items:center;justify-content:center;">
+        <div onclick="ixSecretClick()" style="cursor:pointer;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#e01a8b,#8327ec);display:flex;align-items:center;justify-content:center;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </div>
         <div>
@@ -3224,7 +3276,7 @@ AI Face Authentication Gate</span></h2>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <button onclick="ixShowKeyInput()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:5px 8px;cursor:pointer;color:#aaa;font-size:11px;">API Key</button>
+        <button id="ix-api-key-btn" onclick="ixShowKeyInput()" style="display:none;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:5px 8px;cursor:pointer;color:#aaa;font-size:11px;">API Key</button>
         <button onclick="ixToggleChat()" style="background:none;border:none;color:#aaa;font-size:20px;cursor:pointer;line-height:1;">&times;</button>
       </div>
     </div>
@@ -3238,7 +3290,7 @@ AI Face Authentication Gate</span></h2>
     <div id="ix-chat-msgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;gap:8px;align-items:flex-start;">
         <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#e01a8b,#8327ec);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">&#129302;</div>
-        <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px 12px 12px 2px;padding:10px 14px;font-size:13px;color:#e2e8f0;line-height:1.5;max-width:85%;">Namaste! Main InternX AI hoon. API Key set karo aur kuch bhi pucho!</div>
+        <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px 12px 12px 2px;padding:10px 14px;font-size:13px;color:#e2e8f0;line-height:1.5;max-width:85%;">Namaste! Main InternX AI hoon. Main aapki kya madad kar sakta hoon?</div>
       </div>
     </div>
     <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.07);display:flex;gap:8px;flex-shrink:0;">
@@ -3249,10 +3301,10 @@ AI Face Authentication Gate</span></h2>
     </div>
   </div>
   <script>
-    function ixToggleChat(){var p=document.getElementById('ix-chat-panel');p.style.display=p.style.display==='flex'?'none':'flex';}
+    let ixClickCount=0;function ixSecretClick(){ixClickCount++;if(ixClickCount>=5){var b=document.getElementById('ix-api-key-btn');b.style.display=b.style.display==='none'?'block':'none';ixClickCount=0;}}function ixToggleChat(){var p=document.getElementById('ix-chat-panel');p.style.display=p.style.display==='flex'?'none':'flex';}
     function ixShowKeyInput(){var b=document.getElementById('ix-key-box');b.style.display=b.style.display==='none'?'block':'none';if(b.style.display==='block'){document.getElementById('ix-key-input').value=localStorage.getItem('ix_gemini_key')||'';}}
     function ixSaveKey(){var k=document.getElementById('ix-key-input').value.trim();if(k){localStorage.setItem('ix_gemini_key',k);document.getElementById('ix-key-box').style.display='none';ixAddMsg('bot','API key save ho gaya! Ab pucho kuch bhi. OK');}}
-    async function ixSendMsg(){var inp=document.getElementById('ix-chat-input');var msg=inp.value.trim();if(!msg)return;inp.value='';ixAddMsg('user',msg);var key=localStorage.getItem('ix_gemini_key');if(!key){ixAddMsg('bot','Pehle API Key set karo - upar API Key button click karo.');return;}var tid='t'+Date.now();ixAddMsg('bot','...',tid);try{var m='gemini-1.5-flash-latest';var url='https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+key;var opts={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'You are InternX AI Assistant for an internship portal. Answer helpfully and concisely. User: '+msg}]}]})};var r=await fetch(url,opts);var d=await r.json();if(d?.error){m='gemini-pro';url='https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+key;r=await fetch(url,opts);d=await r.json();}var rep=d?.candidates?.[0]?.content?.parts?.[0]?.text;if(d?.error){rep='Error: '+d.error.message;}rep=rep||'Jawab nahi mila.';var te=document.getElementById(tid);if(te)te.remove();ixAddMsg('bot',rep);}catch(e){var te=document.getElementById(tid);if(te)te.remove();ixAddMsg('bot','Error: '+e.message);}}
+    async function ixSendMsg(){var inp=document.getElementById('ix-chat-input');var msg=inp.value.trim();if(!msg)return;inp.value='';ixAddMsg('user',msg);var key=localStorage.getItem('ix_gemini_key')||'';var tid='t'+Date.now();ixAddMsg('bot','...',tid);try{var m='gemini-2.5-flash';var url='https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+key;var opts={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'You are InternX AI Assistant for an internship portal. Answer helpfully and concisely. User: '+msg}]}]})};var r=await fetch(url,opts);var d=await r.json();if(d?.error){m='gemini-flash-latest';url='https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+key;r=await fetch(url,opts);d=await r.json();}var rep=d?.candidates?.[0]?.content?.parts?.[0]?.text;if(d?.error){rep='Error: '+d.error.message;}rep=rep||'Jawab nahi mila.';var te=document.getElementById(tid);if(te)te.remove();ixAddMsg('bot',rep);}catch(e){var te=document.getElementById(tid);if(te)te.remove();ixAddMsg('bot','Error: '+e.message);}}
     function ixAddMsg(role,text,id){var c=document.getElementById('ix-chat-msgs');var w=document.createElement('div');w.style.cssText='display:flex;gap:8px;align-items:flex-start;'+(role==='user'?'flex-direction:row-reverse;':'');if(id)w.id=id;var av=document.createElement('div');av.style.cssText='width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;'+(role==='user'?'background:rgba(255,255,255,0.1);':'background:linear-gradient(135deg,#e01a8b,#8327ec);');av.textContent=role==='user'?'U':'AI';var b=document.createElement('div');b.style.cssText=role==='user'?'background:linear-gradient(135deg,rgba(224,26,139,0.2),rgba(131,39,236,0.2));border:1px solid rgba(224,26,139,0.3);border-radius:12px 12px 2px 12px;padding:10px 14px;font-size:13px;color:#e2e8f0;line-height:1.5;max-width:85%;white-space:pre-wrap;':'background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px 12px 12px 2px;padding:10px 14px;font-size:13px;color:#e2e8f0;line-height:1.5;max-width:85%;white-space:pre-wrap;';b.textContent=text;w.appendChild(av);w.appendChild(b);c.appendChild(w);c.scrollTop=c.scrollHeight;}
   </script>
   <button id="debug-panel-trigger" onclick="toggleDebugPanel()" style="position:fixed;bottom:15px;left:15px;z-index:9998;background:var(--primary-magenta);color:#fff;border:none;padding:8px 14px;border-radius:20px;font-family:sans-serif;font-size:11px;font-weight:bold;cursor:pointer;box-shadow:0 0 15px rgba(217,4,181,0.5);">Inspect DB</button>

@@ -4603,3 +4603,10 @@ body.portal-active #ai-copilot-trigger {
   opacity: 1 !important;
   pointer-events: all !important;
 }
+.card-icon.green {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+[data-theme="light"] .card-icon.green {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(16, 185, 129, 0.06) 100%);
+}

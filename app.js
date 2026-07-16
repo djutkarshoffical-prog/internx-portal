@@ -1,4 +1,4 @@
-﻿// app.js - Core Javascript Controller for InternX by UTX
+// app.js - Core Javascript Controller for InternX by UTX
 
 // Safe localStorage wrapper to prevent exceptions under file:// or restricted browser profiles
 const storage = {
@@ -79,7 +79,7 @@ function updateThemeToggleIcons(theme) {
 // Call loadTheme immediately so the theme applies before full page load
 loadTheme();
 
-// ====== LOGO 7-CLICK EASTER EGG � Toggle Supabase Badge ======
+// ====== LOGO 7-CLICK EASTER EGG ... Toggle Supabase Badge ======
 let _logoClickCount = 0;
 let _logoClickTimer = null;
 
@@ -97,7 +97,7 @@ function handleLogoSecretClick() {
     // Portal sidebar badge wrapper
     const sidebarWrapper = document.getElementById('supabase-sidebar-wrapper');
 
-    // Toggle both � whichever is visible on current page
+    // Toggle both ... whichever is visible on current page
     let anyVisible = false;
     if (landingWrapper) {
       const vis = landingWrapper.style.display !== 'none';
@@ -200,7 +200,7 @@ function cleanDatabaseCollections() {
     }
   });
 
-  // Deduplicate users by email � keep the best record per student
+  // Deduplicate users by email ... keep the best record per student
   if (db && Array.isArray(db.users)) {
     db.users = dedupeUsersByEmail(db.users);
   }
@@ -634,7 +634,7 @@ function setSupabaseSyncBadge(state, detail) {
   const badgeMenuEl = document.getElementById('supabase-status-badge-sidebar');
   const labels = {
     active: 'DB: Supabase (Active)',
-    partial: 'DB: Supabase (Sync Partial � click to retry)',
+    partial: 'DB: Supabase (Sync Partial ... click to retry)',
     offline: 'DB: Supabase (Offline)',
     local: 'DB: Local Storage (Fallback)'
   };
@@ -647,7 +647,7 @@ function setSupabaseSyncBadge(state, detail) {
       badge.title = 'Cloud database connected';
     } else if (state === 'partial') {
       badge.className = 'supabase-status-badge fallback';
-      badge.title = 'Sync incomplete � click to retry';
+      badge.title = 'Sync incomplete ... click to retry';
     } else {
       badge.className = 'supabase-status-badge fallback';
       badge.title = state === 'local' ? 'Using local storage only' : 'Click to configure Supabase';
@@ -717,7 +717,7 @@ async function retrySupabaseCloudSync(silent) {
     if (!silent) alert('Supabase is not connected. Check your internet or Supabase settings.');
     return false;
   }
-  if (!silent) setSupabaseSyncBadge('partial', 'DB: Supabase (Retrying sync�)');
+  if (!silent) setSupabaseSyncBadge('partial', 'DB: Supabase (Retrying sync...)');
 
   const ok = await pullCollectionsFromApexSync(APEX_SYNC_COLLECTIONS);
   if (ok) {
@@ -1370,11 +1370,11 @@ function showRegStep(step) {
 }
 window.showRegStep = showRegStep;
 
-// Counter for "Get Started" clicks � unlocks Mentor/Admin form after 5
+// Counter for "Get Started" clicks ... unlocks Mentor/Admin form after 5
 let _registerOpenCount = 0;
 
 function _updateRoleTabLock() {
-  // No visual change on tabs � just control form usability
+  // No visual change on tabs ... just control form usability
   _applyRegisterFormLock();
 }
 
@@ -1558,7 +1558,7 @@ function populateRegisterMentors() {
   const mentorSelect = document.getElementById('reg-mentor-select');
   if (!mentorSelect) return;
 
-  // Loose domain match � normalize both sides for comparison
+  // Loose domain match ... normalize both sides for comparison
   const normalizeDomain = (d) => (d || '').toLowerCase().replace(/[^a-z]/g, '');
   const normalizedSelected = normalizeDomain(domain);
 
@@ -1624,7 +1624,7 @@ function showPortalPage(role) {
   }
 
   // Configure Sidebar User Detail
-  document.getElementById('sidebar-name').innerHTML = `${currentUser.name} <span style="font-size: 10px; opacity: 0.5;">??</span>`;
+  document.getElementById('sidebar-name').innerHTML = `${currentUser.name} <span style="font-size: 10px; opacity: 0.5;">✔</span>`;
   document.getElementById('sidebar-role').innerText = role === 'admin' ? 'Coordinator' : role;
   document.getElementById('sidebar-avatar').src = currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=120';
 
@@ -1660,7 +1660,7 @@ function switchTab(portal, tabName) {
   syncDatabase();
 
   if (portal === 'student' && !isFaceVerifiedThisSession() && tabName === 'dash') {
-    // Only show gate on dashboard tab � allow navigation to other tabs
+    // Only show gate on dashboard tab ... allow navigation to other tabs
     checkStudentGate();
   } else if (portal === 'student' && !isFaceVerifiedThisSession()) {
     // Allow switching to other tabs even without face verification
@@ -1871,7 +1871,7 @@ async function handleLoginSubmit(event) {
     currentUser = syncedUser || authenticatedUser;
     refreshCurrentUserFromDb();
     if (currentUser.role === 'student' && !resolveFaceDescriptor(currentUser)) {
-      console.warn('Student logged in without face enrollment � attendance scan may fail until profile is updated.');
+      console.warn('Student logged in without face enrollment ... attendance scan may fail until profile is updated.');
     }
     sessionStorage.removeItem('apex_intern_session_face_verified');
     storage.setItem('apex_intern_currentUser', JSON.stringify(currentUser));
@@ -2071,7 +2071,7 @@ async function handleRegisterSubmit(event) {
   saveDatabase();
   const regSynced = await syncRecordToSupabase('users', newUser);
   if (!regSynced && supabaseActive) {
-    console.warn('Registration saved locally but Supabase sync may have failed � check browser console.');
+    console.warn('Registration saved locally but Supabase sync may have failed ... check browser console.');
   }
   if (newUser.mentorEmail && db.pairingRequests) {
     const lastReq = db.pairingRequests[db.pairingRequests.length - 1];
@@ -2097,8 +2097,8 @@ function handleLogout() {
 
   // Shut off cameras
   stopWebcam('reg-webcam');
-  try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
-  try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
+  stopWebcam('edit-webcam');
+  stopWebcam('ver-webcam');
   stopWebcam('daily-webcam');
   
   if (dailyScanningInterval) {
@@ -2333,7 +2333,7 @@ function loadStudentDashboard() {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>
-              <div style="font-weight:600; color:var(--text-main);">${task.title}</div>
+              <div style="font-weight:600; color:#fff;">${task.title}</div>
               <div style="font-size:10px; color:var(--text-dark); margin-top:2px;">Mentor: ${mentorName}${attachmentLink}${referenceLinkHTML}</div>
             </td>
             <td>${task.dueDate}</td>
@@ -2700,7 +2700,7 @@ function loadStudentLogs() {
   if (!currentUser) return;
   if (!db.weeklyLogs) db.weeklyLogs = [];
 
-  // Set defaults � safely
+  // Set defaults ... safely
   const weekNumEl = document.getElementById('log-week-num');
   const logStartEl = document.getElementById('log-start');
   const logEndEl = document.getElementById('log-end');
@@ -2739,13 +2739,13 @@ function loadStudentLogs() {
       card.className = 'log-card glass-panel mb-4';
       card.innerHTML = `
         <div class="log-card-header">
-          <h4 style="color:var(--text-main);">Week ${log.weekNumber} Report</h4>
+          <h4 style="color:#fff;">Week ${log.weekNumber} Report</h4>
           <span class="status-badge ${statusClass}">${log.status || 'Pending'}</span>
         </div>
         <div style="font-size:12px;color:var(--text-dark);margin-bottom:8px;">
-          ?? ${log.startDate || '�'} ? ${log.endDate || '�'} &nbsp;|&nbsp; ?? ${log.hoursLogged || 0} hrs
+          ?? ${log.startDate || '...'} ? ${log.endDate || '...'} &nbsp;|&nbsp; ?? ${log.hoursLogged || 0} hrs
         </div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Submitted: ${log.submittedAt || '�'}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Submitted: ${log.submittedAt || '...'}</div>
         ${log.summary ? `<p style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-top:6px;">${log.summary}</p>` : ''}
         ${log.blockers ? `<div style="font-size:12px;color:var(--danger);margin-top:6px;">?? Blockers: ${log.blockers}</div>` : ''}
         ${log.feedback ? `<div style="font-size:12px;color:var(--primary-magenta);border-top:1px dashed var(--border-color);padding-top:8px;margin-top:8px;">?? Mentor Feedback: ${log.feedback}</div>` : ''}
@@ -2812,7 +2812,7 @@ function handleLogSubmit(event) {
         id: `msg-log-submit-${Date.now()}`,
         from: currentUser.email,
         to: mentorEmail,
-        text: `?? Weekly Report Submitted � Week ${weekNumber}\n\n?? Period: ${startDate} ? ${endDate}\n?? Hours: ${hoursLogged}h\n\n?? Summary: ${summary}${blockers ? '\n\n?? Blockers: ' + blockers : ''}`,
+        text: `?? Weekly Report Submitted ... Week ${weekNumber}\n\n?? Period: ${startDate} ? ${endDate}\n?? Hours: ${hoursLogged}h\n\n?? Summary: ${summary}${blockers ? '\n\n?? Blockers: ' + blockers : ''}`,
         timestamp: new Date().toISOString(),
         type: 'weekly_log_alert',
         logId: newLog.id
@@ -2945,7 +2945,7 @@ function renderMentorDashboardContent() {
         const timeStr = todayLog.timestamp ? (todayLog.timestamp.split(',')[1] || '').trim() : '';
         attendanceStatusHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
-            <span style="background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--success); font-size: 11px; font-weight: bold; display: inline-block;">&#10003; Checked-In</span>
+            <span style="background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--success); font-size: 11px; font-weight: bold; display: inline-block;">?? Checked-In</span>
             ${timeStr ? `<span style="font-size: 9px; color: var(--text-muted);">${timeStr}</span>` : ''}
           </div>
         `;
@@ -3113,7 +3113,7 @@ function renderPairingRequests() {
     myRequests.forEach(req => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td style="font-weight:600; color:var(--text-main);">${req.studentName}</td>
+        <td style="font-weight:600; color:#fff;">${req.studentName}</td>
         <td>${req.studentEmail}</td>
         <td><span class="status-badge" style="background: rgba(255, 255, 255, 0.05); color: #fff;">${req.domain}</span></td>
         <td>
@@ -3337,7 +3337,7 @@ function loadMentorTasks() {
       row.innerHTML = `
         <td style="font-weight:600;">${studentName}</td>
         <td>
-          <div style="font-weight:600; color:var(--text-main);">${task.title}</div>
+          <div style="font-weight:600; color:#fff;">${task.title}</div>
           <div style="font-size:11px; color:var(--text-dark); margin-top:2px;">${task.description ? task.description.substring(0, 45) + (task.description.length > 45 ? '...' : '') : 'No written description'}</div>
           ${attachmentHTML}
           ${referenceLinkHTML}
@@ -3566,7 +3566,7 @@ async function loadMentorReviews() {
       card.className = 'log-card glass-panel mb-4';
       card.innerHTML = `
         <div class="log-card-header">
-          <h4 style="color:var(--text-main);">${task.title}</h4>
+          <h4 style="color:#fff;">${task.title}</h4>
           <span style="font-size:12px; color:var(--primary-magenta); font-weight:600;">By: ${sName}</span>
         </div>
         <div style="font-size:12px; color:var(--text-dark); margin-bottom:10px;">Submitted on: ${task.submission.submittedAt}</div>
@@ -3593,7 +3593,7 @@ async function loadMentorReviews() {
       card.className = 'log-card glass-panel mb-4';
       card.innerHTML = `
         <div class="log-card-header">
-          <h4 style="color:var(--text-main);">Week ${log.weekNumber} Activity Report</h4>
+          <h4 style="color:#fff;">Week ${log.weekNumber} Activity Report</h4>
           <span style="font-size:12px; color:var(--primary-magenta); font-weight:600;">By: ${sName}</span>
         </div>
         <div style="font-size:12px; color:var(--text-dark); margin-bottom:10px;">Dates: ${log.startDate} to ${log.endDate} | Logged: ${log.hoursLogged} Hours</div>
@@ -3689,7 +3689,7 @@ function getChatMessagePreview(chat) {
   if (chat.attachment) {
     const isImg = chat.attachment.type && chat.attachment.type.startsWith('image/');
     const textPart = chat.message ? `: ${chat.message}` : '';
-    return isImg ? `📷 Photo${textPart}` : `📎 File: ${chat.attachment.name}${textPart}`;
+    return isImg ? `?? Photo${textPart}` : `?? File: ${chat.attachment.name}${textPart}`;
   }
   return chat.message;
 }
@@ -3719,7 +3719,7 @@ function prepareTaskForCloudSync(task) {
     if (att.isChunked) {
       att.data = '';
     } else if (att.data && typeof att.data === 'string' && att.data.length > 80000) {
-      console.warn('Task attachment too large for cloud sync � storing metadata only:', cloudTask.id);
+      console.warn('Task attachment too large for cloud sync ... storing metadata only:', cloudTask.id);
       att.data = '';
       att.cloudStripped = true;
     }
@@ -3922,7 +3922,7 @@ function loadMentorChat(forceReload = false) {
       <img src="${student.avatar}" class="user-avatar" style="width:36px; height:36px; cursor: pointer;" onclick="event.stopPropagation(); openChatImageLightbox(this.src)">
       <div style="flex-grow:1; overflow:hidden;">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
-          <h4 style="font-size:13px; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0;">${student.name}</h4>
+          <h4 style="font-size:13px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0;">${student.name}</h4>
           <span class="inbox-preview-time" style="font-size:10px; color:var(--text-muted); flex-shrink:0;">${formatChatPreviewTime(lastMsg?.timestamp)}</span>
         </div>
         <p style="font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:2px 0 0 0;">${preview}</p>
@@ -4104,10 +4104,10 @@ function loadAdminUsers() {
     row.innerHTML = `
       <td class="flex align-center gap-2">
         <img src="${user.avatar}" class="user-avatar" style="width:28px; height:28px;">
-        <span style="font-weight:600; color:var(--text-main);">${user.name}</span>
+        <span style="font-weight:600; color:#fff;">${user.name}</span>
       </td>
       <td>${user.email}</td>
-      <td><span class="status-badge" style="background: rgba(255,255,255,0.05); color:var(--text-main);">${user.role}</span></td>
+      <td><span class="status-badge" style="background: rgba(255,255,255,0.05); color:#fff;">${user.role}</span></td>
       <td style="font-size:12px; color:var(--text-muted);">${attributeText}</td>
       <td>
         ${user.id !== currentUser.id ? `<button class="btn btn-secondary btn-sm" style="border-color:var(--danger); color:var(--danger); padding:4px 8px; font-size:11px;" onclick="deleteUserAccount('${user.id}')">Delete</button>` : '<span style="font-size:11px; color:var(--text-dark);">Current User</span>'}
@@ -4277,9 +4277,9 @@ function loadAdminRelations() {
         ? `<span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #fff; background: rgba(224, 26, 139, 0.15); border: 1px solid var(--primary-magenta); padding: 2px 8px; border-radius: 20px;">PAID</span>`
         : `<span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #fff; background: rgba(42, 107, 242, 0.15); border: 1px solid var(--accent-blue); padding: 2px 8px; border-radius: 20px;">UNPAID</span>`;
       
-      let stipendInfo = '�';
+      let stipendInfo = '...';
       if (isPaid) {
-        const symb = student.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
+        const symb = student.stipendCurrency === 'USD' ? '$' : '?';
         const freqLabel = student.stipendFrequency === 'streaming' ? '/ hr active' : (student.stipendFrequency === 'task' ? '/ completed task' : '/ month');
         stipendInfo = `<strong style="color:var(--success);">${symb}${student.stipendAmount || 15000}</strong> ${freqLabel}`;
       }
@@ -4372,7 +4372,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
         const meetNode = document.createElement('div');
         meetNode.style.cssText = 'margin:8px auto;max-width:420px;background:linear-gradient(135deg,rgba(0,182,108,0.12),rgba(66,133,244,0.12));border:1px solid rgba(0,182,108,0.35);border-radius:12px;padding:12px 16px;text-align:center;';
         const lnk = chat.meetLink ? ('<a href="' + chat.meetLink + '" target="_blank" style="color:#4285f4;font-weight:700;word-break:break-all;">' + chat.meetLink + '</a>') : '';
-        meetNode.innerHTML = '<div style="font-size:12px;color:var(--text-main);"><span style="font-size:18px;">📹</span> ' + escapeHTML(chat.message || '') + (lnk ? ('<br><span style="font-size:11px;color:var(--text-muted);">Meet Link:</span> ' + lnk) : '') + '</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px;">' + (new Date(chat.timestamp)).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + '</div>';
+        meetNode.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,0.9);"><span style="font-size:18px;">📹</span> ' + escapeHTML(chat.message || '') + (lnk ? ('<br><span style="font-size:11px;color:rgba(255,255,255,0.55);">Meet Link:</span> ' + lnk) : '') + '</div><div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:4px;">' + (new Date(chat.timestamp)).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + '</div>';
         container.appendChild(meetNode);
         return;
       }
@@ -4492,7 +4492,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
       }
 
       // Show trash icon for messages (allows WhatsApp options)
-      const deleteBtnHTML = `<span class="delete-msg-btn" onclick="showDeleteMenu(event, '${chat.id}', ${isSent})" title="Delete Message" style="margin-left: 8px; cursor: pointer; color: var(--text-dark); opacity: 0.5; transition: opacity var(--transition-fast);">🗑️</span>`;
+      const deleteBtnHTML = `<span class="delete-msg-btn" onclick="showDeleteMenu(event, '${chat.id}', ${isSent})" title="Delete Message" style="margin-left: 8px; cursor: pointer; color: var(--text-dark); opacity: 0.5; transition: opacity var(--transition-fast);">???</span>`;
 
       msgNode.innerHTML = `
         <div class="msg-bubble">${bubbleContent}</div>
@@ -5041,12 +5041,16 @@ function openModal(modalId) {
 }
 
 function closeModal(modalId) {
-  document.getElementById(modalId).classList.remove('active');
+  const modalEl = document.getElementById(modalId);
+  if (!modalEl) return;
+  modalEl.classList.remove('active');
+  modalEl.classList.add('hidden');
+  modalEl.style.display = 'none';
   if (modalId === 'edit-profile-modal') {
-    try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
+    stopWebcam('edit-webcam');
     editWebcamActive = false;
   } else if (modalId === 'face-verification-modal') {
-    try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
+    stopWebcam('ver-webcam');
     verWebcamActive = false;
     if (scanningInterval) {
       clearTimeout(scanningInterval);
@@ -5290,13 +5294,14 @@ function openEditProfileModal() {
       // Fill Mentor Details
       const mentorNameEl = document.getElementById('edit-profile-mentor-name');
       const mentorImgEl = document.getElementById('edit-profile-mentor-img');
-      if (currentUser.supervisor) {
-        const mentorUser = db.users.find(u => u && u.email === currentUser.supervisor);
+      const assignedMentorEmail = currentUser.mentorEmail || currentUser.supervisor;
+        if (assignedMentorEmail) {
+        const mentorUser = db.users.find(u => u && u.email === assignedMentorEmail);
         if (mentorUser) {
           if (mentorNameEl) mentorNameEl.innerText = mentorUser.name || mentorUser.email;
           if (mentorImgEl && mentorUser.avatar) mentorImgEl.src = mentorUser.avatar;
         } else {
-          if (mentorNameEl) mentorNameEl.innerText = currentUser.supervisor;
+          if (mentorNameEl) mentorNameEl.innerText = assignedMentorEmail;
         }
       } else {
         if (mentorNameEl) mentorNameEl.innerText = "Not Assigned";
@@ -5367,7 +5372,7 @@ function handleEditProfileSubmit(event) {
     syncRecordToFirestore('users', currentUser);
     
     // Refresh sidebar details
-    document.getElementById('sidebar-name').innerHTML = `${currentUser.name} <span style="font-size: 10px; opacity: 0.5;">??</span>`;
+    document.getElementById('sidebar-name').innerHTML = `${currentUser.name} <span style="font-size: 10px; opacity: 0.5;">✔</span>`;
     document.getElementById('sidebar-avatar').src = currentUser.avatar;
 
     // Refresh active tab views
@@ -5510,13 +5515,13 @@ function refreshDebugPanel() {
   const content = document.getElementById('debug-panel-content');
   if (!content) return;
   
-  let html = `<div><strong>Current Session User:</strong><br>${currentUser ? `� Name: ${currentUser.name}<br>� Email: ${currentUser.email}<br>� Role: ${currentUser.role}` : 'Logged Out'}</div>`;
+  let html = `<div><strong>Current Session User:</strong><br>${currentUser ? `... Name: ${currentUser.name}<br>... Email: ${currentUser.email}<br>... Role: ${currentUser.role}` : 'Logged Out'}</div>`;
   
   html += `<div style="margin-top: 10px; color: var(--accent-blue);"><strong>Users in LocalStorage DB (${db.users?.length || 0}):</strong></div>`;
   html += `<div style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); line-height: 1.4; margin-top: 4px;">`;
   if (db.users) {
     db.users.forEach(u => {
-      html += `<span style="color:var(--text-main); font-weight:600;">${u.name}</span> (${u.role})<br>+ Email: ${u.email}<br>`;
+      html += `<span style="color:#fff; font-weight:600;">${u.name}</span> (${u.role})<br>+ Email: ${u.email}<br>`;
       if (u.role === 'student') {
         html += `  + Mentor: ${u.mentorEmail || 'None'} | Status: ${u.mentorStatus || 'None'}<br>`;
       }
@@ -5939,7 +5944,7 @@ function handleEditFileUpload(event) {
       statusEl.innerText = "Face photo uploaded and updated successfully!";
       statusEl.style.color = "var(--success)";
 
-      try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
+      stopWebcam('edit-webcam');
       document.getElementById('edit-webcam-toggle-btn').innerText = "?? Retake Face Profile";
       document.getElementById('edit-webcam-toggle-btn').style.borderColor = "var(--primary-magenta)";
       document.getElementById('edit-webcam-toggle-btn').style.color = "var(--primary-magenta)";
@@ -6101,7 +6106,7 @@ function handleVerificationFileUpload(event) {
       matchIndicator.innerText = "Match: 0%";
       progressBar.style.width = '0%';
       setTimeout(() => {
-        try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
+        stopWebcam('ver-webcam');
         closeModal('face-verification-modal');
         alert("No enrolled face template found. Please go to Edit Profile settings to register your face.");
       }, 1500);
@@ -6148,7 +6153,7 @@ function handleVerificationFileUpload(event) {
 
       setTimeout(() => {
         try {
-          try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
+          stopWebcam('ver-webcam');
         } catch (e) {}
         closeModal('face-verification-modal');
         if (verificationCallback) {
@@ -6180,7 +6185,7 @@ function handleVerificationFileUpload(event) {
       syncRecordToFirestore('attendance', newRecord);
 
       setTimeout(() => {
-        try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
+        stopWebcam('ver-webcam');
         closeModal('face-verification-modal');
         alert(`Face verification failed (${similarityScore}%).\n\nTry this:\n1. Run run_local_server.bat ? open http://localhost:8080/\n2. Edit Profile ? Retake face with CAMERA (not file upload)\n3. Scan in good lighting, face centered`);
       }, 2000);
@@ -6204,7 +6209,7 @@ function toggleEditWebcam() {
     toggleBtn.style.color = "var(--danger)";
     editWebcamActive = true;
   } else {
-    try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
+    stopWebcam('edit-webcam');
     toggleBtn.innerText = "?? Turn On Camera";
     toggleBtn.style.borderColor = "var(--primary-magenta)";
     toggleBtn.style.color = "var(--primary-magenta)";
@@ -6263,7 +6268,7 @@ async function captureEditFace() {
     statusEl.innerText = "Face profile updated successfully!";
     statusEl.style.color = "var(--success)";
 
-    try { stopWebcam('edit-webcam'); } catch(e) { console.error(e); }
+    stopWebcam('edit-webcam');
     document.getElementById('edit-webcam-toggle-btn').innerText = "?? Retake Face Profile";
     document.getElementById('edit-webcam-toggle-btn').style.borderColor = "var(--primary-magenta)";
     document.getElementById('edit-webcam-toggle-btn').style.color = "var(--primary-magenta)";
@@ -6621,8 +6626,8 @@ async function compareFaces(img1Input, img2Input) {
 
 function warnFileProtocolIfNeeded() {
   if (location.protocol !== 'file:') return;
-  console.warn('InternX: file:// mode detected � use run_local_server.bat and open http://localhost:8080/');
-  setSupabaseSyncBadge('partial', 'DB: file:// mode � use localhost');
+  console.warn('InternX: file:// mode detected ... use run_local_server.bat and open http://localhost:8080/');
+  setSupabaseSyncBadge('partial', 'DB: file:// mode ... use localhost');
   setTimeout(() => {
     if (!document.getElementById('file-protocol-warning')) {
       const banner = document.createElement('div');
@@ -6696,7 +6701,7 @@ function startFaceVerification(actionName, successCallback) {
 }
 
 function cancelFaceVerification() {
-  try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); }
+  stopWebcam('ver-webcam');
   verWebcamActive = false;
   if (scanningInterval) {
     clearTimeout(scanningInterval);
@@ -6792,7 +6797,7 @@ async function runFaceVerificationScan() {
         syncRecordToFirestore('attendance', newRecord);
 
         setTimeout(() => {
-          try { try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); } } catch (e) {}
+          try { stopWebcam('ver-webcam'); } catch (e) {}
           // Remove success overlay
           const fl = document.getElementById('ver-success-flash');
           if (fl) fl.remove();
@@ -6806,7 +6811,7 @@ async function runFaceVerificationScan() {
         statusText.style.color = "var(--danger)";
         
         setTimeout(() => {
-          try { try { stopWebcam('ver-webcam'); } catch(e) { console.error(e); } } catch (e) {}
+          try { stopWebcam('ver-webcam'); } catch (e) {}
           closeModal('face-verification-modal');
           alert("Security failure: Profile vector properties mismatch.");
         }, 2200);
@@ -6979,7 +6984,7 @@ function checkStudentGate() {
     });
   } else {
     gateOverlay.style.display = 'flex';
-    // DO NOT disable sidebar links � let student navigate but gate shows on dashboard tab
+    // DO NOT disable sidebar links ... let student navigate but gate shows on dashboard tab
     document.querySelectorAll('#student-menu li a').forEach(el => {
       el.style.pointerEvents = 'auto';
       el.style.opacity = '1';
@@ -7443,7 +7448,7 @@ try {
       const badgeMenuEl = document.getElementById('supabase-status-badge-sidebar');
       [badgeEl, badgeMenuEl].forEach(badge => {
         if (badge) {
-          badge.innerText = 'DB: Supabase (Sync Partial � Realtime ON)';
+          badge.innerText = 'DB: Supabase (Sync Partial ... Realtime ON)';
           badge.className = 'supabase-status-badge fallback';
         }
       });
@@ -7554,7 +7559,7 @@ try {
     const badgeMenuEl = document.getElementById('supabase-status-badge-sidebar');
     [badgeEl, badgeMenuEl].forEach(badge => {
       if (badge) {
-        badge.innerText = 'DB: Supabase (Sync Partial � Realtime ON)';
+        badge.innerText = 'DB: Supabase (Sync Partial ... Realtime ON)';
         badge.className = 'supabase-status-badge fallback';
       }
     });
@@ -7582,7 +7587,7 @@ function handleSupabaseChange(payload) {
       let parsedData = robustParse(record.data);
       if (!parsedData || typeof parsedData !== 'object') return;
 
-      // WebRTC signals are ephemeral � never persist to localStorage (prevents hang during calls)
+      // WebRTC signals are ephemeral ... never persist to localStorage (prevents hang during calls)
       // WebRTC signals are ephemeral - never persist to localStorage (prevents hang during calls)
       if (record.collection === 'signals') {
         if (parsedData.meetingId === activeMeeting?.id && parsedData.sender && currentUser?.email &&
@@ -7642,7 +7647,7 @@ function handleSupabaseChange(payload) {
 
     refreshCurrentUserFromDb();
 
-    // Targeted UI refresh � debounced to prevent student list flicker
+    // Targeted UI refresh ... debounced to prevent student list flicker
     if (currentUser?.role === 'mentor' && !cloudSyncInProgress) {
       const mentorTab = getActiveMentorTab();
       if (changedCollection === 'chats') {
@@ -7855,7 +7860,7 @@ async function syncRecordToSupabase(collection, record) {
     if (error) {
       console.error(`Error saving document ${docId} to Supabase apex_sync:`, error);
       if (collection === 'tasks') {
-        console.error('Task cloud sync failed � student will not see this task until sync succeeds.');
+        console.error('Task cloud sync failed ... student will not see this task until sync succeeds.');
       }
     }
 
@@ -8108,7 +8113,7 @@ function getMentorCallTargets() {
 
   getMentorStudents({ activeOnly: true }).forEach(s => {
     if (!s.email) return;
-    // Domain match � student's domain should match mentor's domain
+    // Domain match ... student's domain should match mentor's domain
     const studentDomain = (s.domain || '').trim().toLowerCase();
     if (mentorDomain && studentDomain && studentDomain !== mentorDomain) return;
     emails.add(normalizeChatEmail(s.email));
@@ -8305,7 +8310,7 @@ function handleMeetingBroadcast(data) {
     return;
   }
 
-  // Task submitted by student � refresh mentor's review panel
+  // Task submitted by student ... refresh mentor's review panel
   if (data.type === 'task_submitted' && currentUser.role === 'mentor') {
     syncDatabase();
     if (typeof loadMentorReviews === 'function') {
@@ -8319,7 +8324,7 @@ function handleMeetingBroadcast(data) {
     return;
   }
 
-  // Weekly log submitted � refresh mentor reviews
+  // Weekly log submitted ... refresh mentor reviews
   if (data.type === 'weekly_log_submitted' && currentUser && currentUser.role === 'mentor') {
     syncDatabase();
     if (typeof loadMentorReviews === 'function') {
@@ -8357,7 +8362,7 @@ function initMeetingBroadcastSync() {
   }
 }
 
-// Stable mentor cloud sync � throttled so student counts don't flicker (2&#x20B9;4)
+// Stable mentor cloud sync ... throttled so student counts don't flicker (2&#x20B9;4)
 setInterval(async () => {
   if (!currentUser || currentUser.role !== 'mentor' || cloudSyncInProgress) return;
   const now = Date.now();
@@ -8375,7 +8380,7 @@ setInterval(async () => {
   else if (tabName === 'chat') loadMentorChat(false);
 }, 12000);
 
-// Student cloud sync � tasks + chat (throttled)
+// Student cloud sync ... tasks + chat (throttled)
 let lastStudentChatSyncAt = 0;
 let lastStudentTaskSyncAt = 0;
 setInterval(async () => {
@@ -8535,7 +8540,7 @@ async function checkIncomingCalls() {
   }
 }
 
-// ====== JITSI MEET GROUP CALL � WhatsApp Style ======
+// ====== JITSI MEET GROUP CALL ... WhatsApp Style ======
 // Uses Jitsi Meet API for real camera/mic/speaker group calls
 let _jitsiApi = null;
 let _jitsiRoomId = null;
@@ -8636,7 +8641,7 @@ function showMentorDialingOverlay(invitedStudents, meeting) {
           <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#8327ec,#5b21b6);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid rgba(131,39,236,0.5);">
             ${avatar
               ? `<img src="${avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
-              : `<span style="font-size:22px;font-weight:800;color:var(--text-main);">${initial}</span>`}
+              : `<span style="font-size:22px;font-weight:800;color:#fff;">${initial}</span>`}
           </div>
           <div id="dialing-status-${email.replace(/[@.]/g, '-')}" style="position:absolute;bottom:0;right:0;width:18px;height:18px;border-radius:50%;background:#6b7280;border:2px solid #0a0015;display:flex;align-items:center;justify-content:center;">
             <div style="width:8px;height:8px;border-radius:50%;background:#fff;animation:dialingRing 1.2s ease-in-out infinite;"></div>
@@ -8770,14 +8775,14 @@ function stopGroupCallDialTone() {
   }
 }
 
-// ====== IMPROVED INCOMING RING (Google Meet style � descending 3 tones) ======
+// ====== IMPROVED INCOMING RING (Google Meet style ... descending 3 tones) ======
 function playCallChime() {
   if (callChimeInterval) return;
 
   const playRing = () => {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      // G5 ? E5 ? C5 descending � classic incoming ring pattern
+      // G5 ? E5 ? C5 descending ... classic incoming ring pattern
       const notes = [783.99, 659.25, 523.25];
       notes.forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -9518,7 +9523,7 @@ async function leaveMeeting() {
         const notesEl = document.getElementById('meet-summary-notes');
         const outputEl = document.getElementById('meet-ai-summary-output');
         if (notesEl) notesEl.value = '';
-        if (outputEl) outputEl.innerHTML = '? Auto-generating AI summary�';
+        if (outputEl) outputEl.innerHTML = '? Auto-generating AI summary...';
 
         modal.classList.add('active');
         modal.classList.remove('hidden');
@@ -9585,7 +9590,7 @@ async function saveMeetingSessionReport(meetingRecord, durationSeconds, aiSummar
   // If no summary provided, build a basic auto-summary fallback
   const finalSummary = aiSummary || `Meeting held on ${dateStr} at ${timeStr}. Students: ${studentNamesString}. Duration: ${durationStr}. Internship topics were discussed. Students should complete their assigned tasks.`;
 
-  // Primary Payload � match actual Supabase table columns (no AI Summary column)
+  // Primary Payload ... match actual Supabase table columns (no AI Summary column)
   const tablePayload = {
     "Domain": domain,
     "Mentor Name": mentorName,
@@ -9737,7 +9742,7 @@ async function generateMeetingSummary() {
   const notesEl  = document.getElementById('meet-summary-notes');
   const btnEl    = document.getElementById('btn-generate-ai-summary');
 
-  if (outputEl) outputEl.innerHTML = '? Gemini is analysing the meeting�';
+  if (outputEl) outputEl.innerHTML = '? Gemini is analysing the meeting...';
   if (btnEl)    btnEl.disabled = true;
 
   const meetingRecord = window._pendingMeetingRecord || activeMeeting;
@@ -9803,8 +9808,8 @@ Keep it brief and student-facing. Do NOT include greetings or sign-offs.`;
     if (outputEl) {
       const formatted = summaryText
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n- /g, '<br>� ')
-        .replace(/\n\* /g, '<br>� ')
+        .replace(/\n- /g, '<br>... ')
+        .replace(/\n\* /g, '<br>... ')
         .replace(/\n/g, '<br>');
       outputEl.innerHTML = formatted;
     }
@@ -9812,7 +9817,7 @@ Keep it brief and student-facing. Do NOT include greetings or sign-offs.`;
     console.warn('Gemini summary failed, using structured fallback:', err.message);
     const fallback = `Meeting held on ${new Date().toDateString()} with students: ${studentList || 'N/A'}. Duration: ${durationStr}. ${verbalNotes ? `Topics covered: ${verbalNotes}.` : 'Key internship topics were discussed.'} Students are advised to review shared resources and complete assigned tasks.`;
     window._generatedMeetingSummary = fallback;
-    if (outputEl) outputEl.innerHTML = `<em style="color:var(--text-muted);">?? AI unavailable � auto-summary:</em><br>${fallback}`;
+    if (outputEl) outputEl.innerHTML = `<em style="color:var(--text-muted);">?? AI unavailable ... auto-summary:</em><br>${fallback}`;
   }
 
   if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '?? Regenerate Summary'; }
@@ -9928,7 +9933,7 @@ function getLocalMeetingRecapsForStudent() {
       time: m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
       mentorName: m.mentorName || 'Your Mentor',
       mentorEmail: m.mentorEmail || '',
-      duration: '�',
+      duration: '...',
       recordingLink: `https://gvsextnrduejeaxyadbj.supabase.co/storage/v1/object/public/recordings/meet-rec-${m.id}.webm`,
       aiSummary: buildLocalMeetingRecapText(m),
       chatMessages: m.messages || [],
@@ -9944,7 +9949,7 @@ function buildLocalMeetingRecapText(meetingOrData) {
   if (!msgs.length) {
     return `You joined a group video session with ${mentorName}. No group chat was saved for this call. Check your task board and message your mentor if you need a reminder of what was assigned.`;
   }
-  const highlights = msgs.slice(0, 12).map(m => `� ${m.from}: ${m.text}`).join('\n');
+  const highlights = msgs.slice(0, 12).map(m => `... ${m.from}: ${m.text}`).join('\n');
   return `Here is what was discussed in your group call with ${mentorName}:\n\n${highlights}\n\nTip: Follow up on any tasks or deadlines mentioned above.`;
 }
 
@@ -9952,8 +9957,8 @@ function formatMeetingSummaryHtml(text) {
   if (!text) return '<em style="color:var(--text-muted)">No summary available for this session yet.</em>';
   return escapeHTML(text)
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n- /g, '<br>� ')
-    .replace(/\n\* /g, '<br>� ')
+    .replace(/\n- /g, '<br>... ')
+    .replace(/\n\* /g, '<br>... ')
     .replace(/\n/g, '<br>');
 }
 
@@ -9971,8 +9976,8 @@ function openStudentMeetingSummary(cacheKey) {
   const modal = document.getElementById('student-meeting-recap-modal');
 
   if (mentorEl) mentorEl.innerText = data.mentorName || data['Mentor Name'] || 'Your Mentor';
-  if (dateEl) dateEl.innerText = `${data.date || data['Date'] || '�'} ${data.time || data['Time'] || ''}`.trim();
-  if (durEl) durEl.innerText = data.duration || data['Duration'] || '�';
+  if (dateEl) dateEl.innerText = `${data.date || data['Date'] || '...'} ${data.time || data['Time'] || ''}`.trim();
+  if (durEl) durEl.innerText = data.duration || data['Duration'] || '...';
 
   const summaryText = data.aiSummary || data['AI Summary'] || buildLocalMeetingRecapText(data);
   if (summaryEl) summaryEl.innerHTML = formatMeetingSummaryHtml(summaryText);
@@ -9982,7 +9987,7 @@ function openStudentMeetingSummary(cacheKey) {
     if (msgs.length) {
       chatSection.classList.remove('hidden');
       chatLog.innerHTML = msgs.map(m =>
-        `<div style="margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.06);"><span style="color:var(--primary-magenta); font-weight:600;">${escapeHTML(m.from || 'User')}</span> <span style="color:var(--text-muted); font-size:10px;">${escapeHTML(m.timestamp || '')}</span><br><span style="color:var(--text-main);">${escapeHTML(m.text || '')}</span></div>`
+        `<div style="margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.06);"><span style="color:var(--primary-magenta); font-weight:600;">${escapeHTML(m.from || 'User')}</span> <span style="color:var(--text-muted); font-size:10px;">${escapeHTML(m.timestamp || '')}</span><br><span style="color:#fff;">${escapeHTML(m.text || '')}</span></div>`
       ).join('');
     } else {
       chatSection.classList.add('hidden');
@@ -10020,7 +10025,7 @@ async function loadDashboardMeetings(role) {
   if (!tableEl) return;
   const tbody = tableEl.querySelector('tbody');
   if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Loading�</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Loading...</td></tr>`;
 
   if (role === 'student') studentMeetingSummariesCache = {};
 
@@ -10082,22 +10087,22 @@ async function loadDashboardMeetings(role) {
 
     tbody.innerHTML = '';
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No group call recaps yet. Join a mentor video call � your AI summary will appear here after the session ends.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No group call recaps yet. Join a mentor video call ... your AI summary will appear here after the session ends.</td></tr>`;
       const latestCard = document.getElementById('student-latest-meeting-recap-card');
       if (latestCard) latestCard.classList.add('hidden');
       return;
     }
 
     rows.forEach((row, idx) => {
-      const dateStr = `${row['Date'] || row.date || '�'} ${row['Time'] || row.time || ''}`.trim();
+      const dateStr = `${row['Date'] || row.date || '...'} ${row['Time'] || row.time || ''}`.trim();
       const students = row['Student Names'] || row.studentNames || `${row['Students Count'] || row.studentsCount || 0} students`;
       const mentor = row['Mentor Name'] || row.mentorName || 'Mentor';
-      const duration = row['Duration'] || row.duration || '�';
+      const duration = row['Duration'] || row.duration || '...';
       const rawSummary = row['AI Summary'] || row.aiSummary || row.ai_summary || '';
       const recLink = row['Recording Link'] || row.recordingLink || row.recording_link || '';
       const cacheKey = `meet-row-${idx}`;
       const preview = rawSummary
-        ? escapeHTML(rawSummary.substring(0, 72)) + (rawSummary.length > 72 ? '�' : '')
+        ? escapeHTML(rawSummary.substring(0, 72)) + (rawSummary.length > 72 ? '...' : '')
         : '<em style="color:var(--text-muted)">Tap View Recap</em>';
 
       if (role === 'student') {
@@ -10116,7 +10121,7 @@ async function loadDashboardMeetings(role) {
           const latestCard = document.getElementById('student-latest-meeting-recap-card');
           const latestText = document.getElementById('student-latest-meeting-recap-text');
           if (latestCard) latestCard.classList.remove('hidden');
-          if (latestText) latestText.innerText = `${dateStr} with ${mentor} � click to see the full AI recap.`;
+          if (latestText) latestText.innerText = `${dateStr} with ${mentor} ... click to see the full AI recap.`;
         }
       }
 
@@ -10128,7 +10133,7 @@ async function loadDashboardMeetings(role) {
           <td style="font-size:11px;white-space:nowrap;">${escapeHTML(duration)}</td>
           <td style="font-size:11px;max-width:180px;line-height:1.4;color:var(--text-muted);">${preview}</td>
           <td style="text-align:center;white-space:nowrap;">
-            <button type="button" class="btn btn-primary btn-sm" onclick="openStudentMeetingSummary('${cacheKey}')" style="font-size:11px;padding:6px 12px;">?? View Recap</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openStudentMeetingSummary('${cacheKey}')" style="font-size:11px;padding:6px 12px;">▶ View Recap</button>
           </td>`;
       } else {
         tr.innerHTML = `
@@ -10137,7 +10142,7 @@ async function loadDashboardMeetings(role) {
           <td style="font-size:11px;white-space:nowrap;">${escapeHTML(duration)}</td>
           <td style="font-size:11px;max-width:260px;line-height:1.5;">${rawSummary ? formatMeetingSummaryHtml(rawSummary) : '<em style="color:var(--text-muted)">No summary yet</em>'}</td>
           <td style="text-align:center;">
-            ${recLink ? `<a href="${escapeHTML(recLink)}" target="_blank" style="color:var(--primary-magenta);font-size:11px;font-weight:600;">&#x25B6; Play</a>` : '<span style="color:var(--text-muted);font-size:11px;">�</span>'}
+            ${recLink ? `<a href="${escapeHTML(recLink)}" target="_blank" style="color:var(--primary-magenta);font-size:11px;font-weight:600;">? Play</a>` : '<span style="color:var(--text-muted);font-size:11px;">...</span>'}
           </td>`;
       }
       tbody.appendChild(tr);
@@ -10151,11 +10156,11 @@ async function loadDashboardMeetings(role) {
 async function uploadMeetingRecordingToSupabase(meetingId, blob) {
   try {
     if (!supabaseActive || !supabaseClient) {
-      console.warn("Supabase not active � meeting recording upload skipped.");
+      console.warn("Supabase not active ... meeting recording upload skipped.");
       return null;
     }
     if (!meetingId || !blob || blob.size === 0) {
-      console.warn("Invalid meeting recording � upload skipped.", { meetingId, size: blob?.size });
+      console.warn("Invalid meeting recording ... upload skipped.", { meetingId, size: blob?.size });
       return null;
     }
     const fileName = `meet-rec-${meetingId}.webm`;
@@ -10280,7 +10285,7 @@ async function stopAndDownloadMeetingRecording(explicitMeetingId) {
       meetingMediaRecorder = null;
 
       if (meetingRecordedChunks.length === 0) {
-        console.warn("No meeting recording data captured � Supabase upload skipped.");
+        console.warn("No meeting recording data captured ... Supabase upload skipped.");
         resolve(null);
         return;
       }
@@ -10316,7 +10321,7 @@ async function stopAndDownloadMeetingRecording(explicitMeetingId) {
 
     if (meetingMediaRecorder && meetingMediaRecorder.state !== 'inactive') {
       meetingMediaRecorder.onstop = () => {
-        console.log("MediaRecorder stopped � processing recording chunks...");
+        console.log("MediaRecorder stopped ... processing recording chunks...");
         finalizeRecording();
       };
       try {
@@ -11327,7 +11332,7 @@ function renderMentorAttendanceSheet() {
   const startDay = new Date(year, month, 1).getDay(); // Sunday = 0
 
   let headerHTML = `
-    <th style="min-width: 140px; text-align: left; position: sticky; left: 0; background: var(--bg-main); z-index: 10;">Intern Name</th>
+    <th style="min-width: 140px; text-align: left; position: sticky; left: 0; background: #0f0f15; z-index: 10;">Intern Name</th>
     <th style="min-width: 120px; text-align: left;">Technical Domain</th>
   `;
   
@@ -11375,7 +11380,7 @@ function renderMentorAttendanceSheet() {
     );
 
     let rowHTML = `
-      <td style="font-weight: 600; color: #fff; text-align: left; position: sticky; left: 0; background: var(--bg-main); z-index: 5; border-right: 1px solid var(--border-color);">${student.name}</td>
+      <td style="font-weight: 600; color: #fff; text-align: left; position: sticky; left: 0; background: #12121a; z-index: 5; border-right: 1px solid var(--border-color);">${student.name}</td>
       <td style="text-align: left; color: var(--text-muted);">${student.domain}</td>
     `;
 
@@ -11391,7 +11396,7 @@ function renderMentorAttendanceSheet() {
       const checkedLog = attendanceLogs.find(l => l.date === cellDateStr);
 
       if (isSunday) {
-        rowHTML += `<td style="text-align: center; background: rgba(217, 4, 181, 0.03);"><span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(217, 4, 181, 0.1); border: 1px solid rgba(217, 4, 181, 0.2); color: #ff85d8; font-weight: bold; font-size: 9px;" title="Sunday Holiday">S</span></td>`;
+        rowHTML += `<td style="text-align: center; background: rgba(217, 4, 181, 0.03);"><span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(217, 4, 181, 0.1); border: 1px solid rgba(217, 4, 181, 0.2); color: #ff85d8; text-align: center; line-height: 18px; font-weight: bold; font-size: 9px;" title="Sunday Holiday">S</span></td>`;
       } else {
         if (!isFuture) {
           totalElapsedWorkDays++;
@@ -11401,7 +11406,7 @@ function renderMentorAttendanceSheet() {
           const checkInTime = checkedLog.timestamp ? (checkedLog.timestamp.split(',')[1] || '').trim() : 'Checked-In';
           rowHTML += `
             <td style="text-align: center;">
-              <span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: var(--success); font-weight: bold; font-size: 10px; cursor: pointer;" title="Checked-In: ${checkInTime}">&#10003;</span>
+              <span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: var(--success); text-align: center; line-height: 18px; font-weight: bold; font-size: 10px; cursor: pointer;" title="Checked-In: ${checkInTime}">??</span>
             </td>
           `;
         } else if (isFuture) {
@@ -11409,7 +11414,7 @@ function renderMentorAttendanceSheet() {
         } else {
           rowHTML += `
             <td style="text-align: center;">
-              <span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); font-weight: bold; font-size: 10px;" title="Absent (No Log)">&#10005;</span>
+              <span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); text-align: center; line-height: 18px; font-weight: bold; font-size: 10px;" title="Absent (No Log)">?</span>
             </td>
           `;
         }
@@ -11462,13 +11467,6 @@ function renderMentorAttendanceSheet() {
     rowHTML += `<td style="text-align: center; font-weight: bold; color: var(--success); font-size: 12px; background: rgba(16, 185, 129, 0.04);">${totalPctText}</td>`;
 
     const tr = document.createElement('tr');
-    tr.className = 'attendance-row';
-    tr.onclick = function() {
-      document.querySelectorAll('.attendance-row').forEach(row => {
-        if (row !== this) row.classList.remove('selected');
-      });
-      this.classList.toggle('selected');
-    };
     tr.innerHTML = rowHTML;
     tbody.appendChild(tr);
   });
@@ -11669,11 +11667,11 @@ function exportAttendancePDF() {
         }
         if (checkedLog) {
           totalCheckedInDays++;
-          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: green; font-weight: bold;">&#10003;</td>`;
+          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: green; font-weight: bold;">??</td>`;
         } else if (isFuture) {
           tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: #999;">-</td>`;
         } else {
-          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: red; font-weight: bold;">&#10005;</td>`;
+          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: red; font-weight: bold;">?</td>`;
         }
       }
     }
@@ -11783,7 +11781,7 @@ const APEX_PROJECT_BLUEPRINT = {
 - **Spreadsheet Attendance Matrix**:
   - Implemented in \`renderMentorAttendanceSheet()\` inside **[app.js](file:///c:/Users/Asus/Desktop/2000006/app.js)**.
   - Displays calendar days 1 to 30/31 for the active cohort month.
-  - Preceding Monday�Saturday working days are evaluated. Sundays are marked with a purple \`S\` chip.
+  - Preceding Monday...Saturday working days are evaluated. Sundays are marked with a purple \`S\` chip.
   - Mon-Sat running averages are calculated and rendered inside each week column (\`W1 %\` to \`W5 %\`), and overall score is in \`Total %\`.
   - Uses \`filterMentorInternsByDomain()\` bound to domain selection changes.
 - **Exporting Data**:
@@ -13743,7 +13741,7 @@ function showVerificationResult(type, data) {
         <div style="padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Student Name</div>
-            <div style="font-size:15px;font-weight:700;color:var(--text-main);font-family:'Outfit',sans-serif;">${s.name || 'N/A'}</div>
+            <div style="font-size:15px;font-weight:700;color:#fff;font-family:'Outfit',sans-serif;">${s.name || 'N/A'}</div>
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Student ID</div>
@@ -13751,19 +13749,19 @@ function showVerificationResult(type, data) {
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Domain</div>
-            <div style="font-size:13px;font-weight:600;color:var(--text-main);">${domain}</div>
+            <div style="font-size:13px;font-weight:600;color:#fff;">${domain}</div>
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Start Date</div>
-            <div style="font-size:13px;font-weight:600;color:var(--text-main);">${startDate}</div>
+            <div style="font-size:13px;font-weight:600;color:#fff;">${startDate}</div>
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Duration</div>
-            <div style="font-size:13px;font-weight:600;color:var(--text-main);">${duration}</div>
+            <div style="font-size:13px;font-weight:600;color:#fff;">${duration}</div>
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Program Type</div>
-            <div style="font-size:13px;font-weight:600;color:var(--text-main);">${internType}</div>
+            <div style="font-size:13px;font-weight:600;color:#fff;">${internType}</div>
           </div>
         </div>
 
@@ -14006,7 +14004,7 @@ const MOCK_INTERNSHIPS = [
   }
 ];
 
-// Initialize and Render explore list � with carousel pagination
+// Initialize and Render explore list ... with carousel pagination
 let _explorePage = 0;
 const _explorePageSize = 6;
 
@@ -14085,14 +14083,14 @@ function _buildInternshipCard(intern) {
           font-weight:900;
           text-transform:uppercase;
           letter-spacing:0.13em;
-          color:var(--text-main);
+          color:#fff;
           text-shadow:0 1px 6px rgba(0,0,0,0.25);
         ">${intern.domain}</span>
         <span style="
           font-size:10px;
           font-weight:800;
           text-transform:uppercase;
-          color:var(--text-main);
+          color:#fff;
           background:rgba(255,255,255,0.22);
           border:1px solid rgba(255,255,255,0.45);
           padding:3px 10px;
@@ -14207,9 +14205,9 @@ function initExploreOpportunities() {
     nav.id = 'explore-nav-controls';
     nav.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:20px;margin-top:32px;margin-bottom:24px;';
     nav.innerHTML = `
-      <button id="explore-prev-btn" onclick="exploreCarouselPrev()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);color:var(--text-main);width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1;" title="Previous">&#8249;</button>
+      <button id="explore-prev-btn" onclick="exploreCarouselPrev()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);color:#fff;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1;" title="Previous">&#8249;</button>
       <span id="explore-page-info" style="font-size:15px;font-weight:700;color:var(--text-muted);min-width:28px;text-align:center;">1</span>
-      <button id="explore-next-btn" onclick="exploreCarouselNext()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);color:var(--text-main);width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1;" title="Next">&#8250;</button>
+      <button id="explore-next-btn" onclick="exploreCarouselNext()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);color:#fff;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1;" title="Next">&#8250;</button>
     `;
     const grid = document.getElementById('explore-internships-grid');
     if (grid) grid.after(nav);
@@ -14257,7 +14255,7 @@ function openAddInternshipModal() {
       <button onclick="document.getElementById('add-intern-modal').remove()" style="
         position:absolute; top:16px; right:16px;
         background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
-        color:var(--text-main); width:32px; height:32px; border-radius:50%; cursor:pointer;
+        color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer;
         font-size:16px; display:flex; align-items:center; justify-content:center;
       ">&times;</button>
 
@@ -14485,8 +14483,8 @@ function loadAdminListings() {
     card.innerHTML = `
       <!-- Gradient header -->
       <div style="background:${grad};padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-main);">${intern.domain}</span>
-        <span style="font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text-main);background:${badgeBg};border:1px solid ${badgeCol};padding:2px 8px;border-radius:20px;">${badgeText}</span>
+        <span style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#fff;">${intern.domain}</span>
+        <span style="font-size:9px;font-weight:800;text-transform:uppercase;color:#fff;background:${badgeBg};border:1px solid ${badgeCol};padding:2px 8px;border-radius:20px;">${badgeText}</span>
       </div>
       <!-- Body -->
       <div style="padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:8px;">
@@ -14589,7 +14587,7 @@ window.openAddInternshipModal = function(fromAdmin, editData, editIdx) {
       <button onclick="document.getElementById('add-intern-modal').remove()" style="
         position:absolute;top:16px;right:16px;
         background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
-        color:var(--text-main);width:32px;height:32px;border-radius:50%;cursor:pointer;
+        color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;
         font-size:16px;display:flex;align-items:center;justify-content:center;
       ">&times;</button>
 
@@ -15173,7 +15171,7 @@ function loadStudentPayments() {
   if (typeof currentUser.stipendCurrency === 'undefined') currentUser.stipendCurrency = 'INR';
   if (typeof currentUser.stipendFrequency === 'undefined') currentUser.stipendFrequency = 'monthly';
   
-  const symb = currentUser.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
+  const symb = currentUser.stipendCurrency === 'USD' ? '$' : '?';
   const freqLabel = currentUser.stipendFrequency === 'streaming' ? '/ hr active' : (currentUser.stipendFrequency === 'task' ? '/ completed task' : '/ month');
   
   const rateDisplay = document.getElementById('student-stipend-rate-display');
@@ -15248,7 +15246,7 @@ function renderStudentLedger() {
   }
   
   myTxns.forEach(tx => {
-    const symb = tx.currency === 'USD' ? '$' : '&#x20B9;';
+    const symb = tx.currency === 'USD' ? '$' : '?';
     const dateStr = new Date(tx.date).toLocaleDateString('en-IN', {
       day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
     });
@@ -15258,7 +15256,7 @@ function renderStudentLedger() {
       <td style="font-family: monospace; font-size: 11px; color: var(--text-muted);">${tx.id}</td>
       <td style="font-weight:600; text-transform:uppercase;">${tx.type}</td>
       <td>${dateStr}</td>
-      <td>${tx.notes || '�'}</td>
+      <td>${tx.notes || '...'}</td>
       <td style="font-weight:700; color: ${tx.type === 'withdrawal' ? 'var(--danger)' : 'var(--success)'};">
         ${tx.type === 'withdrawal' ? '-' : '+'}${symb}${parseFloat(tx.amount).toFixed(2)}
       </td>
@@ -15276,7 +15274,7 @@ function triggerStudentWithdrawal() {
     return;
   }
   
-  const symb = currentUser.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
+  const symb = currentUser.stipendCurrency === 'USD' ? '$' : '?';
   const withdrawAmt = currentUser.stipendBalance;
   
   const confirmTransfer = confirm(`Confirm instant bank settlement of ${symb}${withdrawAmt.toFixed(2)} to your registered account?`);
@@ -15340,7 +15338,7 @@ function loadMentorPayments() {
       tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No active paid interns assigned under your supervision.</td></tr>`;
     } else {
       myPaidInterns.forEach(student => {
-        const symb = student.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
+        const symb = student.stipendCurrency === 'USD' ? '$' : '?';
         const pending = student.stipendBalance || 0;
         const scheme = student.stipendFrequency === 'streaming' ? 'Real-time Streaming' : (student.stipendFrequency === 'task' ? 'Milestone-based (Per Task)' : 'Monthly Milestone');
         
@@ -15374,7 +15372,7 @@ function loadMentorPayments() {
     
   const totalDisbursedDisplay = document.getElementById('mentor-total-disbursed-amt');
   if (totalDisbursedDisplay) {
-    totalDisbursedDisplay.innerHTML = `&#x20B9;${disbursedTotal.toFixed(2)}`;
+    totalDisbursedDisplay.innerText = `?${disbursedTotal.toFixed(2)}`;
   }
   
   // Load Global Ledger Table
@@ -15394,7 +15392,7 @@ function renderMentorLedger(myInternsEmails) {
   }
   
   cohortPayments.forEach(tx => {
-    const symb = tx.currency === 'USD' ? '$' : '&#x20B9;';
+    const symb = tx.currency === 'USD' ? '$' : '?';
     const dateStr = new Date(tx.date).toLocaleDateString('en-IN', {
       day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
     });
@@ -15408,8 +15406,8 @@ function renderMentorLedger(myInternsEmails) {
       </td>
       <td style="text-transform:uppercase; font-size:11px;">${tx.type}</td>
       <td>${dateStr}</td>
-      <td style="font-family: monospace; font-size: 11px; color: var(--text-muted);">${tx.referenceId || '�'}</td>
-      <td>${tx.notes || '�'}</td>
+      <td style="font-family: monospace; font-size: 11px; color: var(--text-muted);">${tx.referenceId || '...'}</td>
+      <td>${tx.notes || '...'}</td>
     `;
     tableBody.appendChild(row);
   });
@@ -15419,7 +15417,7 @@ function approveMentorPayout(studentEmail) {
   const student = db.users.find(u => u.email && u.email.trim().toLowerCase() === studentEmail.trim().toLowerCase());
   if (!student) return;
   
-  const symb = student.stipendCurrency === 'USD' ? '$' : '&#x20B9;';
+  const symb = student.stipendCurrency === 'USD' ? '$' : '?';
   const defaultAmt = student.stipendAmount || 15000;
   
   const amtStr = prompt(`Enter payout milestone release amount for ${student.name} (Suggested rate: ${symb}${defaultAmt.toLocaleString()}):`, defaultAmt);
@@ -15499,7 +15497,7 @@ function handleMentorLogPaymentSubmit(event) {
     syncRecordToFirestore('users', student);
     syncRecordToFirestore('payments', newTx);
     
-    alert(`Manual settlement of ${student.stipendCurrency === 'USD' ? '$' : '&#x20B9;'}${amt} logged successfully for ${student.name}.`);
+    alert(`Manual settlement of ${student.stipendCurrency === 'USD' ? '$' : '?'}${amt} logged successfully for ${student.name}.`);
     
     document.getElementById('mentor-log-amount').value = '';
     loadMentorPayments();
@@ -15564,7 +15562,7 @@ window.addEventListener('beforeunload', () => {
 
 
 // ============================================================
-// GROUP CALL FEATURE � Google Meet Group Sessions
+// GROUP CALL FEATURE ... Google Meet Group Sessions
 // Mentor schedules a session, students see and join the link
 // ============================================================
 
@@ -15684,7 +15682,7 @@ function showStudentMeetingAlert(meeting, isLive, mentorName) {
     + '<div style="font-size:28px;line-height:1;">\uD83D\uDCF9</div>'
     + '<div style="flex:1;">'
     + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' + badge + '</div>'
-    + '<div style="font-size:15px;font-weight:800;color:var(--text-main);margin-bottom:2px;">' + title + '</div>'
+    + '<div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:2px;">' + title + '</div>'
     + '<div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:12px;">Hosted by <strong>' + host + '</strong>' + scheduledTime + '</div>'
     + '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">'
     + joinBtn
@@ -15788,7 +15786,7 @@ function getMeetingStatus(meeting) {
 }
 
 function formatMeetDateTime(isoStr) {
-  if (!isoStr) return '�';
+  if (!isoStr) return '...';
   try {
     const d = new Date(isoStr);
     return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) +
@@ -15867,7 +15865,7 @@ function populateScheduleMeetingNotifyList() {
 
   myStudents.forEach(student => {
     const row = document.createElement('label');
-    row.style.cssText = 'display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:var(--text-main); padding:4px 0;';
+    row.style.cssText = 'display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:#fff; padding:4px 0;';
     row.innerHTML = `
       <input type="checkbox" name="sm-notify-student" value="${student.email}" checked style="accent-color:#00b66c; width:14px; height:14px;">
       <img src="${student.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(student.name || 'S') + '&background=random&size=24'}" 
@@ -15964,7 +15962,7 @@ function launchInstantMeeting() {
     scheduledAt: now,
     duration: 60,
     meetLink: 'https://meet.new',
-    notes: 'Instant session � mentor will share the exact Meet link shortly.',
+    notes: 'Instant session ... mentor will share the exact Meet link shortly.',
     mentorEmail: currentUser?.email || '',
     mentorName: currentUser?.name || 'Mentor',
     domain: currentUser?.domain || '',
@@ -16026,9 +16024,9 @@ function renderMentorGroupCallTab() {
       .sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
 
     if (upcomingAndLive.length === 0) {
-      if (upcomingList.innerHTML !== `<div style="text-align:left; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions. Click <strong>Schedule Meeting</strong> to add one.</div>`) upcomingList.innerHTML = `<div style="text-align:left; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions. Click <strong>Schedule Meeting</strong> to add one.</div>`;
+      upcomingList.innerHTML = `<div style="text-align:center; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions. Click <strong>Schedule Meeting</strong> to add one.</div>`;
     } else {
-      const hm = upcomingAndLive.map(m => buildMentorMeetingCard(m)).join(''); if (upcomingList.innerHTML !== hm) upcomingList.innerHTML = hm;
+      upcomingList.innerHTML = upcomingAndLive.map(m => buildMentorMeetingCard(m)).join('');
     }
   }
 
@@ -16040,23 +16038,23 @@ function renderMentorGroupCallTab() {
       .sort((a, b) => new Date(b.scheduledAt) - new Date(a.scheduledAt));
 
     if (past.length === 0) {
-      if (tbody.innerHTML !== `<tr><td colspan="8" style="text-align:left; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`) tbody.innerHTML = `<tr><td colspan="8" style="text-align:left; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`;
     } else {
-      const h2 = past.map(m => `
+      tbody.innerHTML = past.map(m => `
         <tr>
-          <td style="font-weight:600; color:var(--text-main);">${m.title || 'Untitled'}</td>
+          <td style="font-weight:600; color:#fff;">${m.title || 'Untitled'}</td>
           <td style="color:var(--text-muted); font-size:12px;">${formatMeetDateTime(m.scheduledAt)}</td>
-          <td><span style="font-size:11px; background:rgba(131,39,236,0.15); color:var(--primary); padding:2px 8px; border-radius:6px;">${m.domain || '�'}</span></td>
+          <td><span style="font-size:11px; background:rgba(131,39,236,0.15); color:var(--primary); padding:2px 8px; border-radius:6px;">${m.domain || '...'}</span></td>
           <td style="color:var(--text-muted); font-size:12px;">${formatDuration(m.duration)}</td>
           <td style="font-size:12px;">${(m.invitees || []).length} students</td>
-          <td>${m.meetLink ? `<a href="${m.meetLink}" target="_blank" class="gc-meet-badge">&#x1F4F9; Rejoin</a>` : '�'}</td>
-          <td style="font-size:11px; color:var(--text-muted); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.notes || '�'}</td>
+          <td>${m.meetLink ? `<a href="${m.meetLink}" target="_blank" class="gc-meet-badge">&#x1F4F9; Rejoin</a>` : '...'}</td>
+          <td style="font-size:11px; color:var(--text-muted); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.notes || '...'}</td>
           <td>
             <button onclick="showMeetingDetail('${m.id}')" style="background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:var(--text-muted); padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer;">Details</button>
             <button onclick="deleteMeeting('${m.id}')" style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); color:#ef4444; padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer; margin-left:4px;">Delete</button>
           </td>
         </tr>
-      `).join(''); if (typeof hm2 !== "undefined" && tbody.innerHTML !== hm2) tbody.innerHTML = hm2; if (typeof h2 !== "undefined" && tbody.innerHTML !== h2) tbody.innerHTML = h2;
+      `).join('');
     }
   }
 }
@@ -16065,21 +16063,21 @@ function buildMentorMeetingCard(m) {
   const status = getMeetingStatus(m);
   const statusClass = status === 'live' ? 'live' : 'upcoming';
   const statusLabel = status === 'live'
-    ? '<span style="background:#ef4444; color:var(--text-main); font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px; animation:gcPulse 1.5s infinite;">🔴 LIVE</span>'
-    : '<span style="background:rgba(0,182,108,0.2); color:#00b66c; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px;">📅 UPCOMING</span>';
+    ? '<span style="background:#ef4444; color:#fff; font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px; animation:gcPulse 1.5s infinite;">🔴 LIVE</span>'
+    : '<span style="background:rgba(0,182,108,0.2); color:#00b66c; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px;">🟢 UPCOMING</span>';
 
   return `
     <div class="gc-session-card ${statusClass}">
       <div style="flex:1; min-width:200px;">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
           ${statusLabel}
-          <span style="font-size:14px; font-weight:700; color:var(--text-main);">${m.title || 'Untitled Session'}</span>
+          <span style="font-size:14px; font-weight:700; color:#fff;">${m.title || 'Untitled Session'}</span>
         </div>
         <div style="font-size:12px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:12px;">
-          <span>📅 ${formatMeetDateTime(m.scheduledAt)}</span>
-          <span>⏳ ${formatDuration(m.duration)}</span>
-          <span>👤 ${(m.invitees || []).length} students invited</span>
-          ${m.domain ? `<span>🌐 ${m.domain}</span>` : ''}
+          <span>?? ${formatMeetDateTime(m.scheduledAt)}</span>
+          <span>? ${formatDuration(m.duration)}</span>
+          <span>?? ${(m.invitees || []).length} students invited</span>
+          ${m.domain ? `<span>?? ${m.domain}</span>` : ''}
         </div>
         ${m.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic;">${m.notes}</div>` : ''}
       </div>
@@ -16110,7 +16108,7 @@ function renderStudentGroupCallTab() {
       liveBanner.style.display = 'flex';
       const titleEl = document.getElementById('student-gc-live-title');
       const linkEl = document.getElementById('student-gc-live-link');
-      if (titleEl) titleEl.textContent = `🔴 LIVE � ${liveMeeting.title}`;
+      if (titleEl) titleEl.textContent = `🔴 LIVE ... ${liveMeeting.title}`;
       if (linkEl) linkEl.href = liveMeeting.meetLink || '#';
       // Hide NEW badge when they see the tab
       const badge = document.getElementById('student-groupcall-badge');
@@ -16131,9 +16129,9 @@ function renderStudentGroupCallTab() {
 
   if (upcomingList) {
     if (upcoming.length === 0) {
-      if (upcomingList.innerHTML !== `<div style="text-align:left; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions yet. Your mentor will schedule one soon.</div>`) upcomingList.innerHTML = `<div style="text-align:left; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions yet. Your mentor will schedule one soon.</div>`;
+      upcomingList.innerHTML = `<div style="text-align:center; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions yet. Your mentor will schedule one soon.</div>`;
     } else {
-      const h = upcoming.map(m => buildStudentMeetingCard(m)).join(''); if (upcomingList.innerHTML !== h) upcomingList.innerHTML = h;
+      upcomingList.innerHTML = upcoming.map(m => buildStudentMeetingCard(m)).join('');
     }
   }
 
@@ -16145,18 +16143,18 @@ function renderStudentGroupCallTab() {
       .sort((a, b) => new Date(b.scheduledAt) - new Date(a.scheduledAt));
 
     if (past.length === 0) {
-      if (tbody.innerHTML !== `<tr><td colspan="6" style="text-align:left; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`) tbody.innerHTML = `<tr><td colspan="6" style="text-align:left; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`;
     } else {
-      const h2 = past.map(m => `
+      tbody.innerHTML = past.map(m => `
         <tr>
-          <td style="font-weight:600; color:var(--text-main);">${m.title || 'Untitled'}</td>
+          <td style="font-weight:600; color:#fff;">${m.title || 'Untitled'}</td>
           <td style="color:var(--text-muted); font-size:12px;">${formatMeetDateTime(m.scheduledAt)}</td>
-          <td style="font-size:12px;">${m.mentorName || m.mentorEmail || '�'}</td>
+          <td style="font-size:12px;">${m.mentorName || m.mentorEmail || '...'}</td>
           <td style="color:var(--text-muted); font-size:12px;">${formatDuration(m.duration)}</td>
-          <td>${m.meetLink ? `<a href="${m.meetLink}" target="_blank" class="gc-meet-badge">&#x1F4F9; Rejoin</a>` : '�'}</td>
-          <td style="font-size:11px; color:var(--text-muted); max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.notes || '�'}</td>
+          <td>${m.meetLink ? `<a href="${m.meetLink}" target="_blank" class="gc-meet-badge">&#x1F4F9; Rejoin</a>` : '...'}</td>
+          <td style="font-size:11px; color:var(--text-muted); max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.notes || '...'}</td>
         </tr>
-      `).join(''); if (typeof hm2 !== "undefined" && tbody.innerHTML !== hm2) tbody.innerHTML = hm2; if (typeof h2 !== "undefined" && tbody.innerHTML !== h2) tbody.innerHTML = h2;
+      `).join('');
     }
   }
 }
@@ -16166,15 +16164,15 @@ function buildStudentMeetingCard(m) {
     <div class="gc-session-card upcoming">
       <div style="flex:1; min-width:200px;">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-          <span style="background:rgba(0,182,108,0.2); color:#00b66c; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px;">📅 UPCOMING</span>
-          <span style="font-size:14px; font-weight:700; color:var(--text-main);">${m.title || 'Untitled Session'}</span>
+          <span style="background:rgba(0,182,108,0.2); color:#00b66c; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px;">🟢 UPCOMING</span>
+          <span style="font-size:14px; font-weight:700; color:#fff;">${m.title || 'Untitled Session'}</span>
         </div>
         <div style="font-size:12px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:12px;">
-          <span>📅 ${formatMeetDateTime(m.scheduledAt)}</span>
-          <span>⏳ ${formatDuration(m.duration)}</span>
-          <span>👤 Hosted by ${m.mentorName || 'Your Mentor'}</span>
+          <span>?? ${formatMeetDateTime(m.scheduledAt)}</span>
+          <span>? ${formatDuration(m.duration)}</span>
+          <span>?? Hosted by ${m.mentorName || 'Your Mentor'}</span>
         </div>
-        ${m.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic;">📝 ${m.notes}</div>` : ''}
+        ${m.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic;">?? ${m.notes}</div>` : ''}
       </div>
       <a href="${m.meetLink}" target="_blank" class="gc-meet-badge" style="text-decoration:none; cursor:pointer; flex-shrink:0;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -16208,12 +16206,12 @@ function showMeetingDetail(meetingId) {
       </div>
       <div style="flex:1; min-width:180px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:10px; padding:12px;">
         <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Date & Time</div>
-        <div style="font-size:12px; color:var(--text-main);">${formatMeetDateTime(meeting.scheduledAt)}</div>
+        <div style="font-size:12px; color:#fff;">${formatMeetDateTime(meeting.scheduledAt)}</div>
       </div>
     </div>
     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:10px; padding:12px;">
       <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Duration</div>
-      <div style="font-size:12px; color:var(--text-main);">${formatDuration(meeting.duration)}</div>
+      <div style="font-size:12px; color:#fff;">${formatDuration(meeting.duration)}</div>
     </div>
     <div style="background:rgba(66,133,244,0.08); border:1px solid rgba(66,133,244,0.25); border-radius:10px; padding:12px;">
       <div style="font-size:10px; color:rgba(66,133,244,0.8); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Google Meet Link</div>
@@ -16306,7 +16304,7 @@ window.startMentorGroupCall = startMentorGroupCall;
 window.acceptIncomingCall = acceptIncomingCall;
 window.declineIncomingCall = declineIncomingCall;
 
-// ====== MISSING WINDOW EXPORTS � Student & Mentor core functions ======
+// ====== MISSING WINDOW EXPORTS ... Student & Mentor core functions ======
 window.handleLogSubmit = handleLogSubmit;
 window.loadStudentLogs = loadStudentLogs;
 window.startFaceVerification = startFaceVerification;
@@ -16801,7 +16799,7 @@ function waRenderParticipantsList() {
     const d = document.createElement('div');
     d.className = 'wa-participants-item';
     d.innerHTML = (avatar ? `<img src="${avatar}" alt="${name}">` : `<div class="wa-p-initial">${name.charAt(0).toUpperCase()}</div>`)
-      + `<div><div style="font-size:11px;font-weight:600;color:var(--text-main);">${name}${isMe?' (You)':''}</div><div style="font-size:9px;color:#22c55e;">● Active</div></div>`;
+      + `<div><div style="font-size:11px;font-weight:600;color:#fff;">${name}${isMe?' (You)':''}</div><div style="font-size:9px;color:#22c55e;">● Active</div></div>`;
     c.appendChild(d);
   });
 }

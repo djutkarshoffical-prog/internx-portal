@@ -1,4 +1,4 @@
-const CACHE_NAME = 'internx-cache-v10';
+const CACHE_NAME = 'internx-cache-v11';
 const urlsToCache = [
   './',
   './index.html',

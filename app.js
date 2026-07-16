@@ -17512,10 +17512,7 @@ function initAppDownloadPopup() {
   
   // Show automatically after 3 seconds
   setTimeout(() => {
-    // Show the popup only if we are on the landing page
-    if (!document.getElementById('landing-page').classList.contains('hidden')) {
-      popup.classList.add('show');
-    }
+    popup.classList.add('show');
   }, 3000);
 }
 
@@ -17526,10 +17523,7 @@ window.closeAppPopup = function() {
     
     // Auto-reopen after 8 seconds
     setTimeout(() => {
-      // Reopen only if we are still on the landing page
-      if (!document.getElementById('landing-page').classList.contains('hidden')) {
-        popup.classList.add('show');
-      }
+      popup.classList.add('show');
     }, 8000);
   }
 }

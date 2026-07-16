@@ -1,0 +1,22 @@
+{
+  "name": "InternX by UTX",
+  "short_name": "InternX",
+  "description": "A premium glassmorphic portal for managing, tracking, and optimizing student internship progress.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#07070a",
+  "theme_color": "#e01a8b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./robot_avatar.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./robot_avatar.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

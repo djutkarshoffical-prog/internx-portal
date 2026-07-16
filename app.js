@@ -13488,6 +13488,16 @@ JSON Schema structure:
     if (!jsonText) return null;
 
     const parsed = JSON.parse(jsonText.trim());
+    if (parsed && parsed.questions) {
+      parsed.questions.forEach(q => {
+        if (q.options && Array.isArray(q.options)) {
+          for (let i = q.options.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
+          }
+        }
+      });
+    }
     return parsed;
   } catch (err) {
     console.error("Gemini AI Quiz Generation Error:", err);

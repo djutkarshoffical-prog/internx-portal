@@ -4762,6 +4762,11 @@ tr.attendance-row.active-row td:first-child {
     text-align: center;
     gap: 20px;
   }
+  
+  .smart-app-banner .banner-content {
+    flex-direction: column;
+    text-align: center;
+  }
   .footer-links {
     flex-wrap: wrap;
     justify-content: center;

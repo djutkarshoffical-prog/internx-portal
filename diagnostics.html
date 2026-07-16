@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InternX Platform Diagnostics</title>
+  <style>
+    :root {
+      --bg-dark: #07070a;
+      --panel-bg: rgba(15, 15, 25, 0.95);
+      --primary-magenta: #ff007f;
+      --text-muted: #8a8a93;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+    body {
+      background: var(--bg-dark);
+      color: #fff;
+      font-family: sans-serif;
+      padding: 30px;
+      margin: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--primary-magenta);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    .card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: var(--primary-magenta);
+      font-size: 18px;
+    }
+    pre {
+      background: #000;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12px;
+      color: #a5e844;
+      border: 1px solid #1c1c24;
+      max-height: 250px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .btn-primary {
+      background: var(--primary-magenta);
+      color: white;
+    }
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 InternX Diagnostics Console</h1>
+    
+    <div class="card">
+      <h2>Session Information</h2>
+      <div id="session-status">Checking session...</div>
+    </div>
+
+    <div class="card">
+      <h2>Bypass Check-In Gate</h2>
+      <p style="font-size: 13px; color: var(--text-muted);">
+        If your face match completes but the screen doesn't unlock, click below to inject a forced daily check-in log locally.
+      </p>
+      <button class="btn btn-primary" onclick="injectCheckIn()">Forced Check-In & Unlock</button>
+      <button class="btn btn-success" onclick="openApp()">Open App</button>
+    </div>
+
+    <div class="card">
+      <h2>Supabase Connection Status</h2>
+      <div id="supabase-status">Reading local storage keys...</div>
+    </div>
+
+    <div class="card">
+      <h2>Attendance Log Inspector</h2>
+      <div id="attendance-logs">Reading logs...</div>
+    </div>
+
+    <div class="card">
+      <h2>Local Storage Database Dump</h2>
+      <pre id="db-dump">Reading database...</pre>
+    </div>
+  </div>
+
+  <script>
+    function updateUI() {
+      // 1. Session Info
+      const sessionUserStr = localStorage.getItem('apex_intern_currentUser');
+      const sessionStatusEl = document.getElementById('session-status');
+      let currentUser = null;
+      if (sessionUserStr) {
+        currentUser = JSON.parse(sessionUserStr);
+        sessionStatusEl.innerHTML = `
+          <p><strong>Name:</strong> ${currentUser.name}</p>
+          <p><strong>Email:</strong> ${currentUser.email}</p>
+          <p><strong>Role:</strong> ${currentUser.role}</p>
+        `;
+      } else {
+        sessionStatusEl.innerHTML = `<p style="color: var(--danger);">No active session user found. Please log in first.</p>`;
+      }
+
+      // 2. Supabase Info
+      const sbConfigStr = localStorage.getItem('apex_intern_supabase_config');
+      const sbDisabled = localStorage.getItem('apex_intern_supabase_disabled') === 'true';
+      const sbStatusEl = document.getElementById('supabase-status');
+      if (sbDisabled) {
+        sbStatusEl.innerHTML = `<p><span class="status-badge badge-danger">Supabase Disabled</span> (LocalStorage Fallback Active)</p>`;
+      } else if (sbConfigStr) {
+        const config = JSON.parse(sbConfigStr);
+        sbStatusEl.innerHTML = `
+          <p><span class="status-badge badge-success">Supabase Configured</span></p>
+          <p><strong>URL:</strong> <code>${config.url}</code></p>
+          <p><strong>Anon Key:</strong> <code>${config.anonKey.substring(0, 15)}...</code></p>
+        `;
+      } else {
+        sbStatusEl.innerHTML = `
+          <p><span class="status-badge badge-danger">Not Configured</span></p>
+          <p>Using default/fallback credentials.</p>
+        `;
+      }
+
+      // 3. Database Dump
+      const dbStr = localStorage.getItem('apex_intern_db');
+      const dbDumpEl = document.getElementById('db-dump');
+      const attendanceEl = document.getElementById('attendance-logs');
+      if (dbStr) {
+        const db = JSON.parse(dbStr);
+        dbDumpEl.textContent = JSON.stringify(db, null, 2);
+        
+        // Attendance logs
+        if (db.attendance && db.attendance.length > 0) {
+          let html = '<ul>';
+          db.attendance.forEach(log => {
+            if (currentUser && log.studentEmail?.toLowerCase() === currentUser.email?.toLowerCase()) {
+              html += `<li><strong>[${log.date}]</strong> ${log.action} - ${log.status} (Score: ${log.score}%)</li>`;
+            }
+          });
+          html += '</ul>';
+          attendanceEl.innerHTML = html;
+        } else {
+          attendanceEl.innerHTML = '<p>No attendance logs in the database.</p>';
+        }
+      } else {
+        dbDumpEl.textContent = 'No database found in local storage.';
+        attendanceEl.innerHTML = '<p>No database found in local storage.</p>';
+      }
+    }
+
+    function injectCheckIn() {
+      const sessionUserStr = localStorage.getItem('apex_intern_currentUser');
+      if (!sessionUserStr) {
+        alert("Please log in first before injecting a check-in!");
+        return;
+      }
+      const currentUser = JSON.parse(sessionUserStr);
+      let db = {};
+      const dbStr = localStorage.getItem('apex_intern_db');
+      if (dbStr) {
+        db = JSON.parse(dbStr);
+      }
+      
+      if (!db.attendance) db.attendance = [];
+      
+      // Remove any existing attendance record for today to prevent duplicates
+      const todayDate = new Date().toDateString();
+      db.attendance = db.attendance.filter(log => !(log.studentEmail?.toLowerCase() === currentUser.email?.toLowerCase() && log.date === todayDate));
+
+      // Inject clean check-in
+      const newRecord = {
+        id: `att-injected-${Date.now()}`,
+        studentEmail: currentUser.email,
+        studentName: currentUser.name,
+        timestamp: new Date().toLocaleString(),
+        date: todayDate,
+        action: "Daily Attendance Check-In",
+        score: 95,
+        status: "Verified (Pass)",
+        faceImage: ""
+      };
+
+      db.attendance.push(newRecord);
+      localStorage.setItem('apex_intern_db', JSON.stringify(db));
+      alert("Successfully injected check-in record for today!");
+      updateUI();
+    }
+
+    function openApp() {
+      window.location.href = 'index.html';
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>

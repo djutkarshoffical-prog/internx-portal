@@ -33,7 +33,15 @@
           <li><a href="#faqs">FAQs</a></li>
         </ul>
         <div class="nav-actions" style="display: flex; align-items: center; gap: 12px;">
-          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Switch to Light Mode">â˜€ï¸</button>
+          <button class="theme-toggle-btn theme-pill-btn" onclick="toggleTheme()" title="Toggle Theme" id="nav-theme-pill">
+            <span class="theme-pill-track">
+              <span class="theme-pill-knob">
+                <svg class="pill-sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg class="pill-moon-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/><line x1="17" y1="4" x2="17.5" y2="2.5" stroke-width="1.5"/><line x1="20" y1="7" x2="21.5" y2="6.5" stroke-width="1.5"/></svg>
+              </span>
+              <span class="theme-pill-label">NIGHT MODE</span>
+            </span>
+          </button>
           <span id="supabase-status-badge-wrapper" style="display:none;">
             <span id="supabase-status-badge" class="supabase-status-badge fallback" onclick="handleSupabaseBadgeClick()" title="Cloud database status â€” click to retry sync">
               DB: Local Storage
@@ -94,11 +102,11 @@
             @keyframes heroBlink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(0.05)}}
             @keyframes heroScanBar{0%{width:4px}50%{width:60px}100%{width:4px}}
           </style>
-          <div style="position:relative;width:460px;height:480px;display:flex;align-items:center;justify-content:center;">
+          <div style="position:relative;width:min(460px,45vw);height:min(480px,45vw);display:flex;align-items:center;justify-content:center;">
             <!-- Glow rings -->
-            <div style="position:absolute;width:300px;height:300px;border-radius:50%;border:1px solid rgba(224,26,139,0.18);animation:heroPulse 3s ease-in-out infinite;pointer-events:none;"></div>
-            <div style="position:absolute;width:370px;height:370px;border-radius:50%;border:1px solid rgba(131,39,236,0.12);animation:heroPulse 3s ease-in-out infinite 0.6s;pointer-events:none;"></div>
-            <div style="position:absolute;width:440px;height:440px;border-radius:50%;border:1px solid rgba(42,107,242,0.07);animation:heroPulse 3s ease-in-out infinite 1.2s;pointer-events:none;"></div>
+            <div style="position:absolute;width:min(300px,38vw);height:min(300px,38vw);border-radius:50%;border:1px solid rgba(224,26,139,0.18);animation:heroPulse 3s ease-in-out infinite;pointer-events:none;"></div>
+            <div style="position:absolute;width:min(370px,46vw);height:min(370px,46vw);border-radius:50%;border:1px solid rgba(131,39,236,0.12);animation:heroPulse 3s ease-in-out infinite 0.6s;pointer-events:none;"></div>
+            <div style="position:absolute;width:min(440px,54vw);height:min(440px,54vw);border-radius:50%;border:1px solid rgba(42,107,242,0.07);animation:heroPulse 3s ease-in-out infinite 1.2s;pointer-events:none;"></div>
             <!-- Orbiting dots -->
             <div style="position:absolute;width:0;height:0;animation:heroOrbit 6s linear infinite;pointer-events:none;">
               <div style="width:10px;height:10px;border-radius:50%;background:#e01a8b;box-shadow:0 0 12px #e01a8b;margin:-5px 0 0 -5px;"></div>
@@ -111,7 +119,7 @@
             </div>
             <!-- Robot SVG -->
             <svg width="240" height="310" viewBox="0 0 230 300" fill="none" xmlns="http://www.w3.org/2000/svg"
-              style="animation:heroFloat 4s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(224,26,139,0.45));">
+              style="animation:heroFloat 4s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(224,26,139,0.45));width:min(240px,42vw);height:auto;">
               <defs>
                 <linearGradient id="hg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2a0a3e"/><stop offset="100%" stop-color="#0d0d1e"/></linearGradient>
                 <linearGradient id="hg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1c0a30"/><stop offset="100%" stop-color="#0a0a18"/></linearGradient>
@@ -154,9 +162,9 @@
               <rect x="118" y="284" width="50" height="14" rx="7" fill="rgba(224,26,139,0.2)" stroke="rgba(224,26,139,0.5)" stroke-width="1"/>
             </svg>
             <!-- Floating badges -->
-            <div style="position:absolute;top:28px;right:8px;background:rgba(224,26,139,0.1);border:1px solid rgba(224,26,139,0.4);border-radius:8px;padding:5px 11px;font-size:10px;font-weight:700;color:#e01a8b;letter-spacing:0.05em;backdrop-filter:blur(8px);animation:heroFloat 5s ease-in-out infinite 0.4s;white-space:nowrap;">AI Powered</div>
-            <div style="position:absolute;bottom:55px;left:0;background:rgba(42,107,242,0.1);border:1px solid rgba(42,107,242,0.4);border-radius:8px;padding:5px 11px;font-size:10px;font-weight:700;color:#2a6bf2;letter-spacing:0.05em;backdrop-filter:blur(8px);animation:heroFloat 5.5s ease-in-out infinite 1s;white-space:nowrap;">Face Verified</div>
-            <div style="position:absolute;top:95px;left:2px;background:rgba(131,39,236,0.1);border:1px solid rgba(131,39,236,0.4);border-radius:8px;padding:5px 11px;font-size:10px;font-weight:700;color:#8327ec;letter-spacing:0.05em;backdrop-filter:blur(8px);animation:heroFloat 4.5s ease-in-out infinite 1.6s;white-space:nowrap;">Live Tracking</div>
+            <div style="position:absolute;top:10%;right:0;background:rgba(224,26,139,0.1);border:1px solid rgba(224,26,139,0.4);border-radius:8px;padding:4px 8px;font-size:9px;font-weight:700;color:#e01a8b;letter-spacing:0.05em;backdrop-filter:blur(8px);animation:heroFloat 5s ease-in-out infinite 0.4s;white-space:nowrap;">AI Powered</div>
+            <div style="position:absolute;bottom:15%;left:0;background:rgba(42,107,242,0.1);border:1px solid rgba(42,107,242,0.4);border-radius:8px;padding:4px 8px;font-size:9px;font-weight:700;color:#2a6bf2;letter-spacing:0.05em;backdrop-filter:blur(8px);animation:heroFloat 5.5s ease-in-out infinite 1s;white-space:nowrap;">Face Verified</div>
+            <div style="position:absolute;top:35%;left:0;background:rgba(131,39,236,0.1);border:1px solid rgba(131,39,236,0.4);border-radius:8px;padding:4px 8px;font-size:9px;font-weight:700;color:#8327ec;letter-spacing:0.05em;backdrop-filter:blur(8px);animation:heroFloat 4.5s ease-in-out infinite 1.6s;white-space:nowrap;">Live Tracking</div>
           </div>
         </div>
       </section>
@@ -1345,10 +1353,10 @@
                 <div style="font-size:12px; color:var(--text-muted);">Your mentor has started a group call. Join now!</div>
               </div>
             </div>
-            <a id="student-gc-live-link" href="#" target="_blank" style="background:#ef4444; color:#fff; font-weight:700; font-size:13px; padding:10px 22px; border-radius:10px; text-decoration:none; display:flex; align-items:center; gap:8px;">
+            <button onclick="acceptIncomingCall()" id="student-gc-live-link" style="background:#ef4444; color:#fff; font-weight:700; font-size:13px; padding:10px 22px; border-radius:10px; border:none; cursor:pointer; display:flex; align-items:center; gap:8px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
               Join Now
-            </a>
+            </button>
           </div>
 
           <!-- Upcoming Sessions -->
@@ -1869,9 +1877,9 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                 Schedule Meeting
               </button>
-              <button class="btn btn-secondary btn-sm" onclick="launchInstantMeeting()" style="gap:6px; display:flex; align-items:center; border-color:#00b66c; color:#00b66c;">
+              <button class="btn btn-secondary btn-sm" onclick="startMentorGroupCall()" style="gap:6px; display:flex; align-items:center; border-color:#00b66c; color:#00b66c;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.82v6.361a1 1 0 0 1-1.447.89L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg>
-                Start Instant Meet
+                Start Video Call
               </button>
             </div>
           </div>
@@ -1887,7 +1895,7 @@
                 <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">Instantly launch a call with all your domain interns — link auto-shared to their dashboard</div>
               </div>
             </div>
-            <button onclick="launchInstantMeeting()" style="background:linear-gradient(135deg,#00b66c,#009a5c); border:none; color:#fff; font-weight:700; font-size:13px; padding:11px 24px; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:8px; white-space:nowrap; box-shadow:0 4px 16px rgba(0,182,108,0.35);">
+            <button onclick="startMentorGroupCall()" style="background:linear-gradient(135deg,#00b66c,#009a5c); border:none; color:#fff; font-weight:700; font-size:13px; padding:11px 24px; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:8px; white-space:nowrap; box-shadow:0 4px 16px rgba(0,182,108,0.35);">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
               Launch Now
             </button>
@@ -3242,6 +3250,8 @@
   <!-- ==================== CORE JS CONTROLLERS ==================== -->
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Razorpay Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="mockData.js"></script>
   <script src="app.js"></script>
   <!-- Floating Runtime Error Debugger -->

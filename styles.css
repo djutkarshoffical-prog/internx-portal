@@ -1,4 +1,4 @@
-﻿/* styles.css - Premium Glassmorphic Neon Theme */
+/* styles.css - Premium Glassmorphic Neon Theme */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Orbitron:wght@700;800;900&family=Rajdhani:wght@600;700&family=Caveat:wght@400;700&family=Pinyon+Script&family=Alex+Brush&display=swap');
 
 /* Prevent white flash on overscroll */
@@ -402,7 +402,7 @@ header nav {
   font-weight: 900;
   line-height: 1.25;
   margin-bottom: 20px;
-  margin-top: 0;
+  margin-top: -40px;
   font-family: 'Orbitron', sans-serif;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -414,6 +414,7 @@ header nav {
   .hero-content h1 {
     font-size: 30px;
     letter-spacing: 0.01em;
+    margin-top: 20px;
   }
   .hero-content p {
     font-size: 12px;

@@ -2046,21 +2046,6 @@ async function handleRegisterSubmit(event) {
     }
   }
 
-  // Razorpay Checkout Hook for Premium Tier
-  if (activeRegisterRole === 'student' && document.getElementById('reg-tier').value === 'paid' && !pendingRegistrationPayment) {
-    const feeAmount = _selectedInternFee > 0 ? _selectedInternFee : 99;
-    openRzpModal(email, feeAmount, 'InternX Registration Fee', (razorpayPaymentId) => {
-      pendingRegistrationPayment = {
-        method: 'Razorpay',
-        timestamp: new Date().toISOString(),
-        amount: feeAmount,
-        reference: razorpayPaymentId
-      };
-      handleRegisterSubmit(event);
-    });
-    return;
-  }
-
   // Validate duplicate user locally
   if (db.users.some(u => u && u.email && u.email.trim().toLowerCase() === email)) {
     alert("An account with this email address already exists.");
@@ -2095,45 +2080,50 @@ async function handleRegisterSubmit(event) {
 
   const signUpBtn = event.submitter || document.querySelector('#register-form button[type="submit"]');
   const originalBtnText = signUpBtn ? signUpBtn.innerHTML : 'Sign Up →';
-  if (signUpBtn) {
-    signUpBtn.disabled = true;
-    signUpBtn.innerHTML = 'Verifying...';
-  }
 
-  // Verify the OTP using Supabase
-  if (supabaseActive && supabaseClient) {
-    if (window.mockOtpActive) {
-      if (otpCode !== '123456') {
-        showRegError('Invalid OTP. Please enter 123456 in fallback mode.');
-        if (signUpBtn) {
-          signUpBtn.disabled = false;
-          signUpBtn.innerHTML = originalBtnText;
+  // Only verify OTP if we haven't already for this email session
+  if (window.verifiedOTPForEmail !== email) {
+    if (signUpBtn) {
+      signUpBtn.disabled = true;
+      signUpBtn.innerHTML = 'Verifying...';
+    }
+
+    if (supabaseActive && supabaseClient) {
+      if (window.mockOtpActive) {
+        if (otpCode !== '123456') {
+          showRegError('Invalid OTP. Please enter 123456 in fallback mode.');
+          if (signUpBtn) { signUpBtn.disabled = false; signUpBtn.innerHTML = originalBtnText; }
+          return;
         }
-        return;
+      } else {
+        const { data, error } = await supabaseClient.auth.verifyOtp({
+          email,
+          token: otpCode,
+          type: 'email'
+        });
+
+        if (error) {
+          if (signUpBtn) { signUpBtn.disabled = false; signUpBtn.innerHTML = originalBtnText; }
+          const errorMsg = error.message || JSON.stringify(error);
+          showRegError('Invalid OTP: ' + errorMsg);
+          return;
+        }
       }
     } else {
-      const { data, error } = await supabaseClient.auth.verifyOtp({
-        email,
-        token: otpCode,
-        type: 'email'
-      });
-
-      if (error) {
-        if (signUpBtn) {
-          signUpBtn.disabled = false;
-          signUpBtn.innerHTML = originalBtnText;
-        }
-        const errorMsg = error.message || JSON.stringify(error);
-        showRegError('Invalid OTP: ' + errorMsg);
-        return;
-      }
+      showRegError('Supabase is not active. Cannot verify OTP.');
+      if (signUpBtn) { signUpBtn.disabled = false; signUpBtn.innerHTML = originalBtnText; }
+      return;
     }
-  } else {
-    // Fallback if supabase is disabled, but ideally we shouldn't hit this if OTP was sent via Supabase
-    showRegError('Supabase is not active. Cannot verify OTP.');
-    return;
+    
+    // Mark OTP as successfully verified!
+    window.verifiedOTPForEmail = email;
+    if (signUpBtn) {
+      signUpBtn.disabled = false;
+      signUpBtn.innerHTML = originalBtnText;
+    }
   }
 
+  // Set pendingRegistrationData BEFORE Razorpay just in case
   window.pendingRegistrationData = {
     email, password, name, activeRegisterRole,
     faceData: document.getElementById('reg-face-data') ? document.getElementById('reg-face-data').value : '',
@@ -2145,13 +2135,24 @@ async function handleRegisterSubmit(event) {
     mentorDomain: document.getElementById('reg-mentor-domain') ? document.getElementById('reg-mentor-domain').value : ''
   };
 
-  // Directly finalize registration now that OTP is verified
-  await finalizeRegistration();
-  
-  if (signUpBtn) {
-    signUpBtn.disabled = false;
-    signUpBtn.innerHTML = originalBtnText;
+  // Razorpay Checkout Hook for Premium Tier (AFTER OTP VERIFICATION)
+  if (activeRegisterRole === 'student' && document.getElementById('reg-tier').value === 'paid' && !pendingRegistrationPayment) {
+    const feeAmount = _selectedInternFee > 0 ? _selectedInternFee : 99;
+    openRzpModal(email, feeAmount, 'InternX Registration Fee', async (razorpayPaymentId) => {
+      pendingRegistrationPayment = {
+        method: 'Razorpay',
+        timestamp: new Date().toISOString(),
+        amount: feeAmount,
+        reference: razorpayPaymentId
+      };
+      // Once payment succeeds, directly finalize registration!
+      await finalizeRegistration();
+    });
+    return; // Wait for payment callback
   }
+
+  // Directly finalize registration now that OTP is verified (Free tier or already paid)
+  await finalizeRegistration();
 }
 
 // ==========================================

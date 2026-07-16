@@ -1,14 +1,24 @@
-// app.js - Core Javascript Controller for InternX by UTX
+﻿// app.js - Core Javascript Controller for InternX by UTX
 
 // Safe localStorage wrapper to prevent exceptions under file:// or restricted browser profiles
 const storage = {
   getItem(key) {
-    try { return localStorage.getItem(key); } catch (e) { return window.__memoryStorage?.[key] || null; }
+    try { 
+      return localStorage.getItem(key) || sessionStorage.getItem(key); 
+    } catch (e) { 
+      return window.__memoryStorage?.[key] || null; 
+    }
   },
   setItem(key, value) {
-    try { localStorage.setItem(key, value); } catch (e) {
-      if (!window.__memoryStorage) window.__memoryStorage = {};
-      window.__memoryStorage[key] = value;
+    try { 
+      localStorage.setItem(key, value); 
+    } catch (e) {
+      try {
+        sessionStorage.setItem(key, value);
+      } catch(e2) {
+        if (!window.__memoryStorage) window.__memoryStorage = {};
+        window.__memoryStorage[key] = value;
+      }
     }
   },
   removeItem(key) {
@@ -1413,6 +1423,7 @@ function handleRoleTabClick(role) {
 window.handleRoleTabClick = handleRoleTabClick;
 
 function showAuthPage(mode = 'login') {
+  window._appliedInternId = null;
   document.getElementById('main-header').classList.remove('hidden');
   document.getElementById('landing-page').classList.add('hidden');
   document.getElementById('auth-page').classList.remove('hidden');
@@ -1454,10 +1465,11 @@ function toggleAuthForms(mode) {
     if (authSection) { authSection.style.alignItems = 'flex-start'; authSection.style.paddingTop = '90px'; }
     setRegisterRole('student');
 
-    // If opened directly (not via Apply Now), unlock domain & mentor
+    // If opened directly (not via Apply Now), unlock domain & mentor & tier
     if (!window._appliedInternId) {
       const domainEl = document.getElementById('reg-domain');
       const mentorEl = document.getElementById('reg-mentor-select');
+      const tierEl = document.getElementById('reg-tier');
       if (domainEl) {
         domainEl.disabled = false;
         domainEl.style.opacity = '';
@@ -1469,6 +1481,12 @@ function toggleAuthForms(mode) {
         mentorEl.style.opacity = '';
         mentorEl.style.cursor = '';
         mentorEl.title = '';
+      }
+      if (tierEl) {
+        tierEl.disabled = false;
+        tierEl.style.opacity = '';
+        tierEl.style.cursor = '';
+        tierEl.title = '';
       }
     }
   }
@@ -2945,13 +2963,13 @@ function renderMentorDashboardContent() {
         const timeStr = todayLog.timestamp ? (todayLog.timestamp.split(',')[1] || '').trim() : '';
         attendanceStatusHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
-            <span style="background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--success); font-size: 11px; font-weight: bold; display: inline-block;">?? Checked-In</span>
+            <span style="background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--success); font-size: 11px; font-weight: bold; display: inline-block;">✔ Checked-In</span>
             ${timeStr ? `<span style="font-size: 9px; color: var(--text-muted);">${timeStr}</span>` : ''}
           </div>
         `;
       } else {
         attendanceStatusHTML = `
-          <span style="background: rgba(239, 68, 68, 0.12); color: var(--danger); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 11px; font-weight: bold; display: inline-block;">? Absent</span>
+          <span style="background: rgba(239, 68, 68, 0.12); color: var(--danger); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 11px; font-weight: bold; display: inline-block;">✖ Absent</span>
         `;
       }
 
@@ -3306,12 +3324,12 @@ function loadMentorTasks() {
       
       let attachmentHTML = '';
       if (task.attachment) {
-        attachmentHTML = `<div style="margin-top: 4px;"><a href="javascript:void(0)" onclick="downloadTaskAttachment('${task.id}', '${task.attachment.name}')" style="font-size: 11px; color: var(--primary-magenta); text-decoration: underline;" title="Download Task Document">?? ${task.attachment.name}</a></div>`;
+        attachmentHTML = `<div style="margin-top: 4px;"><a href="javascript:void(0)" onclick="downloadTaskAttachment('${task.id}', '${task.attachment.name}')" style="font-size: 11px; color: var(--primary-magenta); text-decoration: underline;" title="Download Task Document">📎 ${task.attachment.name}</a></div>`;
       }
 
       let referenceLinkHTML = '';
       if (task.referenceLink) {
-        referenceLinkHTML = `<div style="margin-top: 4px;"><a href="${task.referenceLink}" target="_blank" style="font-size: 11px; color: var(--primary-magenta); text-decoration: underline;" title="Open Task Platform">?? Task Platform</a></div>`;
+        referenceLinkHTML = `<div style="margin-top: 4px;"><a href="${task.referenceLink}" target="_blank" style="font-size: 11px; color: var(--primary-magenta); text-decoration: underline;" title="Open Task Platform">🔗 Task Platform</a></div>`;
       }
 
       let progressHTML = '';
@@ -3344,7 +3362,7 @@ function loadMentorTasks() {
           ${progressHTML}
         </td>
         <td>${task.dueDate}</td>
-        <td><span class="status-badge ${task.status.toLowerCase().replace(/\s+/g, '_')}">${task.status}</span></td>
+        <td><span class="status-badge ${task.status.toLowerCase().replace(/\s+/g, '_')}">${task.status === 'Todo' ? 'Task' : task.status}</span></td>
       `;
       tableBody.appendChild(row);
     });
@@ -3684,12 +3702,12 @@ function submitReviewOutcome(outcomeStatus) {
 function getChatMessagePreview(chat) {
   if (!chat) return "Click to start chatting...";
   if (chat.deleted) {
-    return chat.from === currentUser.email ? "?? You deleted this message" : "?? This message was deleted";
+    return chat.from === currentUser.email ? "\uD83D\uDEAB You deleted this message" : "\uD83D\uDEAB This message was deleted";
   }
   if (chat.attachment) {
     const isImg = chat.attachment.type && chat.attachment.type.startsWith('image/');
     const textPart = chat.message ? `: ${chat.message}` : '';
-    return isImg ? `?? Photo${textPart}` : `?? File: ${chat.attachment.name}${textPart}`;
+    return isImg ? `\uD83D\uDCF7 Photo${textPart}` : `\uD83D\uDCC4 File: ${chat.attachment.name}${textPart}`;
   }
   return chat.message;
 }
@@ -4279,7 +4297,7 @@ function loadAdminRelations() {
       
       let stipendInfo = '...';
       if (isPaid) {
-        const symb = student.stipendCurrency === 'USD' ? '$' : '?';
+        const symb = student.stipendCurrency === 'USD' ? '$' : '₹';
         const freqLabel = student.stipendFrequency === 'streaming' ? '/ hr active' : (student.stipendFrequency === 'task' ? '/ completed task' : '/ month');
         stipendInfo = `<strong style="color:var(--success);">${symb}${student.stipendAmount || 15000}</strong> ${freqLabel}`;
       }
@@ -4354,7 +4372,6 @@ window.togglePairStipendFields = togglePairStipendFields;
 function renderChatHistory(recipientEmail, chatHistoryElementId) {
   const container = document.getElementById(chatHistoryElementId);
   if (!container) return;
-  container.innerHTML = '';
 
   if (!recipientEmail) {
     container.innerHTML = `<div style="margin: auto; text-align: center; color: var(--text-dark); font-size: 13px;">No supervisor assigned yet. Chat will be enabled once your pairing request is approved.</div>`;
@@ -4362,6 +4379,13 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
   }
 
   const relevantChats = getChatsBetween(currentUser.email, recipientEmail);
+  const chatFingerprint = JSON.stringify(relevantChats);
+
+  if (container.dataset.chatFingerprint === chatFingerprint) {
+    return; // Prevent visual flicker if no changes occurred
+  }
+  container.dataset.chatFingerprint = chatFingerprint;
+  container.innerHTML = '';
 
   if (relevantChats.length === 0) {
     container.innerHTML = `<div style="margin: auto; text-align: center; color: var(--text-dark); font-size: 13px;">No conversations found. Type a message below to start the thread.</div>`;
@@ -4372,7 +4396,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
         const meetNode = document.createElement('div');
         meetNode.style.cssText = 'margin:8px auto;max-width:420px;background:linear-gradient(135deg,rgba(0,182,108,0.12),rgba(66,133,244,0.12));border:1px solid rgba(0,182,108,0.35);border-radius:12px;padding:12px 16px;text-align:center;';
         const lnk = chat.meetLink ? ('<a href="' + chat.meetLink + '" target="_blank" style="color:#4285f4;font-weight:700;word-break:break-all;">' + chat.meetLink + '</a>') : '';
-        meetNode.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,0.9);"><span style="font-size:18px;">📹</span> ' + escapeHTML(chat.message || '') + (lnk ? ('<br><span style="font-size:11px;color:rgba(255,255,255,0.55);">Meet Link:</span> ' + lnk) : '') + '</div><div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:4px;">' + (new Date(chat.timestamp)).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + '</div>';
+        meetNode.innerHTML = '<div style="font-size:12px;color:var(--text-light);"><span style="font-size:18px;">📹</span> ' + escapeHTML((chat.message || '').replace(/^(?:\?\?|dY"1|\uD83D\uDCF9)\s*/, '')) + (lnk ? ('<br><span style="font-size:11px;color:var(--text-muted);">Meet Link:</span> ' + lnk) : '') + '</div><div style="font-size:10px;color:var(--text-dark);margin-top:4px;">' + (new Date(chat.timestamp)).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + '</div>';
         container.appendChild(meetNode);
         return;
       }
@@ -4389,7 +4413,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
       if (isDeleted) {
         const deletedText = (chat.from && currentUser.email && chat.from.trim().toLowerCase() === currentUser.email.trim().toLowerCase()) ? "You deleted this message" : "This message was deleted";
         bubbleContent = `<div style="font-style: italic; color: var(--text-dark); display: flex; align-items: center; gap: 4px; font-size: 12px;">
-          <span>??</span> ${deletedText}
+          <span>\uD83D\uDEAB</span> ${deletedText}
         </div>`;
       } else {
         if (chat.message) {
@@ -4408,7 +4432,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
               bubbleContent += `
                 <div id="${chunkContainerId}" style="${spacingStyle} border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); min-height: 150px; min-width: 200px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2);">
                   <div style="text-align: center; color: var(--text-dark); font-size: 12px;" class="chunk-loader-text">
-                    <span style="font-size: 20px; display: block; margin-bottom: 6px;" class="upload-icon-spinner">?</span>
+                    <span style="font-size: 20px; display: block; margin-bottom: 6px;" class="upload-icon-spinner">\u23F3</span>
                     Loading Image (${Math.round(file.size / 1024)} KB)...
                   </div>
                 </div>`;
@@ -4424,7 +4448,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
                           <img src="${dataUrl}" style="max-width: 250px; max-height: 200px; width: 100%; object-fit: cover; display: block; border-radius: 4px; transition: transform var(--transition-fast);" class="chat-bubble-img" alt="image attachment">
                         </div>`;
                     } else {
-                      el.innerHTML = `<span style="color: var(--danger); font-size: 11px;">?? Failed to load image</span>`;
+                      el.innerHTML = `<span style="color: var(--danger); font-size: 11px;">\u26A0\uFE0F Failed to load image</span>`;
                     }
                   }
                 });
@@ -4433,7 +4457,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
               bubbleContent += `
                 <div id="${chunkContainerId}" style="${spacingStyle} display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 6px; max-width: 260px; min-width: 200px;">
                   <div style="display: flex; align-items: center; gap: 8px; width: calc(100% - 30px);">
-                    <span style="font-size: 20px; flex-shrink: 0;" id="${chunkContainerId}-icon">?</span>
+                    <span style="font-size: 20px; flex-shrink: 0;" id="${chunkContainerId}-icon">\uD83D\uDCC4</span>
                     <span style="font-size: 11px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 500;" title="${file.name}">${file.name}</span>
                   </div>
                   <span id="${chunkContainerId}-action" style="font-size: 11px; color: var(--text-dark);">loading...</span>
@@ -4447,7 +4471,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
                     if (dataUrl) {
                       // Update icon
                       const iconEl = document.getElementById(`${chunkContainerId}-icon`);
-                      if (iconEl) iconEl.innerText = "??";
+                      if (iconEl) iconEl.innerText = "\uD83D\uDCC4";
                       
                       // Make card clickable to open directly in a new window without forcing a download
                       containerEl.style.cursor = "pointer";
@@ -4458,7 +4482,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
                       if (actionEl) {
                         actionEl.outerHTML = `
                           <a href="${dataUrl}" download="${file.name}" style="color: var(--primary-magenta); font-size: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; text-decoration: none;" title="Download File" onclick="event.stopPropagation();">
-                            ??
+                            \u2B07\uFE0F
                           </a>`;
                       }
                     } else {
@@ -4479,11 +4503,11 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
               bubbleContent += `
                 <div style="${spacingStyle} display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 6px; max-width: 260px; min-width: 200px; cursor: pointer;" onclick="openAttachmentFile('${file.data}', '${file.name}')">
                   <div style="display: flex; align-items: center; gap: 8px; width: calc(100% - 30px);">
-                    <span style="font-size: 20px; flex-shrink: 0;">??</span>
+                    <span style="font-size: 20px; flex-shrink: 0;">\uD83D\uDCC4</span>
                     <span style="font-size: 11px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; color: #fff; font-weight: 500;" title="${file.name}">${file.name}</span>
                   </div>
                   <a href="${file.data}" download="${file.name}" style="color: var(--primary-magenta); font-size: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; text-decoration: none;" title="Download File" onclick="event.stopPropagation();">
-                    ??
+                    \u2B07\uFE0F
                   </a>
                 </div>`;
             }
@@ -4492,7 +4516,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
       }
 
       // Show trash icon for messages (allows WhatsApp options)
-      const deleteBtnHTML = `<span class="delete-msg-btn" onclick="showDeleteMenu(event, '${chat.id}', ${isSent})" title="Delete Message" style="margin-left: 8px; cursor: pointer; color: var(--text-dark); opacity: 0.5; transition: opacity var(--transition-fast);">???</span>`;
+      const deleteBtnHTML = `<span class="delete-msg-btn" onclick="showDeleteMenu(event, '${chat.id}', ${isSent})" title="Delete Message" style="margin-left: 8px; cursor: pointer; color: var(--text-dark); opacity: 0.5; transition: opacity var(--transition-fast);">\u25BE</span>`;
 
       msgNode.innerHTML = `
         <div class="msg-bubble">${bubbleContent}</div>
@@ -5740,13 +5764,13 @@ function toggleRegWebcam() {
     document.getElementById('reg-face-data').value = '';
 
     startWebcam('reg-webcam', 'reg-face-status', 'reg-capture-btn');
-    toggleBtn.innerText = "?? Turn Off Camera";
+    toggleBtn.innerText = "Turn Off Camera";
     toggleBtn.style.borderColor = "var(--danger)";
     toggleBtn.style.color = "var(--danger)";
     regWebcamActive = true;
   } else {
     stopWebcam('reg-webcam');
-    toggleBtn.innerText = "?? Turn On Camera";
+    toggleBtn.innerText = "📷 Turn On Camera";
     toggleBtn.style.borderColor = "var(--primary-magenta)";
     toggleBtn.style.color = "var(--primary-magenta)";
     captureBtn.style.display = 'none';
@@ -5802,7 +5826,7 @@ async function captureRegistrationFace() {
     statusEl.style.color = "var(--success)";
     
     stopWebcam('reg-webcam');
-    document.getElementById('reg-webcam-toggle-btn').innerText = "?? Retake Face Profile";
+    document.getElementById('reg-webcam-toggle-btn').innerText = "📸 Retake Face Profile";
     document.getElementById('reg-webcam-toggle-btn').style.borderColor = "var(--primary-magenta)";
     document.getElementById('reg-webcam-toggle-btn').style.color = "var(--primary-magenta)";
     document.getElementById('reg-capture-btn').style.display = 'none';
@@ -5873,7 +5897,7 @@ function handleRegistrationFileUpload(event) {
       statusEl.style.color = "var(--success)";
 
       stopWebcam('reg-webcam');
-      document.getElementById('reg-webcam-toggle-btn').innerText = "?? Retake Face Profile";
+      document.getElementById('reg-webcam-toggle-btn').innerText = "📸 Retake Face Profile";
       document.getElementById('reg-webcam-toggle-btn').style.borderColor = "var(--primary-magenta)";
       document.getElementById('reg-webcam-toggle-btn').style.color = "var(--primary-magenta)";
       document.getElementById('reg-capture-btn').style.display = 'none';
@@ -5945,7 +5969,7 @@ function handleEditFileUpload(event) {
       statusEl.style.color = "var(--success)";
 
       stopWebcam('edit-webcam');
-      document.getElementById('edit-webcam-toggle-btn').innerText = "?? Retake Face Profile";
+      document.getElementById('edit-webcam-toggle-btn').innerText = "📸 Retake Face Profile";
       document.getElementById('edit-webcam-toggle-btn').style.borderColor = "var(--primary-magenta)";
       document.getElementById('edit-webcam-toggle-btn').style.color = "var(--primary-magenta)";
       document.getElementById('edit-capture-btn').style.display = 'none';
@@ -6204,13 +6228,13 @@ function toggleEditWebcam() {
     document.getElementById('edit-face-data').value = '';
 
     startWebcam('edit-webcam', 'edit-face-status', 'edit-capture-btn');
-    toggleBtn.innerText = "?? Turn Off Camera";
+    toggleBtn.innerText = "Turn Off Camera";
     toggleBtn.style.borderColor = "var(--danger)";
     toggleBtn.style.color = "var(--danger)";
     editWebcamActive = true;
   } else {
     stopWebcam('edit-webcam');
-    toggleBtn.innerText = "?? Turn On Camera";
+    toggleBtn.innerText = "📷 Turn On Camera";
     toggleBtn.style.borderColor = "var(--primary-magenta)";
     toggleBtn.style.color = "var(--primary-magenta)";
     captureBtn.style.display = 'none';
@@ -6269,7 +6293,7 @@ async function captureEditFace() {
     statusEl.style.color = "var(--success)";
 
     stopWebcam('edit-webcam');
-    document.getElementById('edit-webcam-toggle-btn').innerText = "?? Retake Face Profile";
+    document.getElementById('edit-webcam-toggle-btn').innerText = "📸 Retake Face Profile";
     document.getElementById('edit-webcam-toggle-btn').style.borderColor = "var(--primary-magenta)";
     document.getElementById('edit-webcam-toggle-btn').style.color = "var(--primary-magenta)";
     document.getElementById('edit-capture-btn').style.display = 'none';
@@ -7402,6 +7426,33 @@ function initSupabase() {
   }
 }
 
+
+async function syncInternshipsToCloud() {
+  if (!supabaseActive || !supabaseClient) return;
+  try {
+    const { data: records, error } = await supabaseClient
+      .from('apex_sync')
+      .select('data, created_at')
+      .eq('collection', 'internships')
+      .order('created_at', { ascending: false });
+      
+    if (error) throw error;
+    
+    if (records && records.length > 0) {
+      const parsed = records.map(r => typeof r.data === 'string' ? JSON.parse(r.data) : r.data);
+      MOCK_INTERNSHIPS = parsed;
+      if (typeof _renderExplorePage === 'function') _renderExplorePage();
+      if (typeof loadAdminListings === 'function' && currentUser?.role === 'admin') loadAdminListings();
+    } else {
+      for (const intern of MOCK_INTERNSHIPS) {
+        await syncRecordToSupabase('internships', intern);
+      }
+      if (typeof _renderExplorePage === 'function') _renderExplorePage();
+    }
+  } catch (err) {
+    console.warn("Failed to sync internships to Supabase:", err);
+  }
+}
 async function initSupabaseSync() {
   if (!supabaseActive || !supabaseClient) {
     isInitialSyncDone = true;
@@ -7547,6 +7598,7 @@ try {
     }
     
     // Repopulate mentor list on the registration form if it is currently open
+    syncInternshipsToCloud();
     const registerView = document.getElementById('register-view');
     if (registerView && !registerView.classList.contains('hidden') && activeRegisterRole === 'student') {
       populateRegisterMentors();
@@ -7620,6 +7672,15 @@ function handleSupabaseChange(payload) {
       } else if (record.collection === 'syncNotes') {
         if (!db.syncNotes) db.syncNotes = {};
         db.syncNotes[record.id] = parsedData.notes || '';
+      } else if (record.collection === 'internships') {
+        const existingIdx = MOCK_INTERNSHIPS.findIndex(i => i.id === parsedData.id);
+        if (existingIdx !== -1) {
+          MOCK_INTERNSHIPS[existingIdx] = parsedData;
+        } else {
+          MOCK_INTERNSHIPS.unshift(parsedData);
+        }
+        if (typeof _renderExplorePage === 'function') _renderExplorePage();
+        if (typeof loadAdminListings === 'function' && currentUser?.role === 'admin') loadAdminListings();
       }
     } else if (payload.eventType === 'DELETE') {
       const oldRecord = payload.old;
@@ -7638,8 +7699,13 @@ function handleSupabaseChange(payload) {
       if (db.skills && db.skills[deletedId]) {
         delete db.skills[deletedId];
       }
-      if (db.syncNotes && db.syncNotes[deletedId]) {
+            if (db.syncNotes && db.syncNotes[deletedId]) {
         delete db.syncNotes[deletedId];
+      }
+      if (changedCollection === 'internships' || MOCK_INTERNSHIPS.find(i => i.id === deletedId)) {
+        MOCK_INTERNSHIPS = MOCK_INTERNSHIPS.filter(i => i.id !== deletedId);
+        if (typeof _renderExplorePage === 'function') _renderExplorePage();
+        if (typeof loadAdminListings === 'function' && currentUser?.role === 'admin') loadAdminListings();
       }
     }
 
@@ -7711,6 +7777,7 @@ function handleSupabaseChange(payload) {
     }
 
     // Repopulate mentor list on the registration form if it is currently open and active
+    syncInternshipsToCloud();
     const registerView = document.getElementById('register-view');
     if (registerView && !registerView.classList.contains('hidden') && activeRegisterRole === 'student') {
       populateRegisterMentors();
@@ -8319,7 +8386,7 @@ function handleMeetingBroadcast(data) {
         scheduleMentorDashboardRefresh(200);
       }, 500);
     }
-    showToast('?? A student submitted a task for review!', 3500);
+    showToast('🔔 A student submitted a task for review!', 3500);
     if (typeof updateMentorPendingBadge === 'function') updateMentorPendingBadge();
     return;
   }
@@ -8333,7 +8400,7 @@ function handleMeetingBroadcast(data) {
         scheduleMentorDashboardRefresh(200);
       }, 500);
     }
-    showToast('?? A student submitted a weekly progress report!', 3500);
+    showToast('🔔 A student submitted a weekly progress report!', 3500);
     return;
   }
 }
@@ -9308,7 +9375,7 @@ function getSimulatedLiveFeedHTML(name, avatarUrl, isMuted, isLocal) {
 function getScreenShareMockupHTML() {
   return `
     <div style="width:100%; height:100%; background:#1e1e1e; font-family:monospace; font-size:10px; color:#a6accd; padding:15px; overflow:hidden; box-sizing:border-box;" class="webrtc-screen-share">
-      <div style="color:#ffcb6b; border-bottom:1px solid #2d2d30; padding-bottom:5px; margin-bottom:8px; font-weight:bold;">?? index.html - Screen Share Feed</div>
+      <div style="color:#ffcb6b; border-bottom:1px solid #2d2d30; padding-bottom:5px; margin-bottom:8px; font-weight:bold;">📄 index.html - Screen Share Feed</div>
       <div class="scrolling-code-feed" style="line-height:1.4; animation: scrollCode 12s infinite linear; text-align: left;">
         <span style="color:#89ddff">&lt;div</span> <span style="color:#f07178">class=</span><span style="color:#c3e88d">"dashboard"</span><span style="color:#89ddff">&gt;</span><br>
         &nbsp;&nbsp;<span style="color:#89ddff">&lt;aside</span> <span style="color:#f07178">class=</span><span style="color:#c3e88d">"sidebar"</span><span style="color:#89ddff">&gt;</span><br>
@@ -10144,7 +10211,7 @@ async function loadDashboardMeetings(role) {
           <td style="font-size:11px;white-space:nowrap;">${escapeHTML(duration)}</td>
           <td style="font-size:11px;max-width:260px;line-height:1.5;">${rawSummary ? formatMeetingSummaryHtml(rawSummary) : '<em style="color:var(--text-muted)">No summary yet</em>'}</td>
           <td style="text-align:center;">
-            ${recLink ? `<a href="${escapeHTML(recLink)}" target="_blank" style="color:var(--primary-magenta);font-size:11px;font-weight:600;">? Play</a>` : '<span style="color:var(--text-muted);font-size:11px;">...</span>'}
+            ${recLink ? `<a href="${escapeHTML(recLink)}" target="_blank" style="color:var(--primary-magenta);font-size:11px;font-weight:600;">▶ Play</a>` : '<span style="color:var(--text-muted);font-size:11px;">...</span>'}
           </td>`;
       }
       tbody.appendChild(tr);
@@ -11334,7 +11401,7 @@ function renderMentorAttendanceSheet() {
   const startDay = new Date(year, month, 1).getDay(); // Sunday = 0
 
   let headerHTML = `
-    <th style="min-width: 140px; text-align: left; position: sticky; left: 0; background: #0f0f15; z-index: 10;">Intern Name</th>
+    <th style="min-width: 140px; text-align: left; position: sticky; left: 0; background: var(--bg-deep); z-index: 10; color: var(--text-main);">Intern Name</th>
     <th style="min-width: 120px; text-align: left;">Technical Domain</th>
   `;
   
@@ -11382,7 +11449,7 @@ function renderMentorAttendanceSheet() {
     );
 
     let rowHTML = `
-      <td style="font-weight: 600; color: #fff; text-align: left; position: sticky; left: 0; background: #12121a; z-index: 5; border-right: 1px solid var(--border-color);">${student.name}</td>
+      <td style="font-weight: 600; color: var(--text-main); text-align: left; position: sticky; left: 0; background: var(--bg-card); z-index: 5; border-right: 1px solid var(--border-color);">${student.name}</td>
       <td style="text-align: left; color: var(--text-muted);">${student.domain}</td>
     `;
 
@@ -11408,7 +11475,7 @@ function renderMentorAttendanceSheet() {
           const checkInTime = checkedLog.timestamp ? (checkedLog.timestamp.split(',')[1] || '').trim() : 'Checked-In';
           rowHTML += `
             <td style="text-align: center;">
-              <span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: var(--success); text-align: center; line-height: 18px; font-weight: bold; font-size: 10px; cursor: pointer;" title="Checked-In: ${checkInTime}">??</span>
+              <span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: var(--success); text-align: center; line-height: 18px; font-weight: bold; font-size: 10px; cursor: pointer;" title="Checked-In: ${checkInTime}">&#10004;</span>
             </td>
           `;
         } else if (isFuture) {
@@ -11416,7 +11483,7 @@ function renderMentorAttendanceSheet() {
         } else {
           rowHTML += `
             <td style="text-align: center;">
-              <span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); text-align: center; line-height: 18px; font-weight: bold; font-size: 10px;" title="Absent (No Log)">?</span>
+              <span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); text-align: center; line-height: 18px; font-weight: bold; font-size: 10px;" title="Absent (No Log)">&#10008;</span>
             </td>
           `;
         }
@@ -11469,6 +11536,12 @@ function renderMentorAttendanceSheet() {
     rowHTML += `<td style="text-align: center; font-weight: bold; color: var(--success); font-size: 12px; background: rgba(16, 185, 129, 0.04);">${totalPctText}</td>`;
 
     const tr = document.createElement('tr');
+    tr.className = 'attendance-row';
+    tr.style.cursor = 'pointer';
+    tr.onclick = function() {
+      Array.from(tbody.querySelectorAll('tr')).forEach(r => r.classList.remove('active-row'));
+      tr.classList.add('active-row');
+    };
     tr.innerHTML = rowHTML;
     tbody.appendChild(tr);
   });
@@ -11762,20 +11835,20 @@ function exportAttendancePDF() {
 // ==================== 13. APEX AI COPILOT CHATBOT ====================
 
 const APEX_PROJECT_BLUEPRINT = {
-  structure: `### ?? Project File Structure
+  structure: `### 📂 Project File Structure
 - **[index.html](file:///c:/Users/Asus/Desktop/2000006/index.html)**: Main HTML5 template containing UI containers for Student, Mentor, and Admin portals, Chat overlays, Call overlays, Debug Panel, and authentication screens.
 - **[app.js](file:///c:/Users/Asus/Desktop/2000006/app.js)**: Main JavaScript file implementing app initialization, state synchronization, Firebase Firestore connection, sidebar tab routing, webcam check-in face scans, attendance sheet averages, task CRUD, and real-time messaging channels.
 - **[styles.css](file:///c:/Users/Asus/Desktop/2000006/styles.css)**: Vanilla CSS stylesheet establishing variables (magenta/blue accent colors), glassmorphism styles (\`glass-panel\`), scrollable wrappers, sidebar animations, and mobile responsive query blocks.
 - **[mockData.js](file:///c:/Users/Asus/Desktop/2000006/mockData.js)**: Local mock dataset fallback used if Firebase Firestore connection is offline. Includes pre-registered accounts, starter tasks, and chat templates.`,
 
-  db: `### ??? Database Collections (Firestore & LocalStorage)
+  db: `### 🗄️ Database Collections (Firestore & LocalStorage)
 - **users**: Stores profiles. Schema: \`email\`, \`name\`, \`role\` (student/mentor/admin), \`domain\`, \`avatar\`, \`mentorEmail\`, \`mentorStatus\` (Active/Pending).
 - **tasks**: Internship assignments. Schema: \`id\`, \`title\`, \`description\`, \`assigneeEmail\`, \`mentorEmail\`, \`status\` (To Do/In Progress/Completed), \`fileAttachment\`, \`feedback\`.
 - **weeklyLogs**: Weekly student progress reports. Schema: \`id\`, \`studentEmail\`, \`mentorEmail\`, \`weekNum\`, \`hoursWorked\`, \`achievements\`, \`blockages\`, \`status\` (Pending/Approved/Rejected).
 - **chats**: Real-time channel messages. Schema: \`id\`, \`channelId\`, \`senderEmail\`, \`receiverEmail\`, \`message\`, \`timestamp\`, \`fileUrl\`.
 - **attendance**: Verified check-in logs. Schema: \`id\`, \`studentEmail\`, \`action\` ("Daily Attendance Check-In"), \`date\` (\`toDateString()\`), \`timestamp\`, \`faceImage\` (base64 dataurl), \`matchScore\`, \`status\` ("Verified (Pass)"/"Failed").`,
 
-  attendance: `### ?? Attendance Tracking & Export Workflows
+  attendance: `### 📅 Attendance Tracking & Export Workflows
 - **Daily Webcam Check-in**:
   - Triggered by clicking the top indicator bar button (\`#student-attendance-indicator\`).
   - Calls \`startDailyAttendanceScan()\` -> \`runDailyAttendanceScan()\` which simulates camera inputs using canvas drawing, validating user face match integrity score. Saves log with \`Verified (Pass)\` status.
@@ -11968,7 +12041,7 @@ function getLocalAIResponse(prompt) {
   }
   
   // Default response showing options
-  return `I analyzed your question: "${prompt}".\n\nTo give you the best answer, please ask something related to:\n- **?? Project Structure** (files, directories, assets)\n- **??? Database Collections** (schema, firestore keys)\n- **?? Attendance Flow** (face checks, spreadsheet formulas, exports)\n- **? Core Features** (login, tasks, intern chat, video calls)\n\n*Tip: Connect your **Google Gemini API Key** in settings (??) above and I will be able to answer any custom developer question, generate specific code snippets, or debug files dynamically!*`;
+  return `I analyzed your question: "${prompt}".\n\nTo give you the best answer, please ask something related to:\n- **?? Project Structure** (files, directories, assets)\n- **🗄️ Database Collections** (schema, firestore keys)\n- **?? Attendance Flow** (face checks, spreadsheet formulas, exports)\n- **? Core Features** (login, tasks, intern chat, video calls)\n\n*Tip: Connect your **Google Gemini API Key** in settings (??) above and I will be able to answer any custom developer question, generate specific code snippets, or debug files dynamically!*`;
 }
 
 async function queryLiveGeminiAI(prompt, apiKey, typingIndicator) {
@@ -12015,7 +12088,7 @@ Answer the user's questions about this codebase accurately. Reference specific f
   } catch (error) {
     console.error("Gemini API Error:", error);
     removeAICopilotTyping(typingIndicator);
-    addAICopilotMessage('bot', `?? **Gemini API Error:**\n\n${error.message}\n\nPlease check your internet connection, verify your API Key is valid, and try again. (Make sure your API key has access to the Gemini API).`);
+    addAICopilotMessage('bot', `⚠️ **Gemini API Error:**\n\n${error.message}\n\nPlease check your internet connection, verify your API Key is valid, and try again. (Make sure your API key has access to the Gemini API).`);
   }
 }
 
@@ -12450,7 +12523,7 @@ function renderQuizQuestion(index) {
           <div style="font-weight: bold; font-size: 12px; color: #fff; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
             <span>Browser Unit Test Assertions</span>
             <span style="color: ${results.passed ? 'var(--success)' : 'var(--danger)'}; font-size: 11px;">
-              ${results.passed ? '?? All Tests Passed' : '? Tests Incomplete / Failing'}
+              ${results.passed ? '✅ All Tests Passed' : '❌ Tests Incomplete / Failing'}
             </span>
           </div>
           <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -12866,7 +12939,7 @@ function viewInternQuizDetail(submissionId) {
   (sub.questions || []).forEach((q, idx) => {
     const det = sub.details?.[idx] || { correct: false, answerText: "", feedback: "" };
     content += `\nQ${idx+1}: ${q.question}\n`;
-    content += `Status: ${det.correct ? '?? CORRECT' : '? INCORRECT'}\n`;
+    content += `Status: ${det.correct ? '✅ CORRECT' : '❌ INCORRECT'}\n`;
     if (q.type === 'mcq') {
       content += `Student Selection: "${det.answerText}"\n`;
       content += `Correct Option: "${q.correctAnswer}"\n`;
@@ -13649,7 +13722,7 @@ async function issueCertificate(studentEmail) {
   
   syncRecordToFirestore('certificates', certObject);
   
-  const msgText = `?? Congratulations! Your Internship Certificate of Completion has been officially issued! You can view and download it directly from your dashboard. Certificate ID: ${certificateId}`;
+  const msgText = `🎉 Congratulations! Your Internship Certificate of Completion has been officially issued! You can view and download it directly from your dashboard. Certificate ID: ${certificateId}`;
   
   const newChat = {
     id: `chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -13835,7 +13908,7 @@ function verifyCertificate(certId) {
 // ==================== 14. EXPLORE INTERNSHIPS & RAZORPAY CODE ====================
 
 // Mock Internships Catalog Data
-const MOCK_INTERNSHIPS = [
+let MOCK_INTERNSHIPS = [
   // -- PAGE 1 ---------------------------------------------
   {
     id: "intern-web-paid",
@@ -14550,6 +14623,9 @@ function deleteAdminListing(idx) {
   if (!intern) return;
   if (!confirm(`Delete "${intern.title}"? This cannot be undone.`)) return;
   MOCK_INTERNSHIPS.splice(idx, 1);
+  if (typeof supabaseActive !== 'undefined' && supabaseActive && typeof supabaseClient !== 'undefined' && supabaseClient) {
+    supabaseClient.from('apex_sync').delete().eq('collection', 'internships').eq('id', intern.id).then();
+  }
   loadAdminListings();
   showToast(`🗑️ "${intern.title}" removed.`, 2000);
 }
@@ -14701,23 +14777,27 @@ window.submitAddInternship = function(editIdx, fromAdmin) {
     description: desc, features
   };
 
-  if (editIdx != null && MOCK_INTERNSHIPS[editIdx]) {
-    MOCK_INTERNSHIPS[editIdx] = internData;
-    showToast(`✅ "${title}" updated!`, 2500);
-  } else {
-    MOCK_INTERNSHIPS.push(internData);
-    showToast(`✅ "${title}" added to listings!`, 2500);
-  }
+    if (editIdx != null && MOCK_INTERNSHIPS[editIdx]) {
+      MOCK_INTERNSHIPS[editIdx] = internData;
+      showToast(`✅ "${title}" updated!`, 2500);
+    } else {
+      MOCK_INTERNSHIPS.unshift(internData);
+      showToast(`✅ "${title}" added to listings!`, 2500);
+    }
+  
+    if (typeof supabaseActive !== 'undefined' && supabaseActive && typeof supabaseClient !== 'undefined' && supabaseClient) {
+      syncRecordToSupabase('internships', internData);
+    }
 
-  document.getElementById('add-intern-modal')?.remove();
-
-  // Reload admin grid or jump to last explore page
-  if (fromAdmin) {
-    loadAdminListings();
-  } else {
-    _explorePage = Math.ceil(MOCK_INTERNSHIPS.length / _explorePageSize) - 1;
-    _renderExplorePage();
-  }
+    document.getElementById('add-intern-modal')?.remove();
+  
+    // Reload admin grid or jump to last explore page
+    if (fromAdmin) {
+      loadAdminListings();
+    } else {
+      _explorePage = 0;
+      _renderExplorePage();
+    }
 };
 
 window.loadAdminListings  = loadAdminListings;
@@ -14789,7 +14869,18 @@ function applyForExploreInternship(internId) {
 
   // Pre-select Tier
   const tierEl = document.getElementById('reg-tier');
-  if (tierEl) { tierEl.value = intern.type; handleRegisterTierChange(intern.type); }
+  if (tierEl) { 
+    tierEl.value = intern.type; 
+    handleRegisterTierChange(intern.type); 
+    
+    // Lock tier if it's paid (so they cannot change back to free)
+    if (intern.type === 'paid') {
+      tierEl.disabled = true;
+      tierEl.style.opacity = '0.65';
+      tierEl.style.cursor = 'not-allowed';
+      tierEl.title = 'Tier is fixed based on your selected internship';
+    }
+  }
 
   // Pre-select Duration
   const durationEl = document.getElementById('reg-duration');
@@ -14874,12 +14965,12 @@ function verifyRegPayment() {
   const utr = utrEl ? utrEl.value.trim() : '';
 
   if (!amount || !utr) {
-    if (statusEl) { statusEl.innerText = '?? Please enter the amount paid and UTR number.'; statusEl.style.color = 'var(--warning)'; }
+    if (statusEl) { statusEl.innerText = '⚠️ Please enter the amount paid and UTR number.'; statusEl.style.color = 'var(--warning)'; }
     return;
   }
   const requiredFee = _selectedInternFee > 0 ? _selectedInternFee : 99;
   if (parseInt(amount) < requiredFee) {
-    if (statusEl) { statusEl.innerText = `? Amount must be ?${requiredFee} or more.`; statusEl.style.color = 'var(--danger)'; }
+    if (statusEl) { statusEl.innerText = `\u2716 Amount must be \u20B9${requiredFee} or more.`; statusEl.style.color = 'var(--danger)'; }
     return;
   }
   if (utr.length < 6) {
@@ -14892,7 +14983,7 @@ function verifyRegPayment() {
     verifyBtn.disabled = true;
     verifyBtn.innerHTML = '<span style="display:inline-block;animation:spin 0.7s linear infinite;margin-right:6px;">&#x25F7;</span> Matching UTR...';
   }
-  if (statusEl) { statusEl.innerText = '?? Verifying payment reference...'; statusEl.style.color = 'var(--text-muted)'; }
+  if (statusEl) { statusEl.innerText = '⏳ Verifying payment reference...'; statusEl.style.color = 'var(--text-muted)'; }
 
   // Simulate UTR matching (1.5s delay for realism)
   setTimeout(() => {
@@ -15374,7 +15465,7 @@ function loadMentorPayments() {
     
   const totalDisbursedDisplay = document.getElementById('mentor-total-disbursed-amt');
   if (totalDisbursedDisplay) {
-    totalDisbursedDisplay.innerText = `?${disbursedTotal.toFixed(2)}`;
+    totalDisbursedDisplay.innerText = `\u20B9${disbursedTotal.toFixed(2)}`;
   }
   
   // Load Global Ledger Table
@@ -15733,7 +15824,7 @@ function generateMeetRoomCode() {
 // Opens meet.new so mentor can create a real room and copy the link back
 function openNewMeetTab() {
   window.open('https://meet.new', '_blank');
-  showToast('?? Google Meet opened ? copy the link ? paste it here', 3000);
+  showToast('🌐 Google Meet opened ? copy the link ? paste it here', 3000);
 }
 
 function generateMeetLink() {
@@ -15745,7 +15836,7 @@ function generateMeetLink() {
     el.style.borderColor = 'rgba(0,182,108,0.6)';
     setTimeout(() => { el.style.borderColor = ''; }, 1500);
   }
-  showToast('?? Meet link generated!', 1800);
+  showToast('🔗 Meet link generated!', 1800);
 }
 
 function getMyGroupCallMeetings() {
@@ -15893,7 +15984,7 @@ function handleScheduleMeetingSubmit(e) {
   const notes = (document.getElementById('sm-notes')?.value || '').trim();
 
   if (!title || !date || !time) {
-    showToast('?? Please fill in title, date, and time.', 2200);
+    showToast('⚠️ Please fill in title, date, and time.', 2200);
     return;
   }
 
@@ -15951,7 +16042,7 @@ function launchInstantMeeting() {
   // meet.new is Google's official shortcut to instantly create a new real meeting room
   // We open it so the mentor gets a valid room link
   window.open('https://meet.new', '_blank');
-  showToast('?? Google Meet opened! Copy the link and share with students.', 3000);
+  showToast('🌐 Google Meet opened! Copy the link and share with students.', 3000);
 
   // Also save a placeholder meeting so students know a session is happening
   const now = new Date().toISOString();
@@ -16831,4 +16922,17 @@ window.waSendCallChat = waSendCallChat;
 window.waEndCall = waEndCall;
 window.waPopupMinimise = waPopupMinimise;
 window.waPopupRestore = waPopupRestore;
+
+
+
+
+
+
+
+
+
+
+
+
+
 

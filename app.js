@@ -12818,6 +12818,16 @@ async function loadStudentQuiz() {
     } catch (err) {
       console.warn("AI Quiz Generation failed, falling back to local curriculum:", err);
       const fallback = getOfflineFallbackQuiz(studentDomain, todayDate);
+      if (fallback && fallback.questions) {
+        fallback.questions.forEach(q => {
+          if (q.options && Array.isArray(q.options)) {
+            for (let i = q.options.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
+            }
+          }
+        });
+      }
       fallback.id = quizId;
       db.quizzes.push(fallback);
       saveDatabase();

@@ -430,12 +430,21 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Attach sidebar user profile click ? Edit Profile
     const sidebarUser = document.querySelector('.sidebar-user');
+    const sidebarAvatar = document.getElementById('sidebar-avatar');
+
+    // Force override any cached HTML inline onclick handlers
     if (sidebarUser) {
-      sidebarUser.addEventListener('click', function(e) {
-        // Don't trigger if logout button was clicked
+      sidebarUser.onclick = function(e) {
         if (e.target.closest('.logout-btn')) return;
+        e.stopPropagation();
         openEditProfileModal();
-      });
+      };
+    }
+    if (sidebarAvatar) {
+      sidebarAvatar.onclick = function(e) {
+        e.stopPropagation();
+        openEditProfileModal();
+      };
     }
     if (copilotBtn) {
       makeElementDraggable(copilotBtn);
@@ -1297,6 +1306,9 @@ function showLandingPage() {
   document.getElementById('landing-page').classList.remove('hidden');
   document.getElementById('auth-page').classList.add('hidden');
   document.getElementById('portal-page').classList.add('hidden');
+  // Show footer on landing page
+  const footer = document.getElementById('main-footer');
+  if (footer) footer.classList.remove('hidden');
 }
 
 // Registration step navigation
@@ -1405,6 +1417,15 @@ function showAuthPage(mode = 'login') {
   document.getElementById('landing-page').classList.add('hidden');
   document.getElementById('auth-page').classList.remove('hidden');
   document.getElementById('portal-page').classList.add('hidden');
+  // Hide footer on auth/portal pages
+  const footer = document.getElementById('main-footer');
+  if (footer) footer.classList.add('hidden');
+  // Adjust vertical alignment based on mode
+  const authSection = document.getElementById('auth-page');
+  if (authSection) {
+    authSection.style.alignItems = mode === 'register' ? 'flex-start' : 'center';
+    authSection.style.paddingTop = mode === 'register' ? '90px' : '24px';
+  }
 
   if (mode === 'register') {
     _registerOpenCount++;
@@ -1419,15 +1440,18 @@ function toggleAuthForms(mode) {
   regWebcamActive = false;
 
   const authCard = document.querySelector('.auth-card');
+  const authSection = document.getElementById('auth-page');
 
   if (mode === 'login') {
     document.getElementById('login-view').classList.remove('hidden');
     document.getElementById('register-view').classList.add('hidden');
     if (authCard) authCard.style.maxWidth = '480px';
+    if (authSection) { authSection.style.alignItems = 'center'; authSection.style.paddingTop = '24px'; }
   } else {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('register-view').classList.remove('hidden');
     if (authCard) authCard.style.maxWidth = '900px';
+    if (authSection) { authSection.style.alignItems = 'flex-start'; authSection.style.paddingTop = '90px'; }
     setRegisterRole('student');
 
     // If opened directly (not via Apply Now), unlock domain & mentor
@@ -1455,13 +1479,19 @@ function _makeFaceScanOptional() {
   const rightCol = faceSection?.closest('.reg-col-right') || faceSection?.parentElement;
   if (!faceSection) return;
 
-  // Update the heading label to say Optional
+  // Update the heading label to say Optional — only once
   const heading = rightCol?.querySelector('div[style*="AI FACE"]') || rightCol?.querySelector('div:first-child > div:first-child');
-  if (heading) heading.innerHTML = heading.innerHTML.replace('AI Face Attendance', 'AI Face Attendance <span style="font-size:10px;opacity:0.6;">(Optional)</span>');
+  if (heading && !heading.querySelector('.optional-tag')) {
+    const tag = document.createElement('span');
+    tag.className = 'optional-tag';
+    tag.style.cssText = 'font-size:10px;opacity:0.6;margin-left:4px;';
+    tag.textContent = '(Optional)';
+    heading.appendChild(tag);
+  }
 
   // Update status text
   const statusEl = document.getElementById('reg-face-status');
-  if (statusEl) statusEl.textContent = 'Optional � skip if not needed.';
+  if (statusEl) statusEl.textContent = 'Optional — skip if not needed.';
 }
 
 function setRegisterRole(role) {
@@ -1567,11 +1597,30 @@ function showPortalPage(role) {
   document.getElementById('landing-page').classList.add('hidden');
   document.getElementById('auth-page').classList.add('hidden');
   document.getElementById('portal-page').classList.remove('hidden');
+  // Hide footer inside portal
+  const footer = document.getElementById('main-footer');
+  if (footer) footer.classList.add('hidden');
+  // Mark body as portal-active for CSS targeting
+  document.body.classList.add('portal-active');
 
   // Show AI Copilot button inside portal
   const copilotBtn = document.getElementById('ai-copilot-trigger');
   if (copilotBtn) {
     copilotBtn.classList.remove('hidden');
+    copilotBtn.style.display = 'flex';
+    copilotBtn.style.opacity = '1';
+    copilotBtn.style.visibility = 'visible';
+    copilotBtn.removeAttribute('hidden');
+    // Force show after render
+    setTimeout(() => {
+      copilotBtn.classList.remove('hidden');
+      copilotBtn.style.display = 'flex';
+    }, 500);
+  }
+  // Show new chatbot button
+  const ixBtn = document.getElementById('ix-chat-btn');
+  if (ixBtn) {
+    ixBtn.style.cssText = 'position:fixed!important;top:calc(100vh - 120px)!important;right:24px!important;z-index:99999!important;width:58px!important;height:58px!important;border-radius:50%!important;background:linear-gradient(135deg,#e01a8b,#8327ec)!important;box-shadow:0 4px 20px rgba(224,26,139,0.5)!important;display:flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important;border:2px solid rgba(255,255,255,0.3)!important;';
   }
 
   // Configure Sidebar User Detail
@@ -2079,6 +2128,7 @@ function handleLogout() {
   if (copilotPanel) {
     copilotPanel.classList.remove('active');
   }
+  document.body.classList.remove('portal-active');
 
   currentUser = null;
   storage.removeItem('apex_intern_currentUser');
@@ -5174,86 +5224,120 @@ const PRESET_AVATARS = [
 function openEditProfileModal() {
   if (!currentUser) return;
 
-  // Fill in inputs
-  const nameInput = document.getElementById('edit-profile-name');
-  const pwdInput = document.getElementById('edit-profile-pwd');
-  if (!nameInput || !pwdInput) { openModal('edit-profile-modal'); return; }
-
-  nameInput.value = currentUser.name;
-  pwdInput.value = currentUser.password || '';
-
-  // Reset password field to type='password' and reset visibility icon
-  pwdInput.type = 'password';
-  const toggle = pwdInput.nextElementSibling;
-  if (toggle && toggle.classList.contains('pwd-toggle')) {
-    const eyeOpen = toggle.querySelector('.eye-open');
-    const eyeClosed = toggle.querySelector('.eye-closed');
-    if (eyeOpen) eyeOpen.classList.remove('hidden');
-    if (eyeClosed) eyeClosed.classList.add('hidden');
-  }
-
-  // Toggle roles inputs
-  const domainGroup = document.getElementById('edit-profile-domain-group');
-  const titleGroup = document.getElementById('edit-profile-title-group');
-  const mentorGroup = document.getElementById('edit-profile-mentor-group');
-
-  if (currentUser.role === 'student') {
-    if (domainGroup) domainGroup.classList.remove('hidden');
-    if (mentorGroup) mentorGroup.classList.remove('hidden');
-    if (titleGroup) titleGroup.classList.add('hidden');
-    const domainInput = document.getElementById('edit-profile-domain');
-    if (domainInput) domainInput.value = currentUser.domain || '';
+  const modalEl = document.getElementById('edit-profile-modal');
+  if (modalEl) {
+    modalEl.classList.remove('hidden');
+    modalEl.style.display = 'flex';
+    // Force reflow
+    void modalEl.offsetWidth;
+    modalEl.classList.add('active');
     
-    // Fill Mentor Details
-    const mentorNameEl = document.getElementById('edit-profile-mentor-name');
-    const mentorImgEl = document.getElementById('edit-profile-mentor-img');
-    if (currentUser.supervisor) {
-      const mentorUser = db.users.find(u => u && u.email === currentUser.supervisor);
-      if (mentorUser) {
-        if (mentorNameEl) mentorNameEl.innerText = mentorUser.name || mentorUser.email;
-        if (mentorImgEl && mentorUser.avatar) mentorImgEl.src = mentorUser.avatar;
+    // Ensure it's not hidden by weird styles
+    modalEl.style.opacity = '1';
+    modalEl.style.pointerEvents = 'auto';
+    modalEl.style.zIndex = '999999';
+
+    const contentEl = modalEl.querySelector('.modal-content');
+    if (contentEl) {
+      contentEl.style.display = 'block';
+      contentEl.style.opacity = '1';
+      contentEl.style.visibility = 'visible';
+    }
+  }
+
+  // Ensure chatbot is also unhidden if it got stuck
+  const copilotBtn = document.getElementById('ai-copilot-trigger');
+  if (copilotBtn) {
+    copilotBtn.classList.remove('hidden');
+    copilotBtn.style.display = 'flex';
+    copilotBtn.style.opacity = '1';
+  }
+
+  try {
+    // Fill in inputs
+    const nameInput = document.getElementById('edit-profile-name');
+    const pwdInput = document.getElementById('edit-profile-pwd');
+    if (!nameInput || !pwdInput) {
+      console.warn("Edit Profile inputs not found.");
+      return;
+    }
+
+    nameInput.value = currentUser.name;
+    pwdInput.value = currentUser.password || '';
+
+    // Reset password field to type='password' and reset visibility icon
+    pwdInput.type = 'password';
+    const toggle = pwdInput.nextElementSibling;
+    if (toggle && toggle.classList.contains('pwd-toggle')) {
+      const eyeOpen = toggle.querySelector('.eye-open');
+      const eyeClosed = toggle.querySelector('.eye-closed');
+      if (eyeOpen) eyeOpen.classList.remove('hidden');
+      if (eyeClosed) eyeClosed.classList.add('hidden');
+    }
+
+    // Toggle roles inputs
+    const domainGroup = document.getElementById('edit-profile-domain-group');
+    const titleGroup = document.getElementById('edit-profile-title-group');
+    const mentorGroup = document.getElementById('edit-profile-mentor-group');
+
+    if (currentUser.role === 'student') {
+      if (domainGroup) domainGroup.classList.remove('hidden');
+      if (mentorGroup) mentorGroup.classList.remove('hidden');
+      if (titleGroup) titleGroup.classList.add('hidden');
+      const domainInput = document.getElementById('edit-profile-domain');
+      if (domainInput) domainInput.value = currentUser.domain || '';
+      
+      // Fill Mentor Details
+      const mentorNameEl = document.getElementById('edit-profile-mentor-name');
+      const mentorImgEl = document.getElementById('edit-profile-mentor-img');
+      if (currentUser.supervisor) {
+        const mentorUser = db.users.find(u => u && u.email === currentUser.supervisor);
+        if (mentorUser) {
+          if (mentorNameEl) mentorNameEl.innerText = mentorUser.name || mentorUser.email;
+          if (mentorImgEl && mentorUser.avatar) mentorImgEl.src = mentorUser.avatar;
+        } else {
+          if (mentorNameEl) mentorNameEl.innerText = currentUser.supervisor;
+        }
       } else {
-        if (mentorNameEl) mentorNameEl.innerText = currentUser.supervisor;
+        if (mentorNameEl) mentorNameEl.innerText = "Not Assigned";
+        if (mentorImgEl) mentorImgEl.src = "https://ui-avatars.com/api/?name=NA&background=random";
       }
+    } else if (currentUser.role === 'mentor') {
+      if (domainGroup) domainGroup.classList.add('hidden');
+      if (mentorGroup) mentorGroup.classList.add('hidden');
+      if (titleGroup) titleGroup.classList.remove('hidden');
+      const titleInput = document.getElementById('edit-profile-title');
+      if (titleInput) titleInput.value = currentUser.title || '';
     } else {
-      if (mentorNameEl) mentorNameEl.innerText = "Not Assigned";
-      if (mentorImgEl) mentorImgEl.src = "https://ui-avatars.com/api/?name=NA&background=random";
+      if (domainGroup) domainGroup.classList.add('hidden');
+      if (mentorGroup) mentorGroup.classList.add('hidden');
+      if (titleGroup) titleGroup.classList.add('hidden');
     }
-  } else if (currentUser.role === 'mentor') {
-    if (domainGroup) domainGroup.classList.add('hidden');
-    if (mentorGroup) mentorGroup.classList.add('hidden');
-    if (titleGroup) titleGroup.classList.remove('hidden');
-    const titleInput = document.getElementById('edit-profile-title');
-    if (titleInput) titleInput.value = currentUser.title || '';
-  } else {
-    if (domainGroup) domainGroup.classList.add('hidden');
-    if (mentorGroup) mentorGroup.classList.add('hidden');
-    if (titleGroup) titleGroup.classList.add('hidden');
-  }
 
-  // Setup email input
-  const emailInput = document.getElementById('edit-profile-email');
-  if (emailInput) emailInput.value = currentUser.email || '';
+    // Setup email input
+    const emailInput = document.getElementById('edit-profile-email');
+    if (emailInput) emailInput.value = currentUser.email || '';
 
-  // Setup avatar circle
-  selectedAvatarPreset = currentUser.avatar || '';
-  const avatarCircle = document.getElementById('edit-profile-avatar-circle');
-  const plusIcon = document.getElementById('edit-profile-avatar-plus');
-  if (avatarCircle) {
-    if (currentUser.avatar) {
-      avatarCircle.style.backgroundImage = `url(${currentUser.avatar})`;
-      if (plusIcon) plusIcon.style.display = 'none';
-    } else {
-      avatarCircle.style.backgroundImage = 'none';
-      if (plusIcon) plusIcon.style.display = 'block';
+    // Setup avatar circle
+    selectedAvatarPreset = currentUser.avatar || '';
+    const avatarCircle = document.getElementById('edit-profile-avatar-circle');
+    const plusIcon = document.getElementById('edit-profile-avatar-plus');
+    if (avatarCircle) {
+      if (currentUser.avatar) {
+        avatarCircle.style.backgroundImage = `url(${currentUser.avatar})`;
+        if (plusIcon) plusIcon.style.display = 'none';
+      } else {
+        avatarCircle.style.backgroundImage = 'none';
+        if (plusIcon) plusIcon.style.display = 'block';
+      }
     }
+
+    // Clear file selector
+    const avatarFile = document.getElementById('edit-profile-avatar-file');
+    if (avatarFile) avatarFile.value = '';
+  } catch (err) {
+    console.error("Error populating Edit Profile Modal:", err);
   }
-
-  // Clear file selector
-  const avatarFile = document.getElementById('edit-profile-avatar-file');
-  if (avatarFile) avatarFile.value = '';
-
-  openModal('edit-profile-modal');
 }
 
 function handleEditProfileSubmit(event) {
@@ -7499,13 +7583,25 @@ function handleSupabaseChange(payload) {
       if (!parsedData || typeof parsedData !== 'object') return;
 
       // WebRTC signals are ephemeral � never persist to localStorage (prevents hang during calls)
+      // WebRTC signals are ephemeral - never persist to localStorage (prevents hang during calls)
       if (record.collection === 'signals') {
         if (parsedData.meetingId === activeMeeting?.id && parsedData.sender && currentUser?.email &&
             parsedData.sender.trim().toLowerCase() !== currentUser.email.trim().toLowerCase()) {
           if (typeof window.processedSignalIds === 'undefined') window.processedSignalIds = new Set();
           if (!window.processedSignalIds.has(parsedData.id)) {
             window.processedSignalIds.add(parsedData.id);
-            handleWebRTCSignal(parsedData);
+            var waOvl = document.getElementById('wa-call-popup');
+            if (waOvl && waOvl.style.display !== 'none') {
+              if (parsedData.type === 'chat_msg' && parsedData.data) {
+                waCall.inCallMessages.push({ sender: parsedData.data.sender || parsedData.sender, text: parsedData.data.text, mine: false, time: parsedData.data.time || '' });
+                waRenderCallChat();
+                if (!waCall.chatOpen) { var b = document.getElementById('wa-chat-badge'); if (b) { b.style.display = 'flex'; b.textContent = '+'; } }
+              } else {
+                waHandleSignal(parsedData).catch(function(){});
+              }
+            } else {
+              handleWebRTCSignal(parsedData);
+            }
           }
         }
         return;
@@ -8505,7 +8601,10 @@ async function startMentorGroupCall() {
 
   activeMeeting = newMeeting;
 
-  // Show dialing overlay with student avatars ringing
+  // Open WA popup immediately (WhatsApp style — you see yourself right away)
+  openWAStyleCall();
+
+  // Show dialing overlay with student avatars ringing (on top of popup)
   showMentorDialingOverlay(invitedStudents, newMeeting);
 }
 
@@ -8614,7 +8713,13 @@ function proceedToMeetingRoom() {
   stopGroupCallDialTone();
   const overlay = document.getElementById('mentor-dialing-overlay');
   if (overlay) { overlay.classList.add('hidden'); overlay.classList.remove('active'); }
-  openMeetingRoom();
+  // WA popup already open from startMentorGroupCall — just ensure it's visible
+  const popup = document.getElementById('wa-call-popup');
+  if (popup && popup.style.display === 'none') {
+    openMeetingRoom();
+  } else if (popup) {
+    waPopupRestore(); // in case it was minimised
+  }
 }
 
 // ====== GOOGLE MEET STYLE DIAL TONE ======
@@ -8758,10 +8863,8 @@ function declineIncomingCall() {
 }
 
 function openMeetingRoom() {
-  // Use Jitsi Meet for real WhatsApp-style group call if room ID available
-  const roomId = (activeMeeting && activeMeeting.jitsiRoomId) || _jitsiRoomId;
-  if (roomId) { launchJitsiCall(roomId); return; }
-  _openLegacyMeetingRoom();
+  // Always use WhatsApp-style WebRTC overlay
+  openWAStyleCall();
 }
 
 function launchJitsiCall(roomId) {
@@ -12252,6 +12355,10 @@ function renderQuizQuestion(index) {
 
   const totalQuestions = currentActiveQuiz.questions.length;
   document.getElementById('quiz-progress-text').innerText = `Question ${index + 1} of ${totalQuestions}`;
+  const progressBar = document.getElementById('quiz-progress-bar');
+  if (progressBar) {
+    progressBar.style.width = `${((index + 1) / totalQuestions) * 100}%`;
+  }
 
   // Enable/disable navigation buttons
   document.getElementById('quiz-prev-btn').disabled = index === 0;
@@ -12299,7 +12406,7 @@ function renderQuizQuestion(index) {
       
       optionsHTML += `
         <button class="quiz-option-btn ${stateClass}" ${onclickAttr} style="${hasAnswered ? 'cursor: not-allowed;' : ''}">
-          <span style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 10px; background: rgba(255,255,255,0.02); font-weight: bold;">
+          <span class="quiz-option-letter">
             ${String.fromCharCode(65 + optIdx)}
           </span>
           <span>${escapeHTML(opt)}</span>
@@ -12312,9 +12419,9 @@ function renderQuizQuestion(index) {
     if (hasAnswered) {
       const isStudentCorrect = studentAnswer && q.correctAnswer && studentAnswer.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase();
       feedbackHTML = `
-        <div class="quiz-feedback-box" style="margin-top: 16px; padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.015); text-align: left; animation: fadeIn 0.25s ease;">
+        <div class="quiz-feedback-box ${isStudentCorrect ? 'correct' : 'incorrect'}">
           <div style="font-weight: bold; margin-bottom: 6px; color: ${isStudentCorrect ? 'var(--success)' : 'var(--danger)'}; display: flex; align-items: center; gap: 6px; font-size: 13px;">
-            <span>${isStudentCorrect ? '?? Correct Response!' : '? Incorrect Response'}</span>
+            <span>${isStudentCorrect ? '&#x2714; Correct Response!' : '&#x2718; Incorrect Response'}</span>
           </div>
           <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
             <strong>Explanation:</strong> ${escapeHTML(q.explanation || 'No explanation provided.')}
@@ -12721,7 +12828,7 @@ function showQuizResults(quiz, submission) {
     card.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <span style="font-weight:bold; font-size:12px; color: ${detail.correct ? 'var(--success)' : 'var(--danger)'};">
-          ${detail.correct ? '?? Correct Response' : '? Incorrect Response'}
+          ${detail.correct ? '&#x2714; Correct Response' : '&#x2718; Incorrect Response'}
         </span>
         <span class="difficulty-badge ${q.difficulty || 'easy'}">${q.difficulty || 'easy'}</span>
       </div>
@@ -12729,7 +12836,7 @@ function showQuizResults(quiz, submission) {
       <div style="font-size: 12px; color: var(--text-main); margin-bottom: 8px; text-align: left;">
         ${ansDisplay}
       </div>
-      <div style="font-size: 11px; color: var(--text-dark); background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; text-align: left; line-height: 1.4;">
+      <div class="quiz-grader-notes">
         <strong>Grader Notes:</strong> ${escapeHTML(detail.feedback)}
         ${q.explanation ? `<br><strong style="color:var(--primary-magenta);">Explanation:</strong> ${escapeHTML(q.explanation)}` : ''}
       </div>
@@ -16205,7 +16312,7 @@ window.previewSubmitScreenshot = previewSubmitScreenshot;
 window.removeSubmitScreenshot = removeSubmitScreenshot;
 window.loadMentorReviews = loadMentorReviews;
 window.openReviewModal = openReviewModal;
-window.handleReviewFeedbackSubmit = handleReviewFeedbackSubmit;
+
 window.loadStudentTasks = loadStudentTasks;
 window.loadStudentDashboard = loadStudentDashboard;
 window.loadStudentChat = loadStudentChat;
@@ -16222,3 +16329,499 @@ window.handlePublicVerificationSearch = handlePublicVerificationSearch;
 window.resetVerificationResult = resetVerificationResult;
 window.showVerificationResult = showVerificationResult;
 window.verifyCertificate = verifyCertificate;
+
+
+
+
+// ==================== WHATSAPP POPUP VIDEO CALL ENGINE ====================
+const waCall = {
+  localStream: null, screenStream: null,
+  pcs: {}, remoteStreams: {}, iceCandQueues: {}, pendingSignals: new Set(),
+  micMuted: false, camOff: false, shareActive: false,
+  chatOpen: false, participantsOpen: false, minimised: false,
+  timerInterval: null, seconds: 0,
+  inCallMessages: [], signalPollInterval: null, lastSignalTs: null,
+};
+const WA_ICE = { iceServers: [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+]};
+
+async function openWAStyleCall() {
+  const popup = document.getElementById('wa-call-popup');
+  if (!popup) { _openLegacyMeetingRoom(); return; }
+
+  // Reset state
+  Object.assign(waCall, {
+    micMuted:false, camOff:false, shareActive:false,
+    chatOpen:false, participantsOpen:false, minimised:false,
+    seconds:0, inCallMessages:[], pendingSignals: new Set(), lastSignalTs: null,
+  });
+  // Close old peer conns
+  Object.values(waCall.pcs).forEach(pc => { try{pc.close();}catch(e){} });
+  waCall.pcs = {}; waCall.remoteStreams = {}; waCall.iceCandQueues = {};
+
+  // Show popup
+  popup.style.display = 'flex';
+  const pill = document.getElementById('wa-call-pill');
+  if (pill) pill.style.display = 'none';
+
+  // Reset button states
+  const mic = document.getElementById('wa-btn-mic');
+  const cam = document.getElementById('wa-btn-cam');
+  const share = document.getElementById('wa-btn-share');
+  if (mic) mic.className = ''; if (cam) cam.className = ''; if (share) share.className = '';
+  const micOn = document.getElementById('wa-mic-on'); const micOff = document.getElementById('wa-mic-off');
+  const camOn = document.getElementById('wa-cam-on'); const camOff = document.getElementById('wa-cam-off');
+  if (micOn) micOn.style.display='block'; if (micOff) micOff.style.display='none';
+  if (camOn) camOn.style.display='block'; if (camOff) camOff.style.display='none';
+
+  // Reset panels
+  const chatPanel = document.getElementById('wa-call-chat-panel');
+  const partPanel = document.getElementById('wa-participants-panel');
+  if (chatPanel) chatPanel.style.display = 'none';
+  if (partPanel) partPanel.style.display = 'none';
+
+  // Make draggable
+  waInitDrag();
+
+  // Start timer
+  clearInterval(waCall.timerInterval);
+  waCall.timerInterval = setInterval(() => {
+    waCall.seconds++;
+    const t = waFmtTime(waCall.seconds);
+    const el1 = document.getElementById('wa-popup-timer');
+    const el2 = document.getElementById('wa-pill-timer');
+    if (el1) el1.textContent = t;
+    if (el2) el2.textContent = t;
+  }, 1000);
+
+  // Get camera
+  try {
+    waCall.localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  } catch(e) {
+    try { waCall.localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false }); }
+    catch(e2) { waCall.localStream = null; }
+  }
+
+  waRenderAllTiles();
+  waStartSignaling();
+}
+
+function waFmtTime(s) {
+  return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+
+function waInitDrag() {
+  const popup = document.getElementById('wa-call-popup');
+  const bar = document.getElementById('wa-popup-titlebar');
+  if (!popup || !bar) return;
+  let dragging = false, ox = 0, oy = 0, sx = 0, sy = 0;
+  bar.onmousedown = (e) => {
+    if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+    dragging = true;
+    bar.style.cursor = 'grabbing';
+    const rect = popup.getBoundingClientRect();
+    ox = e.clientX - rect.left; oy = e.clientY - rect.top;
+    popup.style.right = 'auto'; popup.style.bottom = 'auto';
+    popup.style.left = rect.left + 'px'; popup.style.top = rect.top + 'px';
+  };
+  document.onmousemove = (e) => {
+    if (!dragging) return;
+    popup.style.left = (e.clientX - ox) + 'px';
+    popup.style.top  = (e.clientY - oy) + 'px';
+  };
+  document.onmouseup = () => { dragging = false; bar.style.cursor = 'grab'; };
+}
+
+function waGetParticipants() {
+  if (!activeMeeting) return [(currentUser.email||'').trim().toLowerCase()];
+  return [...new Set((activeMeeting.participants||[currentUser.email]).map(e=>(e||'').trim().toLowerCase()).filter(Boolean))];
+}
+function waGetPeers() {
+  const me = (currentUser.email||'').trim().toLowerCase();
+  return waGetParticipants().filter(e => e !== me);
+}
+
+function waRenderAllTiles() {
+  const grid = document.getElementById('wa-video-grid');
+  if (!grid) return;
+  const peers = waGetPeers();
+  const total = 1 + peers.length;
+  grid.setAttribute('data-count', String(total));
+  grid.innerHTML = '';
+
+  // Self tile
+  const selfTile = waMakeTile('self', currentUser.name || currentUser.email.split('@')[0], true, currentUser.avatar || '');
+  const sv = selfTile.querySelector('video');
+  if (sv && waCall.localStream && waCall.localStream.getVideoTracks().length > 0 && !waCall.camOff) {
+    sv.srcObject = waCall.localStream; sv.muted = true;
+    sv.play().catch(()=>{});
+    sv.style.display = 'block';
+    const fb = selfTile.querySelector('.wa-avatar-fallback');
+    if (fb) fb.style.display = 'none';
+  }
+  grid.appendChild(selfTile);
+
+  // Peer tiles
+  peers.forEach(peerEmail => {
+    const u = db.users ? db.users.find(x => x && x.email && x.email.trim().toLowerCase() === peerEmail) : null;
+    const name = u ? u.name : peerEmail.split('@')[0];
+    const avatar = u && u.avatar ? u.avatar : '';
+    const tile = waMakeTile(peerEmail, name, false, avatar);
+    const stream = waCall.remoteStreams[peerEmail];
+    if (stream && stream.getVideoTracks().length > 0) {
+      const rv = tile.querySelector('video');
+      if (rv) {
+        rv.srcObject = stream; rv.play().catch(()=>{});
+        rv.style.display = 'block';
+        const fb = tile.querySelector('.wa-avatar-fallback');
+        if (fb) fb.style.display = 'none';
+      }
+    }
+    grid.appendChild(tile);
+  });
+
+  // Update counts
+  const pc = document.getElementById('wa-popup-pcount');
+  const pp = document.getElementById('wa-panel-count');
+  if (pc) pc.textContent = total;
+  if (pp) pp.textContent = total;
+  waRenderParticipantsList();
+}
+
+function waMakeTile(id, name, isSelf, avatar) {
+  const tile = document.createElement('div');
+  tile.className = 'wa-video-tile';
+  tile.id = 'wa-tile-' + id.replace(/[@.]/g, '-');
+  const initial = (name||'?').charAt(0).toUpperCase();
+  const size = 56; // avatar fallback size
+  tile.innerHTML = `
+    <video autoplay playsinline ${isSelf?'muted':''} style="display:none;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);"></video>
+    <div class="wa-avatar-fallback" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px;">
+      ${avatar
+        ? `<img src="${avatar}" alt="${name}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.15);">`
+        : `<div class="wa-initials-circle" style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.38)}px;">${initial}</div>`}
+      <span style="font-size:11px;color:rgba(255,255,255,0.7);font-weight:600;">${name}${isSelf?' (You)':''}</span>
+    </div>
+    <div class="wa-tile-name">${name}${isSelf?' (You)':''}</div>
+  `;
+  return tile;
+}
+
+// ---- WebRTC ----
+function waGetOrCreatePC(peerEmail) {
+  const key = peerEmail.trim().toLowerCase();
+  const existing = waCall.pcs[key];
+  if (existing) {
+    const cs = existing.connectionState||'';
+    if (cs !== 'failed' && cs !== 'closed') return existing;
+    try{existing.close();}catch(e){}
+    delete waCall.pcs[key];
+  }
+  const pc = new RTCPeerConnection(WA_ICE);
+  waCall.pcs[key] = pc;
+  if (waCall.localStream) waCall.localStream.getTracks().forEach(t => pc.addTrack(t, waCall.localStream));
+  pc.onicecandidate = evt => { if (evt.candidate) waSendSignal('candidate', evt.candidate, key); };
+  pc.ontrack = evt => {
+    if (!waCall.remoteStreams[key]) waCall.remoteStreams[key] = new MediaStream();
+    if (!waCall.remoteStreams[key].getTracks().includes(evt.track)) waCall.remoteStreams[key].addTrack(evt.track);
+    const tileEl = document.getElementById('wa-tile-' + key.replace(/[@.]/g,'-'));
+    if (tileEl) {
+      const vid = tileEl.querySelector('video');
+      const fb = tileEl.querySelector('.wa-avatar-fallback');
+      if (vid && waCall.remoteStreams[key].getVideoTracks().length > 0) {
+        vid.srcObject = waCall.remoteStreams[key];
+        vid.style.display = 'block'; vid.play().catch(()=>{});
+        if (fb) fb.style.display = 'none';
+      }
+    } else { waRenderAllTiles(); }
+  };
+  return pc;
+}
+
+async function waInitiateOffer(peerEmail) {
+  const key = peerEmail.trim().toLowerCase();
+  const pc = waGetOrCreatePC(key);
+  if (pc.signalingState !== 'stable') return;
+  try {
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    waSendSignal('offer', offer, key);
+  } catch(e) { console.error('WA offer err:', e); }
+}
+
+async function waHandleSignal(signal) {
+  const sender = (signal.sender||'').trim().toLowerCase();
+  const me = (currentUser.email||'').trim().toLowerCase();
+  if (sender === me) return;
+  if (signal.recipient && signal.recipient.trim().toLowerCase() !== me) return;
+  if (waCall.pendingSignals.has(signal.id)) return;
+  waCall.pendingSignals.add(signal.id);
+  const { type, data } = signal;
+  try {
+    if (type === 'ready') {
+      const pc = waGetOrCreatePC(sender);
+      if (me < sender && pc.signalingState === 'stable') await waInitiateOffer(sender);
+      else waSendSignal('ready_ack', true, sender);
+    } else if (type === 'ready_ack') {
+      if (me < sender) await waInitiateOffer(sender);
+    } else if (type === 'offer') {
+      const pc = waGetOrCreatePC(sender);
+      await pc.setRemoteDescription(new RTCSessionDescription(data));
+      await waFlushCandQueue(sender);
+      const ans = await pc.createAnswer();
+      await pc.setLocalDescription(ans);
+      waSendSignal('answer', ans, sender);
+    } else if (type === 'answer') {
+      const pc = waGetOrCreatePC(sender);
+      if (pc.signalingState === 'have-local-offer') {
+        await pc.setRemoteDescription(new RTCSessionDescription(data));
+        await waFlushCandQueue(sender);
+      }
+    } else if (type === 'candidate') {
+      const pc = waGetOrCreatePC(sender);
+      if (pc.remoteDescription && pc.remoteDescription.type) {
+        await pc.addIceCandidate(new RTCIceCandidate(data));
+      } else {
+        if (!waCall.iceCandQueues[sender]) waCall.iceCandQueues[sender] = [];
+        waCall.iceCandQueues[sender].push(data);
+      }
+    }
+  } catch(e) { console.error('WA signal handle ['+type+']:', e); }
+}
+
+async function waFlushCandQueue(peer) {
+  const pc = waCall.pcs[peer.trim().toLowerCase()];
+  if (!pc) return;
+  const q = waCall.iceCandQueues[peer.trim().toLowerCase()] || [];
+  while (q.length) { try{ await pc.addIceCandidate(new RTCIceCandidate(q.shift())); }catch(e){} }
+}
+
+// ---- Signaling ----
+function waSendSignal(type, data, recipient) {
+  if (!activeMeeting) return;
+  const sig = {
+    id: 'wa-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+    meetingId: activeMeeting.id,
+    sender: currentUser.email,
+    recipient: recipient || null,
+    type, data,
+    timestamp: new Date().toISOString()
+  };
+  syncRecordToSupabase('signals', sig);
+}
+
+function waStartSignaling() {
+  if (!activeMeeting) return;
+  setTimeout(() => waSendSignal('ready', true, null), 400);
+  clearInterval(waCall.signalPollInterval);
+  waCall.signalPollInterval = setInterval(async () => {
+    if (!activeMeeting || !supabaseActive || !supabaseClient) return;
+    try {
+      const cutoff = waCall.lastSignalTs || new Date(Date.now() - 90000).toISOString();
+      const { data, error } = await supabaseClient
+        .from('apex_sync').select('data,created_at')
+        .eq('collection','signals').gt('created_at', cutoff)
+        .order('created_at',{ascending:true}).limit(60);
+      if (error || !data) return;
+      if (data.length > 0) waCall.lastSignalTs = data[data.length-1].created_at;
+      for (const row of data) {
+        try {
+          const sig = typeof row.data === 'string' ? JSON.parse(row.data) : row.data;
+          if (!sig || sig.meetingId !== activeMeeting.id) continue;
+          const me = (currentUser.email||'').trim().toLowerCase();
+          if ((sig.sender||'').trim().toLowerCase() === me) continue;
+          if (sig.type === 'chat_msg') {
+            waCall.inCallMessages.push({ sender: sig.data?.sender || sig.sender, text: sig.data?.text || '', mine: false, time: sig.data?.time || '' });
+            waRenderCallChat();
+            if (!waCall.chatOpen) { const b=document.getElementById('wa-chat-badge'); if(b){b.style.display='flex';b.textContent='●';} }
+          } else {
+            await waHandleSignal(sig);
+          }
+        } catch(e){}
+      }
+    } catch(e){}
+  }, 1800);
+}
+
+// ---- Controls ----
+function waToggleMic() {
+  waCall.micMuted = !waCall.micMuted;
+  if (waCall.localStream) waCall.localStream.getAudioTracks().forEach(t => t.enabled = !waCall.micMuted);
+  const btn = document.getElementById('wa-btn-mic');
+  const on = document.getElementById('wa-mic-on');
+  const off = document.getElementById('wa-mic-off');
+  if (waCall.micMuted) {
+    if (btn) btn.classList.add('muted');
+    if (on) on.style.display = 'none'; if (off) off.style.display = 'block';
+  } else {
+    if (btn) btn.classList.remove('muted');
+    if (on) on.style.display = 'block'; if (off) off.style.display = 'none';
+  }
+  // Update self tile muted icon
+  const selfTile = document.getElementById('wa-tile-self');
+  if (selfTile) {
+    let icon = selfTile.querySelector('.wa-tile-muted');
+    if (waCall.micMuted && !icon) {
+      icon = document.createElement('div'); icon.className = 'wa-tile-muted';
+      icon.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/></svg>';
+      selfTile.appendChild(icon);
+    } else if (!waCall.micMuted && icon) { icon.remove(); }
+  }
+}
+
+function waToggleCam() {
+  waCall.camOff = !waCall.camOff;
+  if (waCall.localStream) waCall.localStream.getVideoTracks().forEach(t => t.enabled = !waCall.camOff);
+  const btn = document.getElementById('wa-btn-cam');
+  const on = document.getElementById('wa-cam-on'); const off = document.getElementById('wa-cam-off');
+  if (waCall.camOff) {
+    if (btn) btn.classList.add('off');
+    if (on) on.style.display = 'none'; if (off) off.style.display = 'block';
+  } else {
+    if (btn) btn.classList.remove('off');
+    if (on) on.style.display = 'block'; if (off) off.style.display = 'none';
+  }
+  const selfTile = document.getElementById('wa-tile-self');
+  if (selfTile) {
+    const vid = selfTile.querySelector('video');
+    const fb = selfTile.querySelector('.wa-avatar-fallback');
+    if (waCall.camOff) { if(vid) vid.style.display='none'; if(fb) fb.style.display='flex'; }
+    else { if(vid&&waCall.localStream){vid.style.display='block';if(fb)fb.style.display='none';} }
+  }
+}
+
+async function waToggleShare() {
+  const btn = document.getElementById('wa-btn-share');
+  if (!waCall.shareActive) {
+    try {
+      waCall.screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      waCall.shareActive = true;
+      if (btn) btn.classList.add('active');
+      const track = waCall.screenStream.getVideoTracks()[0];
+      Object.values(waCall.pcs).forEach(pc => {
+        const s = pc.getSenders().find(x => x.track && x.track.kind === 'video');
+        if (s) s.replaceTrack(track).catch(()=>{});
+      });
+      const sv = document.getElementById('wa-tile-self');
+      if (sv) { const vid = sv.querySelector('video'); if(vid){vid.srcObject=waCall.screenStream;vid.style.display='block';} }
+      track.onended = () => waToggleShare();
+    } catch(e) {}
+  } else {
+    waCall.shareActive = false;
+    if (btn) btn.classList.remove('active');
+    if (waCall.screenStream) { waCall.screenStream.getTracks().forEach(t=>t.stop()); waCall.screenStream = null; }
+    if (waCall.localStream) {
+      const ct = waCall.localStream.getVideoTracks()[0];
+      Object.values(waCall.pcs).forEach(pc => {
+        const s = pc.getSenders().find(x => x.track && x.track.kind === 'video');
+        if (s && ct) s.replaceTrack(ct).catch(()=>{});
+      });
+      const sv = document.getElementById('wa-tile-self');
+      if (sv) { const vid = sv.querySelector('video'); if(vid) vid.srcObject=waCall.localStream; }
+    }
+  }
+}
+
+function waToggleCallChat() {
+  waCall.chatOpen = !waCall.chatOpen;
+  const panel = document.getElementById('wa-call-chat-panel');
+  const btn = document.getElementById('wa-btn-chat');
+  if (panel) panel.style.display = waCall.chatOpen ? 'flex' : 'none';
+  if (btn) { waCall.chatOpen ? btn.classList.add('active') : btn.classList.remove('active'); }
+  if (waCall.chatOpen) { const b=document.getElementById('wa-chat-badge'); if(b)b.style.display='none'; }
+  if (waCall.chatOpen && waCall.participantsOpen) waToggleParticipants();
+}
+
+function waToggleParticipants() {
+  waCall.participantsOpen = !waCall.participantsOpen;
+  const panel = document.getElementById('wa-participants-panel');
+  if (panel) panel.style.display = waCall.participantsOpen ? 'flex' : 'none';
+  if (waCall.participantsOpen && waCall.chatOpen) waToggleCallChat();
+  waRenderParticipantsList();
+}
+
+function waPopupMinimise() {
+  waCall.minimised = true;
+  const popup = document.getElementById('wa-call-popup');
+  const pill = document.getElementById('wa-call-pill');
+  if (popup) popup.style.display = 'none';
+  if (pill) pill.style.display = 'flex';
+}
+
+function waPopupRestore() {
+  waCall.minimised = false;
+  const popup = document.getElementById('wa-call-popup');
+  const pill = document.getElementById('wa-call-pill');
+  if (popup) popup.style.display = 'flex';
+  if (pill) pill.style.display = 'none';
+}
+
+function waSendCallChat(event) {
+  event.preventDefault();
+  const input = document.getElementById('wa-call-chat-input');
+  if (!input || !input.value.trim()) return;
+  const msg = { sender: currentUser.name || currentUser.email.split('@')[0], text: input.value.trim(), mine: true, time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) };
+  waCall.inCallMessages.push(msg);
+  waRenderCallChat();
+  waSendSignal('chat_msg', { sender: msg.sender, text: msg.text, time: msg.time }, null);
+  input.value = '';
+}
+
+function waRenderCallChat() {
+  const c = document.getElementById('wa-call-chat-msgs');
+  if (!c) return;
+  c.innerHTML = '';
+  waCall.inCallMessages.forEach(m => {
+    const d = document.createElement('div');
+    d.className = 'wa-call-chat-msg' + (m.mine ? ' mine' : '');
+    d.innerHTML = `<div class="wa-csender">${m.mine?'You':m.sender}</div><div style="font-size:11px;">${m.text}</div><div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:1px;">${m.time}</div>`;
+    c.appendChild(d);
+  });
+  c.scrollTop = c.scrollHeight;
+}
+
+function waRenderParticipantsList() {
+  const c = document.getElementById('wa-participants-list');
+  if (!c) return;
+  c.innerHTML = '';
+  waGetParticipants().forEach(email => {
+    const u = db.users ? db.users.find(x => x && x.email && x.email.trim().toLowerCase() === email) : null;
+    const name = u ? u.name : email.split('@')[0];
+    const avatar = u && u.avatar ? u.avatar : '';
+    const isMe = email === (currentUser.email||'').trim().toLowerCase();
+    const d = document.createElement('div');
+    d.className = 'wa-participants-item';
+    d.innerHTML = (avatar ? `<img src="${avatar}" alt="${name}">` : `<div class="wa-p-initial">${name.charAt(0).toUpperCase()}</div>`)
+      + `<div><div style="font-size:11px;font-weight:600;color:#fff;">${name}${isMe?' (You)':''}</div><div style="font-size:9px;color:#22c55e;">● Active</div></div>`;
+    c.appendChild(d);
+  });
+}
+
+function waEndCall() {
+  clearInterval(waCall.timerInterval);
+  clearInterval(waCall.signalPollInterval);
+  if (waCall.localStream) { waCall.localStream.getTracks().forEach(t=>t.stop()); waCall.localStream=null; }
+  if (waCall.screenStream) { waCall.screenStream.getTracks().forEach(t=>t.stop()); waCall.screenStream=null; }
+  Object.values(waCall.pcs).forEach(pc=>{try{pc.close();}catch(e){}});
+  waCall.pcs={}; waCall.remoteStreams={}; waCall.iceCandQueues={}; waCall.pendingSignals=new Set();
+  const popup = document.getElementById('wa-call-popup');
+  const pill = document.getElementById('wa-call-pill');
+  if (popup) popup.style.display = 'none';
+  if (pill) pill.style.display = 'none';
+  if (activeMeeting) leaveMeeting().catch(()=>{});
+}
+
+// Global exports
+window.openWAStyleCall = openWAStyleCall;
+window.waToggleMic = waToggleMic;
+window.waToggleCam = waToggleCam;
+window.waToggleShare = waToggleShare;
+window.waToggleCallChat = waToggleCallChat;
+window.waToggleParticipants = waToggleParticipants;
+window.waSendCallChat = waSendCallChat;
+window.waEndCall = waEndCall;
+window.waPopupMinimise = waPopupMinimise;
+window.waPopupRestore = waPopupRestore;
+

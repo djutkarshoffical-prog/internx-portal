@@ -17513,8 +17513,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <button class="btn btn-primary btn-sm" id="banner-qr-toggle" onclick="toggleQRPopup()">Get App via QR</button>
         <div id="banner-qr-popup" class="qr-code-popup">
           <img src="${qrApiUrl}" alt="Scan to Download App">
-          <p>Scan with your phone to<br>download the App</p>
-          <a href="${apkUrl}" download class="btn btn-primary btn-sm" style="margin-top: 10px; width: 100%;">Download App</a>
+          <p>Scan with your phone to<br><span>Download App</span></p>
+          <a href="${apkUrl}" download class="btn btn-primary btn-sm" style="margin-top: 16px; width: 100%; border-radius: 8px;">Download APK</a>
         </div>
       `;
       document.getElementById('banner-message').innerText = "Download our mobile App for on-the-go access! 🚀";

@@ -46,24 +46,32 @@ function toggleTheme() {
 function updateThemeToggleIcons(theme) {
   const btns = document.querySelectorAll('.theme-toggle-btn');
   btns.forEach(btn => {
-    if (btn.classList.contains('sidebar-theme-btn') || btn.classList.contains('portal-theme-btn')) {
-      // Buttons with icon + label
+    const isPill = btn.classList.contains('theme-pill-btn');
+    const isPortal = btn.classList.contains('portal-theme-btn') || btn.classList.contains('sidebar-theme-btn');
+
+    if (isPill) {
+      // Pill button — just update the label text
+      const label = btn.querySelector('.theme-pill-label');
+      if (label) {
+        label.textContent = theme === 'light' ? 'DAY MODE' : 'NIGHT MODE';
+      }
+      btn.title = theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+    } else if (isPortal) {
+      // Legacy portal buttons with icon + label spans (fallback, should not appear now)
+      const iconEl = btn.querySelector('.theme-icon');
+      const labelEl = btn.querySelector('.theme-label');
       if (theme === 'light') {
-        btn.innerHTML = '<span class="theme-icon">??</span><span class="theme-label">Dark Theme</span>';
-        btn.title = "Switch to Dark Mode";
+        if (iconEl) iconEl.textContent = '';
+        if (labelEl) labelEl.textContent = 'Dark Theme';
+        btn.title = 'Switch to Dark Mode';
       } else {
-        btn.innerHTML = '<span class="theme-icon">??</span><span class="theme-label">Light Theme</span>';
-        btn.title = "Switch to Light Mode";
+        if (iconEl) iconEl.textContent = '';
+        if (labelEl) labelEl.textContent = 'Light Theme';
+        btn.title = 'Switch to Light Mode';
       }
     } else {
-      // Header button � icon only
-      if (theme === 'light') {
-        btn.innerHTML = '??';
-        btn.title = "Switch to Dark Mode";
-      } else {
-        btn.innerHTML = '??';
-        btn.title = "Switch to Light Mode";
-      }
+      // Any other plain button — leave as-is
+      btn.title = theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
     }
   });
 }
@@ -1278,6 +1286,13 @@ function checkSession() {
 
 // 2. ROUTING CONTROLS
 function showLandingPage() {
+  // Reset applied internship lock when going back to landing
+  window._appliedInternId = null;
+  // Re-enable domain/mentor in case they were locked
+  const domainEl = document.getElementById('reg-domain');
+  const mentorEl = document.getElementById('reg-mentor-select');
+  if (domainEl) { domainEl.disabled = false; domainEl.style.opacity = ''; domainEl.style.cursor = ''; }
+  if (mentorEl) { mentorEl.disabled = false; mentorEl.style.opacity = ''; mentorEl.style.cursor = ''; }
   document.getElementById('main-header').classList.remove('hidden');
   document.getElementById('landing-page').classList.remove('hidden');
   document.getElementById('auth-page').classList.add('hidden');
@@ -1285,6 +1300,25 @@ function showLandingPage() {
 }
 
 // Registration step navigation
+function showRegError(msg) {
+  let el = document.getElementById('reg-error-msg');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'reg-error-msg';
+    el.style.cssText = 'margin:10px 0 0 0;padding:10px 14px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.5);border-radius:8px;color:#ef4444;font-size:13px;font-weight:600;text-align:center;display:flex;align-items:center;gap:8px;';
+    // Insert before the submit button
+    const submitBtn = document.querySelector('#register-form button[type="submit"]');
+    if (submitBtn && submitBtn.parentNode) {
+      submitBtn.parentNode.insertBefore(el, submitBtn);
+    }
+  }
+  el.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' + msg;
+  el.style.display = 'flex';
+  el.style.animation = 'none';
+  setTimeout(() => { el.style.animation = 'shake 0.4s ease'; }, 10);
+  setTimeout(() => { if (el) el.style.display = 'none'; }, 5000);
+}
+
 function showRegStep(step) {
   const formPage = document.getElementById('register-form');
   const roleSel  = document.querySelector('#register-view .role-selector');
@@ -1389,14 +1423,30 @@ function toggleAuthForms(mode) {
   if (mode === 'login') {
     document.getElementById('login-view').classList.remove('hidden');
     document.getElementById('register-view').classList.add('hidden');
-    // Narrow card for login
     if (authCard) authCard.style.maxWidth = '480px';
   } else {
     document.getElementById('login-view').classList.add('hidden');
     document.getElementById('register-view').classList.remove('hidden');
-    // Wide landscape card for register
     if (authCard) authCard.style.maxWidth = '900px';
     setRegisterRole('student');
+
+    // If opened directly (not via Apply Now), unlock domain & mentor
+    if (!window._appliedInternId) {
+      const domainEl = document.getElementById('reg-domain');
+      const mentorEl = document.getElementById('reg-mentor-select');
+      if (domainEl) {
+        domainEl.disabled = false;
+        domainEl.style.opacity = '';
+        domainEl.style.cursor = '';
+        domainEl.title = '';
+      }
+      if (mentorEl) {
+        mentorEl.disabled = false;
+        mentorEl.style.opacity = '';
+        mentorEl.style.cursor = '';
+        mentorEl.title = '';
+      }
+    }
   }
 }
 
@@ -1676,6 +1726,7 @@ function switchTab(portal, tabName) {
     if (tabName === 'dash') loadAdminDashboard();
     if (tabName === 'users') loadAdminUsers();
     if (tabName === 'relations') loadAdminRelations();
+    if (tabName === 'listings') loadAdminListings();
   }
 }
 
@@ -1789,25 +1840,61 @@ async function handleRegisterSubmit(event) {
   const email = document.getElementById('reg-email').value.trim().toLowerCase();
   const password = document.getElementById('reg-password').value;
 
+  // ===== STUDENT VALIDATION =====
+  if (activeRegisterRole === 'student') {
+    if (!name) {
+      showRegError('Full Name is required.'); return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showRegError('Please enter a valid Email Address.'); return;
+    }
+    if (!password || password.length < 6) {
+      showRegError('Password must be at least 6 characters.'); return;
+    }
+    const faceCheck = document.getElementById('reg-face-data').value;
+    if (!faceCheck) {
+      showRegError('Face scan is required. Please turn on your camera and capture your face.'); 
+      // Scroll to camera
+      const camSection = document.getElementById('reg-webcam-toggle-btn');
+      if (camSection) camSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Highlight camera box
+      const camBox = document.querySelector('.face-scan-container') || document.getElementById('reg-webcam');
+      if (camBox) { camBox.style.border = '2px solid #ef4444'; setTimeout(() => { camBox.style.border = ''; }, 3000); }
+      return;
+    }
+  }
+
+  // ===== MENTOR VALIDATION =====
+  if (activeRegisterRole === 'mentor') {
+    if (!name) { showRegError('Full Name is required.'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showRegError('Please enter a valid Email Address.'); return;
+    }
+    if (!password || password.length < 6) {
+      showRegError('Password must be at least 6 characters.'); return;
+    }
+  }
+
+  // ===== ADMIN VALIDATION =====
+  if (activeRegisterRole === 'admin') {
+    if (!name) { showRegError('Full Name is required.'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showRegError('Please enter a valid Email Address.'); return;
+    }
+    if (!password || password.length < 6) {
+      showRegError('Password must be at least 6 characters.'); return;
+    }
+  }
+
   // Razorpay Checkout Hook for Premium Tier
   if (activeRegisterRole === 'student' && document.getElementById('reg-tier').value === 'paid' && !pendingRegistrationPayment) {
-    if (!name || !email || !password) {
-      alert("Please fill in your name, email, and password first.");
-      return;
-    }
-    
-    if (db.users.some(u => u && u.email && u.email.trim().toLowerCase() === email)) {
-      alert("An account with this email address already exists.");
-      return;
-    }
-
     const feeAmount = _selectedInternFee > 0 ? _selectedInternFee : 99;
     openRzpModal(email, feeAmount, 'InternX Registration Fee', (razorpayPaymentId) => {
       pendingRegistrationPayment = {
         method: 'Razorpay',
         timestamp: new Date().toISOString(),
         amount: feeAmount,
-        reference: razorpayPaymentId  // Real Razorpay payment ID e.g. pay_ABC123XYZ
+        reference: razorpayPaymentId
       };
       handleRegisterSubmit(event);
     });
@@ -1849,11 +1936,10 @@ async function handleRegisterSubmit(event) {
   if (activeRegisterRole === 'student') {
     let faceData = document.getElementById('reg-face-data').value;
     
-    // ?? SAFETY TRAP: Agar camera block hone ki wajah se faceData khali hai, toh standard testing profile photo generate karein
+    // Face scan compulsory hai — bina scan ke registration nahi hogi
     if (!faceData) {
-      console.warn("Camera data was blocked or empty. Generating a safe testing profile face scan data automatically.");
-      faceData = generateMockFaceData(name || 'Student');
-      document.getElementById('reg-face-data').value = faceData;
+      showRegError('Face scan is required. Please capture your face using the camera.');
+      return;
     }
     newUser.faceScanImage = faceData;
     newUser.faceDescriptor = window.lastRegisteredFaceDescriptor || '';
@@ -4976,10 +5062,10 @@ function loadDashboardBadges() {
   const skillPercentage = Math.round((studentSkills.length / CORE_SKILLS.length) * 100);
 
   const badges = [
-    { name: "Welcome Aboard", desc: "Active intern registry", icon: "?", unlocked: true },
-    { name: "Task Crusher", desc: "Completed 2+ tasks", icon: "??", unlocked: completedCount >= 2 },
-    { name: "Time Keeper", desc: "Logged 40+ hours", icon: "??", unlocked: loggedHours >= 40 },
-    { name: "Skill Master", desc: "50%+ skills mastery", icon: "??", unlocked: skillPercentage >= 50 }
+    { name: "Welcome Aboard", desc: "Active intern registry",  icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e01a8b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>`, unlocked: true },
+    { name: "Task Crusher",   desc: "Completed 2+ tasks",     icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8327ec" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`, unlocked: completedCount >= 2 },
+    { name: "Time Keeper",    desc: "Logged 40+ hours",       icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a6bf2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`, unlocked: loggedHours >= 40 },
+    { name: "Skill Master",   desc: "50%+ skills mastery",    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`, unlocked: skillPercentage >= 50 }
   ];
 
   badges.forEach(badge => {
@@ -7726,7 +7812,7 @@ async function syncRecordToSupabase(collection, record) {
         // Registration details cloud user profile structure table mein push karein
         const { error: syncError } = await supabaseClient
           .from('registration and login')
-          .upsert(getRegistrationTablePayload(record, faceScanUrl));
+          .upsert(getRegistrationTablePayload(record, faceScanUrl), { onConflict: 'Email Id' });
           
         if (syncError) {
           console.error("Error syncing to registration and login table:", syncError);
@@ -7739,7 +7825,7 @@ async function syncRecordToSupabase(collection, record) {
             
             const { error: retryError } = await supabaseClient
               .from('registration and login')
-              .upsert(getRegistrationTablePayload(record, faceScanUrl));
+              .upsert(getRegistrationTablePayload(record, faceScanUrl), { onConflict: 'Email Id' });
             if (retryError) {
               console.error("Error retrying registration sync after disabling Mentor Status:", retryError);
             } else {
@@ -8169,7 +8255,7 @@ function initMeetingBroadcastSync() {
   }
 }
 
-// Stable mentor cloud sync � throttled so student counts don't flicker (2?4)
+// Stable mentor cloud sync � throttled so student counts don't flicker (2&#x20B9;4)
 setInterval(async () => {
   if (!currentUser || currentUser.role !== 'mentor' || cloudSyncInProgress) return;
   const now = Date.now();
@@ -13468,59 +13554,159 @@ async function issueCertificate(studentEmail) {
   }
 }
 
+function resetVerificationResult() {
+  const panel = document.getElementById('verification-result-panel');
+  if (panel) { panel.style.display = 'none'; panel.innerHTML = ''; }
+}
+
 function handlePublicVerificationSearch() {
   const input = document.getElementById('public-verify-id-input');
   if (!input) return;
   const rawId = input.value.trim();
   if (!rawId) {
-    alert("Please enter a valid Student ID or Certificate ID.");
+    showVerificationResult('error', 'Please enter a valid Student ID or Certificate ID.');
     return;
   }
   verifyCertificate(rawId);
 }
 
+function showVerificationResult(type, data) {
+  const panel = document.getElementById('verification-result-panel');
+  if (!panel) return;
+  panel.style.display = 'block';
+
+  if (type === 'error') {
+    panel.innerHTML = `
+      <div style="
+        background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3);
+        border-radius:12px; padding:16px 20px;
+        display:flex; align-items:center; gap:12px;
+      ">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#ef4444;">Not Found</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${data}</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (type === 'student') {
+    const s = data;
+    const sid = s.studentId || 'N/A';
+    const domain = s.domain || 'Internship';
+    const startDate = s.startDate ? new Date(s.startDate).toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'}) : 'N/A';
+    const duration = s.duration ? `${s.duration} Month${s.duration > 1 ? 's' : ''}` : '1 Month';
+    const internType = s.internshipType === 'paid' ? 'Premium (Paid)' : 'Standard (Free)';
+
+    panel.innerHTML = `
+      <div style="
+        background:linear-gradient(135deg,rgba(34,197,94,0.06) 0%,rgba(131,39,236,0.06) 100%);
+        border:1px solid rgba(34,197,94,0.3); border-radius:14px; overflow:hidden;
+        animation: fadeInUp 0.35s ease;
+      ">
+        <!-- Green verified header -->
+        <div style="background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(131,39,236,0.1));padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(34,197,94,0.15);">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(34,197,94,0.2);border:1.5px solid #22c55e;display:flex;align-items:center;justify-content:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#22c55e;letter-spacing:0.03em;">VERIFIED &mdash; OFFER LETTER FOUND</div>
+            <div style="font-size:10px;color:var(--text-muted);">This credential is authentic and issued by InternX by UTX</div>
+          </div>
+          <div style="margin-left:auto;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(34,197,94,0.7);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:6px;padding:3px 10px;">Active</div>
+        </div>
+
+        <!-- Details grid -->
+        <div style="padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Student Name</div>
+            <div style="font-size:15px;font-weight:700;color:#fff;font-family:'Outfit',sans-serif;">${s.name || 'N/A'}</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Student ID</div>
+            <div style="font-size:13px;font-weight:700;color:#8327ec;font-family:monospace;">${sid}</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Domain</div>
+            <div style="font-size:13px;font-weight:600;color:#fff;">${domain}</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Start Date</div>
+            <div style="font-size:13px;font-weight:600;color:#fff;">${startDate}</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Duration</div>
+            <div style="font-size:13px;font-weight:600;color:#fff;">${duration}</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Program Type</div>
+            <div style="font-size:13px;font-weight:600;color:#fff;">${internType}</div>
+          </div>
+        </div>
+
+        <!-- View offer letter button -->
+        <div style="padding:0 20px 18px;">
+          <button onclick="showOfferLetterForStudent(window._verifiedStudent)" style="
+            width:100%;padding:12px;font-size:13px;font-weight:700;letter-spacing:0.04em;
+            background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);
+            border:none;border-radius:10px;color:#fff;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;gap:8px;
+            transition:all 0.2s;
+          "
+          onmouseover="this.style.opacity='0.9'"
+          onmouseout="this.style.opacity='1'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            View Offer Letter
+          </button>
+        </div>
+      </div>
+      <style>
+        @keyframes fadeInUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+      </style>
+    `;
+    window._verifiedStudent = s;
+  }
+}
+
 function verifyCertificate(certId) {
   if (!certId) return;
   const idClean = certId.trim().toLowerCase();
-  
+
   if (idClean.includes('/cert/')) {
-    // Search for Certificate ID
+    // Certificate ID lookup
     if (!db.certificates) db.certificates = [];
     const cert = db.certificates.find(c => c.certificateId && c.certificateId.trim().toLowerCase() === idClean);
     if (cert) {
       const verNameEl = document.getElementById('ver-student-name');
-      if (verNameEl) verNameEl.innerText = cert.studentName || '�';
-      
+      if (verNameEl) verNameEl.innerText = cert.studentName || '—';
       const verDomainEl = document.getElementById('ver-domain');
-      if (verDomainEl) verDomainEl.innerText = cert.domain || '�';
-      
+      if (verDomainEl) verDomainEl.innerText = cert.domain || '—';
       const verDurationEl = document.getElementById('ver-duration');
       if (verDurationEl) verDurationEl.innerText = `${cert.duration} Month${cert.duration > 1 ? 's' : ''}`;
-      
       const verMentorEl = document.getElementById('ver-mentor');
-      if (verMentorEl) verMentorEl.innerText = cert.mentorName || '�';
-      
+      if (verMentorEl) verMentorEl.innerText = cert.mentorName || '—';
       const verIssueDateEl = document.getElementById('ver-issue-date');
-      if (verIssueDateEl) verIssueDateEl.innerText = cert.issuedDate || '�';
-      
+      if (verIssueDateEl) verIssueDateEl.innerText = cert.issuedDate || '—';
       const verCertIdEl = document.getElementById('ver-cert-id');
-      if (verCertIdEl) verCertIdEl.innerText = cert.certificateId || '�';
-      
+      if (verCertIdEl) verCertIdEl.innerText = cert.certificateId || '—';
       openModal('verification-modal');
     } else {
-      alert("No matching record found in the verification registry.");
+      showVerificationResult('error', `No certificate found with ID "${certId}". Please check the ID and try again.`);
     }
   } else {
-    // Search for Student ID
-    const foundStudent = db.users.find(u => 
-      u.role === 'student' && 
-      u.studentId && 
+    // Student ID → Offer Letter lookup
+    const foundStudent = db.users.find(u =>
+      u.role === 'student' &&
+      u.studentId &&
       u.studentId.trim().toLowerCase() === idClean
     );
     if (foundStudent) {
-      showOfferLetterForStudent(foundStudent);
+      showVerificationResult('student', foundStudent);
     } else {
-      alert("No matching student record found for Student ID.");
+      showVerificationResult('error', `No student found with ID "${certId}". Make sure the ID is correct (e.g. IX/WD/2026/12345).`);
     }
   }
 }
@@ -13603,7 +13789,7 @@ const MOCK_INTERNSHIPS = [
     title: "Cybersecurity Analyst",
     domain: "Cybersecurity",
     type: "paid",
-    stipend: "?2,000 / month",
+    stipend: "&#x20B9;2,000 / month",
     duration: "6 Months",
     fee: 99,
     description: "Perform ethical hacking, penetration testing, and vulnerability assessments on live systems with certified professionals.",
@@ -13614,7 +13800,7 @@ const MOCK_INTERNSHIPS = [
     title: "Security Research Intern",
     domain: "Cybersecurity",
     type: "paid",
-    stipend: "?1,500 / month",
+    stipend: "&#x20B9;1,500 / month",
     duration: "3 Months",
     fee: 69,
     description: "Learn network security basics, OWASP Top-10, and how to identify common vulnerabilities in web apps.",
@@ -13625,11 +13811,11 @@ const MOCK_INTERNSHIPS = [
     title: "Cloud & DevOps Engineer",
     domain: "Cloud Computing",
     type: "paid",
-    stipend: "?2,000 / month",
+    stipend: "&#x20B9;2,000 / month",
     duration: "6 Months",
     fee: 99,
     description: "Work with AWS, Docker, and Kubernetes to build and maintain CI/CD pipelines for enterprise-grade systems.",
-    features: ["Stipend: ?2,000/mo", "AWS Practitioner Track", "CI/CD Pipeline Projects", "DevOps Certificate"]
+    features: ["Stipend: &#x20B9;2,000/mo", "AWS Practitioner Track", "CI/CD Pipeline Projects", "DevOps Certificate"]
   },
   {
     id: "intern-cloud-free",
@@ -13647,11 +13833,11 @@ const MOCK_INTERNSHIPS = [
     title: "Blockchain Developer",
     domain: "Blockchain & Web3",
     type: "paid",
-    stipend: "?1,800 / month",
+    stipend: "&#x20B9;1,800 / month",
     duration: "6 Months",
     fee: 79,
     description: "Build and deploy Solidity smart contracts on Ethereum. Explore DeFi protocols, NFT minting, and Web3 frontend integration.",
-    features: ["Stipend: ?1,800/mo", "Solidity & Hardhat", "Smart Contract Auditing", "Web3 Portfolio"]
+    features: ["Stipend: &#x20B9;1,800/mo", "Solidity & Hardhat", "Smart Contract Auditing", "Web3 Portfolio"]
   },
   {
     id: "intern-ml-paid",
@@ -13692,11 +13878,11 @@ const MOCK_INTERNSHIPS = [
     title: "Digital Marketing Specialist",
     domain: "Digital Marketing",
     type: "paid",
-    stipend: "?1,500 / month",
+    stipend: "&#x20B9;1,500 / month",
     duration: "3 Months",
     fee: 5,
     description: "Run live ad campaigns on Meta and Google, manage SEO strategies, and analyze conversion funnels for real clients.",
-    features: ["Stipend: ?1,500/mo", "Meta & Google Ads", "SEO & Analytics", "Campaign Portfolio"]
+    features: ["Stipend: &#x20B9;1,500/mo", "Meta & Google Ads", "SEO & Analytics", "Campaign Portfolio"]
   }
 ];
 
@@ -13715,7 +13901,7 @@ function _buildInternshipCard(intern) {
   let featuresHtml = '';
   intern.features.forEach(f => {
     featuresHtml += `<li style="font-size:11px;margin-bottom:6px;display:flex;align-items:center;gap:6px;color:var(--text-muted);">
-      <span style="color:${badgeColor};font-weight:bold;">?</span> ${f}
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;"><circle cx="6" cy="6" r="6" fill="${badgeColor}" opacity="0.18"/><path d="M3.5 6L5.2 7.7L8.5 4.3" stroke="${badgeColor}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> ${f}
     </li>`;
   });
 
@@ -13725,27 +13911,40 @@ function _buildInternshipCard(intern) {
 
   // Fee row content
   const stipendLabel = isPaid
-    ? `<div style="font-size:14px;font-weight:700;color:var(--text-main);">${intern.stipend}</div><div style="font-size:9px;color:var(--primary-magenta);">Reg. Fee: ?${intern.fee}</div>`
+    ? `<div style="font-size:14px;font-weight:700;color:var(--text-main);">${intern.stipend}</div><div style="font-size:9px;color:var(--primary-magenta);">Reg. Fee: &#x20B9;${intern.fee}</div>`
     : intern.fee === 0
-      ? `<div style="font-size:14px;font-weight:700;color:var(--success);">FREE</div><div style="font-size:9px;color:var(--text-muted);">No Stipend � Experience Letter</div>`
-      : `<div style="font-size:14px;font-weight:700;color:var(--accent-blue);">?${intern.fee} Registration</div><div style="font-size:9px;color:var(--text-muted);">No Stipend � Experience Letter</div>`;
+      ? `<div style="font-size:14px;font-weight:700;color:var(--success);">FREE</div><div style="font-size:9px;color:var(--text-muted);">No Stipend &bull; Experience Letter</div>`
+      : `<div style="font-size:14px;font-weight:700;color:var(--accent-blue);">&#x20B9;${intern.fee} Registration</div><div style="font-size:9px;color:var(--text-muted);">No Stipend &bull; Experience Letter</div>`;
 
   const btnStyle = isPaid
     ? `background:var(--primary-magenta);border-color:var(--primary-magenta);color:#fff;`
     : `background:rgba(42,107,242,0.12);border-color:var(--accent-blue);color:var(--accent-blue);`;
 
-  // Domain header gradient � unique per domain type
-  const domainColors = {
-    'Web Development':        ['#e01a8b','#8327ec'],
-    'Python / ML':            ['#f59e0b','#ef4444'],
-    'UI/UX Design':           ['#06b6d4','#2a6bf2'],
-    'Mobile Development':     ['#10b981','#2a6bf2'],
-    'Cloud & DevOps':         ['#f97316','#8327ec'],
-    'Cybersecurity':          ['#ef4444','#8327ec'],
-    'Data Analytics':         ['#f59e0b','#10b981'],
-    'Blockchain':             ['#8327ec','#2a6bf2'],
+  // Domain header gradient — unique per domain type
+  const _buildDomainColors = {
+    'Web Development':    ['#e01a8b','#8327ec'],
+    'Python / ML':        ['#f59e0b','#ef4444'],
+    'UI/UX Design':       ['#06b6d4','#2a6bf2'],
+    'Mobile Development': ['#10b981','#059669'],
+    'Cybersecurity':      ['#ef4444','#b91c1c'],
+    'Cloud Computing':    ['#f97316','#ea580c'],
+    'Cloud & DevOps':     ['#fb923c','#f97316'],
+    'Blockchain & Web3':  ['#6366f1','#4f46e5'],
+    'Machine Learning':   ['#a78bfa','#7c3aed'],
+    'Game Development':   ['#ec4899','#db2777'],
+    'Embedded Systems':   ['#14b8a6','#0d9488'],
+    'Digital Marketing':  ['#f59e0b','#d97706'],
+    'Data Analytics':     ['#22c55e','#16a34a'],
   };
-  const dc = domainColors[intern.domain] || ['#e01a8b','#8327ec'];
+  const _bdc_pal = [['#e01a8b','#8327ec'],['#06b6d4','#2a6bf2'],['#10b981','#059669'],['#f59e0b','#ef4444'],['#6366f1','#4f46e5'],['#f97316','#ea580c'],['#ec4899','#db2777'],['#a78bfa','#7c3aed'],['#14b8a6','#0d9488'],['#22c55e','#16a34a'],['#38bdf8','#0284c7'],['#facc15','#ca8a04']];
+  function _getBuildColor(d) {
+    if (_buildDomainColors[d]) return _buildDomainColors[d];
+    const k = Object.keys(_buildDomainColors).find(k => d.toLowerCase().includes(k.toLowerCase().split(' ')[0]) || k.toLowerCase().includes(d.toLowerCase().split(' ')[0]));
+    if (k) return _buildDomainColors[k];
+    let h = 0; for (let c of d) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+    return _bdc_pal[h % _bdc_pal.length];
+  }
+  const dc = _getBuildColor(intern.domain);
   const domainGradient = `linear-gradient(135deg, ${dc[0]} 0%, ${dc[1]} 100%)`;
 
   card.innerHTML = `
@@ -13812,19 +14011,69 @@ function _renderExplorePage() {
 
   const start = _explorePage * _explorePageSize;
   const slice = MOCK_INTERNSHIPS.slice(start, start + _explorePageSize);
+  const isLastPage = _explorePage >= totalPages - 1;
 
-  // Fade out ? swap ? fade in
+  // Fade out → swap → fade in
   grid.style.opacity = '0';
   grid.style.transition = 'opacity 0.2s ease';
   setTimeout(() => {
     grid.innerHTML = '';
     slice.forEach(intern => grid.appendChild(_buildInternshipCard(intern)));
+
+    // On last page, show "Add Internship" + card (admin only)
+    if (isLastPage && currentUser && currentUser.role === 'admin') {
+      const addCard = document.createElement('div');
+      addCard.className = 'feature-card glass-panel explore-card';
+      addCard.style.cssText = `
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        min-height:340px; border:2px dashed rgba(131,39,236,0.4); border-radius:16px;
+        cursor:pointer; transition:all 0.25s ease; gap:16px; padding:24px;
+        background:rgba(131,39,236,0.04);
+      `;
+      addCard.innerHTML = `
+        <div style="
+          width:64px; height:64px; border-radius:50%;
+          background:linear-gradient(135deg,rgba(224,26,139,0.15),rgba(131,39,236,0.15));
+          border:2px solid rgba(131,39,236,0.4);
+          display:flex; align-items:center; justify-content:center;
+          transition:all 0.25s ease;
+        ">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#addGrad)" stroke-width="2.5" stroke-linecap="round">
+            <defs>
+              <linearGradient id="addGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#e01a8b"/>
+                <stop offset="100%" stop-color="#8327ec"/>
+              </linearGradient>
+            </defs>
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:15px;font-weight:700;color:var(--text-main);font-family:'Outfit',sans-serif;margin-bottom:6px;">Add New Internship</div>
+          <div style="font-size:12px;color:var(--text-muted);">Create a new listing with domain, fee &amp; features</div>
+        </div>
+      `;
+      addCard.onmouseenter = () => {
+        addCard.style.borderColor = 'rgba(224,26,139,0.7)';
+        addCard.style.background = 'rgba(131,39,236,0.08)';
+        addCard.style.transform = 'translateY(-4px)';
+        addCard.style.boxShadow = '0 8px 30px rgba(131,39,236,0.2)';
+      };
+      addCard.onmouseleave = () => {
+        addCard.style.borderColor = 'rgba(131,39,236,0.4)';
+        addCard.style.background = 'rgba(131,39,236,0.04)';
+        addCard.style.transform = '';
+        addCard.style.boxShadow = '';
+      };
+      addCard.onclick = openAddInternshipModal;
+      grid.appendChild(addCard);
+    }
+
     grid.style.opacity = '1';
   }, 180);
 
   if (prevBtn) prevBtn.disabled = _explorePage === 0;
   if (nextBtn) nextBtn.disabled = _explorePage >= totalPages - 1;
-  // Show just the page number e.g. "1", "2", "3"
   if (pageInfo) pageInfo.textContent = `${_explorePage + 1}`;
 }
 
@@ -13862,6 +14111,499 @@ function exploreCarouselNext() {
 window.exploreCarouselPrev = exploreCarouselPrev;
 window.exploreCarouselNext = exploreCarouselNext;
 
+// ====== ADD INTERNSHIP MODAL (Admin only) ======
+function openAddInternshipModal() {
+  // Remove old modal if exists
+  const old = document.getElementById('add-intern-modal');
+  if (old) old.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'add-intern-modal';
+  modal.style.cssText = `
+    position:fixed; inset:0; z-index:10010;
+    background:rgba(3,3,8,0.88); backdrop-filter:blur(10px);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background:linear-gradient(145deg,#0d0d1a 0%,#12091e 100%);
+      border:1px solid rgba(131,39,236,0.35); border-radius:20px;
+      width:100%; max-width:600px; max-height:90vh; overflow-y:auto;
+      padding:32px; position:relative;
+      box-shadow:0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(131,39,236,0.1);
+    ">
+      <!-- Close -->
+      <button onclick="document.getElementById('add-intern-modal').remove()" style="
+        position:absolute; top:16px; right:16px;
+        background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+        color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer;
+        font-size:16px; display:flex; align-items:center; justify-content:center;
+      ">&times;</button>
+
+      <!-- Header -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#e01a8b,#8327ec);"></div>
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#8327ec;">Admin Panel</span>
+        </div>
+        <h2 style="font-size:22px;font-weight:800;font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#e01a8b,#8327ec);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:0;">Add New Internship</h2>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">This listing will appear in the Explore section for all visitors.</p>
+      </div>
+
+      <!-- Form -->
+      <div style="display:flex; flex-direction:column; gap:16px;">
+
+        <!-- Row 1: Title + Domain -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Internship Title *</label>
+            <input type="text" id="ai-title" class="form-control" placeholder="e.g. React Developer Intern" style="font-size:13px;">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Domain / Category *</label>
+            <input type="text" id="ai-domain" class="form-control" placeholder="e.g. Web Development" style="font-size:13px;">
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group" style="margin:0;">
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Description *</label>
+          <textarea id="ai-desc" class="form-control" rows="3" placeholder="Short description of the internship role and what interns will learn..." style="font-size:13px;resize:vertical;"></textarea>
+        </div>
+
+        <!-- Row 2: Type + Stipend + Fee + Duration -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Type</label>
+            <select id="ai-type" class="form-control" style="font-size:13px;" onchange="toggleAddInternStipend(this.value)">
+              <option value="free">Free Training</option>
+              <option value="paid">Paid (Stipend)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;" id="ai-stipend-group">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Stipend (INR/mo)</label>
+            <input type="number" id="ai-stipend" class="form-control" placeholder="e.g. 2000" style="font-size:13px;" disabled>
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Reg. Fee (&#x20B9;)</label>
+            <input type="number" id="ai-fee" class="form-control" placeholder="0 = Free" value="0" style="font-size:13px;">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Duration</label>
+            <select id="ai-duration" class="form-control" style="font-size:13px;">
+              <option value="1 Month">1 Month</option>
+              <option value="3 Months" selected>3 Months</option>
+              <option value="6 Months">6 Months</option>
+              <option value="12 Months">12 Months</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div class="form-group" style="margin:0;">
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">
+            Key Features / Highlights
+            <span style="color:#555;font-weight:400;"> — one per line (max 6)</span>
+          </label>
+          <textarea id="ai-features" class="form-control" rows="5" placeholder="1-on-1 Senior Mentor&#10;Face-verified Attendance&#10;Verified Certificate&#10;Experience Letter" style="font-size:13px;resize:vertical;"></textarea>
+        </div>
+
+        <!-- Action buttons -->
+        <div style="display:flex;gap:12px;margin-top:4px;">
+          <button type="button" onclick="document.getElementById('add-intern-modal').remove()" class="btn btn-secondary" style="flex:1;">Cancel</button>
+          <button type="button" onclick="submitAddInternship()" class="btn btn-primary" style="flex:2;font-weight:700;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:middle;margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add to Listings
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // Close on backdrop click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+}
+
+function toggleAddInternStipend(type) {
+  const stipendInput = document.getElementById('ai-stipend');
+  if (!stipendInput) return;
+  if (type === 'paid') {
+    stipendInput.disabled = false;
+    stipendInput.placeholder = 'e.g. 2000';
+  } else {
+    stipendInput.disabled = true;
+    stipendInput.value = '';
+    stipendInput.placeholder = 'N/A';
+  }
+}
+
+function submitAddInternship() {
+  const title    = (document.getElementById('ai-title')?.value || '').trim();
+  const domain   = (document.getElementById('ai-domain')?.value || '').trim();
+  const desc     = (document.getElementById('ai-desc')?.value || '').trim();
+  const type     = document.getElementById('ai-type')?.value || 'free';
+  const stipendVal = (document.getElementById('ai-stipend')?.value || '').trim();
+  const fee      = parseInt(document.getElementById('ai-fee')?.value || '0', 10);
+  const duration = document.getElementById('ai-duration')?.value || '3 Months';
+  const featuresRaw = (document.getElementById('ai-features')?.value || '').trim();
+
+  if (!title || !domain || !desc) {
+    showToast('Please fill in Title, Domain and Description.', 2500);
+    return;
+  }
+
+  const features = featuresRaw
+    ? featuresRaw.split('\n').map(f => f.trim()).filter(Boolean).slice(0, 6)
+    : ['Experience Letter', 'Mentor Support'];
+
+  const stipend = type === 'paid' && stipendVal
+    ? `&#x20B9;${stipendVal} / month`
+    : 'No Stipend';
+
+  const newIntern = {
+    id: `intern-custom-${Date.now()}`,
+    title,
+    domain,
+    type,
+    stipend,
+    duration,
+    fee: isNaN(fee) ? 0 : fee,
+    description: desc,
+    features
+  };
+
+  MOCK_INTERNSHIPS.push(newIntern);
+
+  // Jump to last page to show the new card
+  _explorePage = Math.ceil(MOCK_INTERNSHIPS.length / _explorePageSize) - 1;
+  _renderExplorePage();
+
+  document.getElementById('add-intern-modal')?.remove();
+  showToast(`✅ "${title}" added to listings!`, 2500);
+}
+
+window.openAddInternshipModal = openAddInternshipModal;
+window.toggleAddInternStipend = toggleAddInternStipend;
+window.submitAddInternship = submitAddInternship;
+
+// ====== ADMIN: MANAGE INTERNSHIP LISTINGS ======
+
+function loadAdminListings() {
+  const grid   = document.getElementById('admin-listings-grid');
+  const total  = document.getElementById('listing-metric-total');
+  const paid   = document.getElementById('listing-metric-paid');
+  const free   = document.getElementById('listing-metric-free');
+  if (!grid) return;
+
+  const paidCount = MOCK_INTERNSHIPS.filter(i => i.type === 'paid').length;
+  const freeCount = MOCK_INTERNSHIPS.filter(i => i.type !== 'paid').length;
+  if (total) total.textContent = MOCK_INTERNSHIPS.length;
+  if (paid)  paid.textContent  = paidCount;
+  if (free)  free.textContent  = freeCount;
+
+  grid.innerHTML = '';
+
+  MOCK_INTERNSHIPS.forEach((intern, idx) => {
+    const domainColors = {
+      'Web Development':    ['#e01a8b','#8327ec'],
+      'Python / ML':        ['#f59e0b','#ef4444'],
+      'UI/UX Design':       ['#06b6d4','#2a6bf2'],
+      'Mobile Development': ['#10b981','#059669'],
+      'Cybersecurity':      ['#ef4444','#b91c1c'],
+      'Cloud Computing':    ['#f97316','#ea580c'],
+      'Blockchain & Web3':  ['#6366f1','#4f46e5'],
+      'Machine Learning':   ['#a78bfa','#7c3aed'],
+      'Game Development':   ['#ec4899','#db2777'],
+      'Embedded Systems':   ['#14b8a6','#0d9488'],
+      'Digital Marketing':  ['#f59e0b','#d97706'],
+      'Data Analytics':     ['#22c55e','#16a34a'],
+      'Cloud & DevOps':     ['#fb923c','#f97316'],
+      'Android':            ['#4ade80','#22c55e'],
+      'Flutter':            ['#38bdf8','#0284c7'],
+      'React':              ['#61dafb','#0ea5e9'],
+      'Node.js':            ['#84cc16','#65a30d'],
+      'Python':             ['#facc15','#ca8a04'],
+    };
+
+    // Smart color picker for custom domains — hash-based so same domain always gets same color
+    function getDomainColor(domain) {
+      if (domainColors[domain]) return domainColors[domain];
+      // Check partial match
+      const key = Object.keys(domainColors).find(k =>
+        domain.toLowerCase().includes(k.toLowerCase().split(' ')[0]) ||
+        k.toLowerCase().includes(domain.toLowerCase().split(' ')[0])
+      );
+      if (key) return domainColors[key];
+      // Hash-based unique color from a curated palette
+      const palette = [
+        ['#e01a8b','#8327ec'], ['#06b6d4','#2a6bf2'], ['#10b981','#059669'],
+        ['#f59e0b','#ef4444'], ['#6366f1','#4f46e5'], ['#f97316','#ea580c'],
+        ['#ec4899','#db2777'], ['#a78bfa','#7c3aed'], ['#14b8a6','#0d9488'],
+        ['#22c55e','#16a34a'], ['#38bdf8','#0284c7'], ['#facc15','#ca8a04'],
+      ];
+      let hash = 0;
+      for (let c of domain) hash = (hash * 31 + c.charCodeAt(0)) & 0xffff;
+      return palette[hash % palette.length];
+    }
+
+    const dc = getDomainColor(intern.domain);
+    const grad = `linear-gradient(135deg,${dc[0]},${dc[1]})`;
+    const isPaid = intern.type === 'paid';
+    const badgeText = isPaid ? 'PAID' : 'FREE';
+    const badgeBg   = isPaid ? 'rgba(224,26,139,0.2)' : 'rgba(42,107,242,0.2)';
+    const badgeCol  = isPaid ? '#e01a8b' : '#2a6bf2';
+    const feeText   = intern.fee > 0 ? `&#x20B9;${intern.fee} reg. fee` : 'No Fee';
+
+    const card = document.createElement('div');
+    card.className = 'glass-panel';
+    card.style.cssText = 'border-radius:14px;overflow:hidden;display:flex;flex-direction:column;position:relative;border:1px solid var(--border-color);transition:border-color 0.2s;';
+    card.innerHTML = `
+      <!-- Gradient header -->
+      <div style="background:${grad};padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#fff;">${intern.domain}</span>
+        <span style="font-size:9px;font-weight:800;text-transform:uppercase;color:#fff;background:${badgeBg};border:1px solid ${badgeCol};padding:2px 8px;border-radius:20px;">${badgeText}</span>
+      </div>
+      <!-- Body -->
+      <div style="padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:14px;font-weight:700;color:var(--text-main);font-family:'Outfit',sans-serif;">${intern.title}</div>
+        <div style="font-size:11px;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${intern.description}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;">
+          <span style="font-size:10px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;padding:2px 8px;color:var(--text-muted);">${intern.duration}</span>
+          <span style="font-size:10px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;padding:2px 8px;color:var(--text-muted);">${feeText}</span>
+          <span style="font-size:10px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;padding:2px 8px;color:var(--text-muted);">${intern.stipend}</span>
+        </div>
+        <!-- Features -->
+        <ul style="list-style:none;padding:0;margin:4px 0 0;display:flex;flex-direction:column;gap:3px;">
+          ${(intern.features||[]).slice(0,3).map(f=>`<li style="font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:5px;"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="6" fill="${dc[0]}" opacity="0.18"/><path d="M3.5 6L5.2 7.7L8.5 4.3" stroke="${dc[0]}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>${f}</li>`).join('')}
+          ${intern.features&&intern.features.length>3?`<li style="font-size:10px;color:var(--text-muted);padding-left:15px;">+${intern.features.length-3} more</li>`:''}
+        </ul>
+      </div>
+      <!-- Actions -->
+      <div style="padding:10px 16px 14px;display:flex;gap:8px;border-top:1px solid var(--border-color);">
+        <button onclick="openEditInternshipModal(${idx})" class="btn btn-secondary btn-sm" style="flex:1;font-size:11px;display:flex;align-items:center;justify-content:center;gap:4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit
+        </button>
+        <button onclick="deleteAdminListing(${idx})" class="btn btn-sm" style="flex:1;font-size:11px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;display:flex;align-items:center;justify-content:center;gap:4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          Delete
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Add "+" card at the end
+  const addCard = document.createElement('div');
+  addCard.className = 'glass-panel';
+  addCard.style.cssText = `
+    border-radius:14px; border:2px dashed rgba(131,39,236,0.35);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:220px; cursor:pointer; gap:12px; padding:24px;
+    background:rgba(131,39,236,0.03); transition:all 0.25s ease;
+  `;
+  addCard.innerHTML = `
+    <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgba(224,26,139,0.15),rgba(131,39,236,0.15));border:2px solid rgba(131,39,236,0.4);display:flex;align-items:center;justify-content:center;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#ag2)" stroke-width="2.5" stroke-linecap="round">
+        <defs><linearGradient id="ag2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e01a8b"/><stop offset="100%" stop-color="#8327ec"/></linearGradient></defs>
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:14px;font-weight:700;color:var(--text-main);font-family:'Outfit',sans-serif;margin-bottom:4px;">Add New Listing</div>
+      <div style="font-size:11px;color:var(--text-muted);">Create a new internship opportunity</div>
+    </div>
+  `;
+  addCard.onmouseenter = () => { addCard.style.borderColor='rgba(224,26,139,0.6)'; addCard.style.background='rgba(131,39,236,0.08)'; addCard.style.transform='translateY(-3px)'; };
+  addCard.onmouseleave = () => { addCard.style.borderColor='rgba(131,39,236,0.35)'; addCard.style.background='rgba(131,39,236,0.03)'; addCard.style.transform=''; };
+  addCard.onclick = () => openAddInternshipModal(true);
+  grid.appendChild(addCard);
+}
+
+function deleteAdminListing(idx) {
+  const intern = MOCK_INTERNSHIPS[idx];
+  if (!intern) return;
+  if (!confirm(`Delete "${intern.title}"? This cannot be undone.`)) return;
+  MOCK_INTERNSHIPS.splice(idx, 1);
+  loadAdminListings();
+  showToast(`🗑️ "${intern.title}" removed.`, 2000);
+}
+
+function openEditInternshipModal(idx) {
+  const intern = MOCK_INTERNSHIPS[idx];
+  if (!intern) return;
+
+  // Reuse add modal but pre-fill values
+  openAddInternshipModal(true, intern, idx);
+}
+
+// Extend openAddInternshipModal to support edit mode
+const _origOpenAddInternshipModal = openAddInternshipModal;
+window.openAddInternshipModal = function(fromAdmin, editData, editIdx) {
+  // Remove old modal
+  const old = document.getElementById('add-intern-modal');
+  if (old) old.remove();
+
+  const isEdit = !!editData;
+  const modal = document.createElement('div');
+  modal.id = 'add-intern-modal';
+  modal.style.cssText = `
+    position:fixed;inset:0;z-index:10010;
+    background:rgba(3,3,8,0.88);backdrop-filter:blur(10px);
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background:linear-gradient(145deg,#0d0d1a 0%,#12091e 100%);
+      border:1px solid rgba(131,39,236,0.35);border-radius:20px;
+      width:100%;max-width:600px;max-height:90vh;overflow-y:auto;
+      padding:32px;position:relative;
+      box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(131,39,236,0.1);
+    ">
+      <button onclick="document.getElementById('add-intern-modal').remove()" style="
+        position:absolute;top:16px;right:16px;
+        background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+        color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;
+        font-size:16px;display:flex;align-items:center;justify-content:center;
+      ">&times;</button>
+
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#e01a8b,#8327ec);"></div>
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#8327ec;">Admin Panel</span>
+        </div>
+        <h2 style="font-size:22px;font-weight:800;font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#e01a8b,#8327ec);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:0;">${isEdit ? 'Edit Internship' : 'Add New Internship'}</h2>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">${isEdit ? 'Update the listing details below.' : 'This listing will appear in the Explore section for all visitors.'}</p>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Internship Title *</label>
+            <input type="text" id="ai-title" class="form-control" placeholder="e.g. React Developer Intern" style="font-size:13px;" value="${isEdit ? editData.title : ''}">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Domain / Category *</label>
+            <input type="text" id="ai-domain" class="form-control" placeholder="e.g. Web Development" style="font-size:13px;" value="${isEdit ? editData.domain : ''}">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin:0;">
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Description *</label>
+          <textarea id="ai-desc" class="form-control" rows="3" placeholder="Short description..." style="font-size:13px;resize:vertical;">${isEdit ? editData.description : ''}</textarea>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Type</label>
+            <select id="ai-type" class="form-control" style="font-size:13px;" onchange="toggleAddInternStipend(this.value)">
+              <option value="free" ${!isEdit||editData.type==='free'?'selected':''}>Free Training</option>
+              <option value="paid" ${isEdit&&editData.type==='paid'?'selected':''}>Paid (Stipend)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;" id="ai-stipend-group">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Stipend (&#x20B9;/mo)</label>
+            <input type="number" id="ai-stipend" class="form-control" placeholder="e.g. 2000" style="font-size:13px;"
+              value="${isEdit && editData.type==='paid' ? (editData.stipend||'').replace(/[^0-9]/g,'') : ''}"
+              ${(!isEdit||editData.type!=='paid')?'disabled':''}>
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Reg. Fee (&#x20B9;)</label>
+            <input type="number" id="ai-fee" class="form-control" placeholder="0 = Free" style="font-size:13px;" value="${isEdit ? editData.fee : 0}">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">Duration</label>
+            <select id="ai-duration" class="form-control" style="font-size:13px;">
+              <option value="1 Month" ${isEdit&&editData.duration==='1 Month'?'selected':''}>1 Month</option>
+              <option value="3 Months" ${!isEdit||editData.duration==='3 Months'?'selected':''}>3 Months</option>
+              <option value="6 Months" ${isEdit&&editData.duration==='6 Months'?'selected':''}>6 Months</option>
+              <option value="12 Months" ${isEdit&&editData.duration==='12 Months'?'selected':''}>12 Months</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin:0;">
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;">
+            Key Features <span style="color:#555;font-weight:400;">— one per line (max 6)</span>
+          </label>
+          <textarea id="ai-features" class="form-control" rows="5" placeholder="1-on-1 Senior Mentor&#10;Verified Certificate&#10;Experience Letter" style="font-size:13px;resize:vertical;">${isEdit && editData.features ? editData.features.join('\n') : ''}</textarea>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:4px;">
+          <button type="button" onclick="document.getElementById('add-intern-modal').remove()" class="btn btn-secondary" style="flex:1;">Cancel</button>
+          <button type="button" onclick="submitAddInternship(${isEdit ? editIdx : 'null'}, ${fromAdmin ? 'true' : 'false'})" class="btn btn-primary" style="flex:2;font-weight:700;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:middle;margin-right:6px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            ${isEdit ? 'Save Changes' : 'Add to Listings'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+};
+
+// Override submitAddInternship to handle edit + reload admin grid
+window.submitAddInternship = function(editIdx, fromAdmin) {
+  const title      = (document.getElementById('ai-title')?.value || '').trim();
+  const domain     = (document.getElementById('ai-domain')?.value || '').trim();
+  const desc       = (document.getElementById('ai-desc')?.value || '').trim();
+  const type       = document.getElementById('ai-type')?.value || 'free';
+  const stipendVal = (document.getElementById('ai-stipend')?.value || '').trim();
+  const fee        = parseInt(document.getElementById('ai-fee')?.value || '0', 10);
+  const duration   = document.getElementById('ai-duration')?.value || '3 Months';
+  const featuresRaw = (document.getElementById('ai-features')?.value || '').trim();
+
+  if (!title || !domain || !desc) {
+    showToast('Please fill in Title, Domain and Description.', 2500);
+    return;
+  }
+
+  const features = featuresRaw
+    ? featuresRaw.split('\n').map(f => f.trim()).filter(Boolean).slice(0, 6)
+    : ['Experience Letter', 'Mentor Support'];
+
+  const stipend = type === 'paid' && stipendVal
+    ? `&#x20B9;${stipendVal} / month`
+    : 'No Stipend';
+
+  const internData = {
+    id: (editIdx != null && MOCK_INTERNSHIPS[editIdx]) ? MOCK_INTERNSHIPS[editIdx].id : `intern-custom-${Date.now()}`,
+    title, domain, type, stipend, duration,
+    fee: isNaN(fee) ? 0 : fee,
+    description: desc, features
+  };
+
+  if (editIdx != null && MOCK_INTERNSHIPS[editIdx]) {
+    MOCK_INTERNSHIPS[editIdx] = internData;
+    showToast(`✅ "${title}" updated!`, 2500);
+  } else {
+    MOCK_INTERNSHIPS.push(internData);
+    showToast(`✅ "${title}" added to listings!`, 2500);
+  }
+
+  document.getElementById('add-intern-modal')?.remove();
+
+  // Reload admin grid or jump to last explore page
+  if (fromAdmin) {
+    loadAdminListings();
+  } else {
+    _explorePage = Math.ceil(MOCK_INTERNSHIPS.length / _explorePageSize) - 1;
+    _renderExplorePage();
+  }
+};
+
+window.loadAdminListings  = loadAdminListings;
+window.deleteAdminListing = deleteAdminListing;
+window.openEditInternshipModal = openEditInternshipModal;
+
 // Global active registration tier metadata
 let pendingRegistrationPayment = null;
 // Actual fee from selected internship card
@@ -13871,52 +14613,75 @@ function applyForExploreInternship(internId) {
   const intern = MOCK_INTERNSHIPS.find(i => i.id === internId);
   if (!intern) return;
 
-  // Store actual fee for this internship
   _selectedInternFee = intern.fee || 0;
 
-  // Show Auth Page & Switch to Register Form
   showAuthPage('register');
-  
-  // Set role to student
   setRegisterRole('student');
 
-  // Pre-select Domain in Register Form � map internship domain to dropdown option
+  // Pre-fill & LOCK domain
   const domainEl = document.getElementById('reg-domain');
   if (domainEl && intern.domain) {
-    // Try exact match first, then partial match
     const options = Array.from(domainEl.options).map(o => o.value);
     const normIntern = intern.domain.toLowerCase();
     let matched = options.find(o => o.toLowerCase() === normIntern);
     if (!matched) {
       matched = options.find(o =>
-        normIntern.includes(o.toLowerCase().split(' ')[0].toLowerCase()) ||
-        o.toLowerCase().includes(normIntern.split(' ')[0].toLowerCase()) ||
-        o.toLowerCase().includes(normIntern.split('/')[0].trim().toLowerCase())
+        normIntern.includes(o.toLowerCase().split(' ')[0]) ||
+        o.toLowerCase().includes(normIntern.split(' ')[0]) ||
+        o.toLowerCase().includes(normIntern.split('/')[0].trim())
       );
     }
     domainEl.value = matched || options[0];
     handleRegisterDomainChange(domainEl.value);
+    // Lock — not editable
+    domainEl.disabled = true;
+    domainEl.style.opacity = '0.65';
+    domainEl.style.cursor = 'not-allowed';
+    domainEl.title = 'Domain is fixed based on your selected internship';
   }
 
-  // Pre-select Tier in Register Form
+  // Auto-assign & LOCK mentor based on domain
+  setTimeout(() => {
+    const mentorEl = document.getElementById('reg-mentor-select');
+    if (mentorEl && intern.domain) {
+      const domainLower = intern.domain.toLowerCase();
+      const matchingMentors = (db.users || []).filter(u =>
+        u.role === 'mentor' && u.domain &&
+        (u.domain.toLowerCase() === domainLower ||
+         u.domain.toLowerCase().includes(domainLower.split(' ')[0]) ||
+         domainLower.includes(u.domain.toLowerCase().split(' ')[0]))
+      );
+      if (matchingMentors.length > 0) {
+        // Pick mentor with fewest students
+        const sorted = matchingMentors.map(m => ({
+          mentor: m,
+          count: (db.users || []).filter(u => u.role === 'student' && u.mentorEmail === m.email).length
+        })).sort((a, b) => a.count - b.count);
+        mentorEl.value = sorted[0].mentor.email;
+      }
+      // Lock mentor
+      mentorEl.disabled = true;
+      mentorEl.style.opacity = '0.65';
+      mentorEl.style.cursor = 'not-allowed';
+      mentorEl.title = 'Mentor is auto-assigned based on your domain';
+    }
+  }, 250);
+
+  // Pre-select Tier
   const tierEl = document.getElementById('reg-tier');
-  if (tierEl) {
-    tierEl.value = intern.type;
-    handleRegisterTierChange(intern.type);
-  }
+  if (tierEl) { tierEl.value = intern.type; handleRegisterTierChange(intern.type); }
 
-  // Set duration if matches
+  // Pre-select Duration
   const durationEl = document.getElementById('reg-duration');
   if (durationEl) {
-    if (intern.duration.includes("6")) durationEl.value = "6";
-    else if (intern.duration.includes("3")) durationEl.value = "3";
-    else durationEl.value = "1";
+    if (intern.duration.includes(""6"")) durationEl.value = ""6"";
+    else if (intern.duration.includes(""3"")) durationEl.value = ""3"";
+    else durationEl.value = ""1"";
   }
 
-  // Smooth scroll back to Auth card
+  window._appliedInternId = internId;
   document.getElementById('auth-page').scrollIntoView({ behavior: 'smooth' });
 }
-
 // ====== PAYMENT VERIFICATION FOR REGISTRATION ======
 let regPaymentVerified = false;
 
@@ -14051,7 +14816,7 @@ function handleRegisterTierChange(value) {
   if (!infoEl) return;
 
   if (value === 'paid') {
-    const feeToShow = _selectedInternFee > 0 ? `?${_selectedInternFee}` : '?99';
+    const feeToShow = _selectedInternFee > 0 ? `?${_selectedInternFee}` : '&#x20B9;99';
     infoEl.innerHTML = `&#x1F4B0; <strong style='color:var(--primary-magenta);'>Registration Fee ${feeToShow}</strong> � Stipend + premium mentorship included.`;
 
     // Update the QR amount display
@@ -14104,7 +14869,7 @@ function handleRegisterTierChange(value) {
 
 // ====== RAZORPAY REAL PAYMENT GATEWAY ======
 // NOTE: Only Key ID is used here (client-side). Secret Key must NEVER be in browser code.
-const RZP_KEY_ID = 'rzp_test_T3PtB4bEFBsFXp';
+const RZP_KEY_ID = 'rzp_live_T3U7sGGqNiT587';
 
 let rzpPaymentSuccessCallback = null;
 
@@ -15472,3 +16237,8 @@ window.startDailyAttendanceScan = startDailyAttendanceScan;
 window.handleDailyFileUpload = handleDailyFileUpload;
 window.openSubmitTaskModal = openSubmitTaskModal;
 window.checkStudentGate = checkStudentGate;
+
+window.handlePublicVerificationSearch = handlePublicVerificationSearch;
+window.resetVerificationResult = resetVerificationResult;
+window.showVerificationResult = showVerificationResult;
+window.verifyCertificate = verifyCertificate;

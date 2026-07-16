@@ -2370,7 +2370,7 @@ function loadStudentDashboard() {
     if (typeof loadDashboardBadges === 'function') loadDashboardBadges();
     if (typeof loadStudentSyncNotes === 'function') loadStudentSyncNotes();
     // Load AI meeting summaries for student
-    if (typeof loadDashboardMeetings === 'function') loadDashboardMeetings('student');
+    if (typeof maybeLoadDashboardMeetings === 'function') maybeLoadDashboardMeetings('student');
   } catch (err) {
     console.error("Error in loadStudentDashboard:", err);
   }
@@ -10025,7 +10025,9 @@ async function loadDashboardMeetings(role) {
   if (!tableEl) return;
   const tbody = tableEl.querySelector('tbody');
   if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Loading...</td></tr>`;
+  if (!tbody.children || tbody.children.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Loading...</td></tr>`;
+  }
 
   if (role === 'student') studentMeetingSummariesCache = {};
 

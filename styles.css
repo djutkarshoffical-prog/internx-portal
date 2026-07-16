@@ -380,7 +380,7 @@ header nav {
   padding: 10px 0 10px 0;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .hero-grid {
     grid-template-columns: 1.15fr 0.85fr;
     gap: 50px;
@@ -391,7 +391,7 @@ header nav {
   text-align: center;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .hero-content {
     text-align: left;
   }
@@ -436,7 +436,7 @@ header nav {
   justify-content: center;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .hero-actions {
     justify-content: flex-start;
   }
@@ -459,7 +459,7 @@ header nav {
   animation: float 6s ease-in-out infinite;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .hero-spline-container {
     height: 760px;
   }

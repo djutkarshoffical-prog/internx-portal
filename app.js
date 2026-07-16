@@ -7266,7 +7266,7 @@ async function runFaceVerificationScan() {
       }
     } catch (err) {
       console.error("Verification runtime crash loop:", err);
-      statusText.innerText = "Scanner computational parsing failure.";
+      statusText.innerText = "Scanner computational parsing failure: " + (err.message || err);
     }
   }, 800); // Frame capture refresh timer bound delay
 }
@@ -7665,7 +7665,7 @@ async function runDailyAttendanceScan() {
       }
     } catch (err) {
       console.error("Verification daily scan crash loop:", err);
-      statusText.innerText = "Scanner computational parsing failure.";
+      statusText.innerText = "Scanner computational parsing failure: " + (err.message || err);
     }
   }, 1000);
 }

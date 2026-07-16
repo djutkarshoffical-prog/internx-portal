@@ -257,6 +257,16 @@ function cleanDatabaseCollections() {
   if (db && Array.isArray(db.users)) {
     db.users = dedupeUsersByEmail(db.users);
   }
+
+  // Cleanup bloated base64 images to prevent QuotaExceededError
+  if (db && Array.isArray(db.attendance)) {
+    db.attendance.forEach(log => {
+      // If the base64 faceImage is larger than ~100KB, strip it to prevent quota issues
+      if (log.faceImage && log.faceImage.length > 100000) {
+        log.faceImage = "";
+      }
+    });
+  }
 }
 
 // ====== Face-API Initialization and Eye Tracking Scan Logic ======
@@ -6077,9 +6087,17 @@ function waitForVideoReady(video, timeoutMs = 5000) {
 
 function captureVideoFrame(video) {
   if (!video || !video.srcObject) return '';
-  const w = video.videoWidth;
-  const h = video.videoHeight;
+  let w = video.videoWidth;
+  let h = video.videoHeight;
   if (!w || !h) return '';
+  
+  // Scale down to max 320px width to save localStorage quota
+  const maxW = 320;
+  if (w > maxW) {
+    h = Math.floor(h * (maxW / w));
+    w = maxW;
+  }
+  
   const canvas = document.createElement('canvas');
   canvas.width = w;
   canvas.height = h;
@@ -6087,7 +6105,8 @@ function captureVideoFrame(video) {
   ctx.translate(w, 0);
   ctx.scale(-1, 1);
   ctx.drawImage(video, 0, 0, w, h);
-  return canvas.toDataURL('image/jpeg', 0.92);
+  // Lower quality to 0.6 to minimize base64 size in localStorage
+  return canvas.toDataURL('image/jpeg', 0.6);
 }
 
 async function startWebcam(videoElId, statusElId, captureBtnId) {

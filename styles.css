@@ -4912,21 +4912,21 @@ tr.attendance-row.active-row td:first-child {
     border: 1px solid rgba(131, 39, 236, 0.4) !important;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(224, 26, 139, 0.2) !important;
   }
-  .smart-app-banner .banner-content {
+  .smart-app-banner.show .banner-content {
     flex-direction: column !important;
     gap: 12px !important;
   }
-  .smart-app-banner .banner-text {
+  .smart-app-banner.show .banner-text {
     flex-direction: column !important;
     text-align: center !important;
   }
-  .smart-app-banner .banner-actions {
+  .smart-app-banner.show .banner-actions {
     justify-content: center !important;
   }
-  #banner-qr-toggle {
+  .smart-app-banner.show #banner-qr-toggle {
     display: none !important;
   }
-  .qr-code-popup {
+  .smart-app-banner.show .qr-code-popup {
     display: block !important;
     position: static !important;
     background: transparent !important;
@@ -4934,7 +4934,7 @@ tr.attendance-row.active-row td:first-child {
     box-shadow: none !important;
     padding: 0 !important;
   }
-  .smart-app-banner .banner-close-btn {
+  .smart-app-banner.show .banner-close-btn {
     position: absolute !important;
     top: 10px !important;
     right: 15px !important;

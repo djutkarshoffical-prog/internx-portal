@@ -16801,6 +16801,16 @@ const waCall = {
 const WA_ICE = { iceServers: [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
+  {
+    urls: 'turn:openrelay.metered.ca:80',
+    username: 'openrelayproject',
+    credential: 'openrelayproject'
+  },
+  {
+    urls: 'turn:openrelay.metered.ca:443',
+    username: 'openrelayproject',
+    credential: 'openrelayproject'
+  }
 ]};
 
 async function openWAStyleCall() {
@@ -16926,13 +16936,16 @@ function waRenderAllTiles() {
     const avatar = u && u.avatar ? u.avatar : '';
     const tile = waMakeTile(peerEmail, name, false, avatar);
     const stream = waCall.remoteStreams[peerEmail];
-    if (stream && stream.getVideoTracks().length > 0) {
+    if (stream) {
       const rv = tile.querySelector('video');
       if (rv) {
-        rv.srcObject = stream; rv.play().catch(()=>{});
-        rv.style.display = 'block';
-        const fb = tile.querySelector('.wa-avatar-fallback');
-        if (fb) fb.style.display = 'none';
+        if (rv.srcObject !== stream) rv.srcObject = stream; 
+        rv.play().catch(()=>{});
+        if (stream.getVideoTracks().length > 0) {
+          rv.style.display = 'block';
+          const fb = tile.querySelector('.wa-avatar-fallback');
+          if (fb) fb.style.display = 'none';
+        }
       }
     }
     grid.appendChild(tile);
@@ -16986,12 +16999,19 @@ function waGetOrCreatePC(peerEmail) {
     if (tileEl) {
       const vid = tileEl.querySelector('video');
       const fb = tileEl.querySelector('.wa-avatar-fallback');
-      if (vid && waCall.remoteStreams[key].getVideoTracks().length > 0) {
-        vid.srcObject = waCall.remoteStreams[key];
-        vid.style.display = 'block'; vid.play().catch(()=>{});
-        if (fb) fb.style.display = 'none';
+      if (vid) {
+        if (vid.srcObject !== waCall.remoteStreams[key]) {
+          vid.srcObject = waCall.remoteStreams[key];
+        }
+        vid.play().catch(()=>{});
+        if (waCall.remoteStreams[key].getVideoTracks().length > 0) {
+          vid.style.display = 'block';
+          if (fb) fb.style.display = 'none';
+        }
       }
-    } else { waRenderAllTiles(); }
+    } else { 
+      waRenderAllTiles(); 
+    }
   };
   return pc;
 }

@@ -17505,8 +17505,8 @@ function initAppDownloadPopup() {
     // Desktop layout with QR code
     contentContainer.innerHTML = `
       <img src="${qrApiUrl}" alt="Scan to Download App">
-      <p>Scan with your phone to<br><span>Download App</span></p>
-      <a href="${apkUrl}" download class="btn btn-primary btn-sm" style="margin-top: 16px; width: 100%; border-radius: 8px;">Download APK</a>
+      <p>Scan with your phone</p>
+      <a href="${apkUrl}" download class="btn btn-primary btn-sm" style="margin-top: 16px; width: 100%; border-radius: 8px;">Download App</a>
     `;
   }
   

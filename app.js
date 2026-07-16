@@ -17540,17 +17540,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* ==================== PWA SERVICE WORKER REGISTRATION ==================== */
-/*
+// PWA Service Worker Registration - DISABLED for Android WebView compatibility
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(registration => {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      })
-      .catch(error => {
-        console.log('ServiceWorker registration failed: ', error);
-      });
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+      console.log('ServiceWorker unregistered successfully to fix WebView bug');
+    }
   });
 }
-*/
 

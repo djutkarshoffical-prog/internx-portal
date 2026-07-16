@@ -4894,12 +4894,7 @@ tr.attendance-row.active-row td:first-child {
   margin-bottom: 0;
 }
 
-@media (max-width: 768px) {
-  .smart-app-banner .banner-content {
-    flex-direction: column;
-    text-align: center;
-  }
-}
+
 
 /* Float smart app banner on desktop instead of taking full width */
 @media (min-width: 992px) {

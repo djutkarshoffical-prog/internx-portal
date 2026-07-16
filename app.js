@@ -17504,9 +17504,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isMobile) {
       // Mobile: direct download link
       actionContainer.innerHTML = `
-        <a href="${apkUrl}" download class="btn btn-primary btn-sm" id="banner-download-btn" style="width: 100%;">Download App</a>
+        <a href="${apkUrl}" download class="btn btn-primary btn-sm" id="banner-download-btn" style="width: auto; white-space: nowrap;">Download App</a>
       `;
-      document.getElementById('banner-message').innerText = "Experience InternX on our App for faster access! 🚀";
+      document.getElementById('banner-message').innerText = "Get our App for faster access! 🚀";
     } else {
       // Desktop: QR code approach
       actionContainer.innerHTML = `

@@ -277,7 +277,7 @@ async function initFaceVerificationModels() {
   try {
     // 1. Try local specific subfolders first
     try {
-      await faceapi.nets.tinyFaceDetector.loadFromUri('./models/tiny_face_detector');
+      await faceapi.nets.ssdMobilenetv1.loadFromUri('./models/ssd_mobilenetv1');
       await faceapi.nets.faceLandmark68Net.loadFromUri('./models/face_landmark_68');
       await faceapi.nets.faceRecognitionNet.loadFromUri('./models/face_recognition');
       faceModelsLoaded = true;
@@ -289,7 +289,7 @@ async function initFaceVerificationModels() {
 
     // 2. CDN Fallback (works perfectly under file:// protocol!)
     const CDN_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
-    await faceapi.nets.tinyFaceDetector.loadFromUri(CDN_URL);
+    await faceapi.nets.ssdMobilenetv1.loadFromUri(CDN_URL);
     await faceapi.nets.faceLandmark68Net.loadFromUri(CDN_URL);
     await faceapi.nets.faceRecognitionNet.loadFromUri(CDN_URL);
     faceModelsLoaded = true;
@@ -393,7 +393,7 @@ async function runWebcamTrackingLoop(videoElId, prefix) {
   }
 
   try {
-    const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })).withFaceLandmarks();
+    const detection = await faceapi.detectSingleFace(video).withFaceLandmarks();
     updateEyeScanPositions(video, detection, prefix);
   } catch (e) {
     // Ignore errors in loop
@@ -2046,6 +2046,21 @@ async function handleRegisterSubmit(event) {
     }
   }
 
+  // Razorpay Checkout Hook for Premium Tier
+  if (activeRegisterRole === 'student' && document.getElementById('reg-tier').value === 'paid' && !pendingRegistrationPayment) {
+    const feeAmount = _selectedInternFee > 0 ? _selectedInternFee : 99;
+    openRzpModal(email, feeAmount, 'InternX Registration Fee', (razorpayPaymentId) => {
+      pendingRegistrationPayment = {
+        method: 'Razorpay',
+        timestamp: new Date().toISOString(),
+        amount: feeAmount,
+        reference: razorpayPaymentId
+      };
+      handleRegisterSubmit(event);
+    });
+    return;
+  }
+
   // Validate duplicate user locally
   if (db.users.some(u => u && u.email && u.email.trim().toLowerCase() === email)) {
     alert("An account with this email address already exists.");
@@ -2080,50 +2095,45 @@ async function handleRegisterSubmit(event) {
 
   const signUpBtn = event.submitter || document.querySelector('#register-form button[type="submit"]');
   const originalBtnText = signUpBtn ? signUpBtn.innerHTML : 'Sign Up →';
-
-  // Only verify OTP if we haven't already for this email session
-  if (window.verifiedOTPForEmail !== email) {
-    if (signUpBtn) {
-      signUpBtn.disabled = true;
-      signUpBtn.innerHTML = 'Verifying...';
-    }
-
-    if (supabaseActive && supabaseClient) {
-      if (window.mockOtpActive) {
-        if (otpCode !== '123456') {
-          showRegError('Invalid OTP. Please enter 123456 in fallback mode.');
-          if (signUpBtn) { signUpBtn.disabled = false; signUpBtn.innerHTML = originalBtnText; }
-          return;
-        }
-      } else {
-        const { data, error } = await supabaseClient.auth.verifyOtp({
-          email,
-          token: otpCode,
-          type: 'email'
-        });
-
-        if (error) {
-          if (signUpBtn) { signUpBtn.disabled = false; signUpBtn.innerHTML = originalBtnText; }
-          const errorMsg = error.message || JSON.stringify(error);
-          showRegError('Invalid OTP: ' + errorMsg);
-          return;
-        }
-      }
-    } else {
-      showRegError('Supabase is not active. Cannot verify OTP.');
-      if (signUpBtn) { signUpBtn.disabled = false; signUpBtn.innerHTML = originalBtnText; }
-      return;
-    }
-    
-    // Mark OTP as successfully verified!
-    window.verifiedOTPForEmail = email;
-    if (signUpBtn) {
-      signUpBtn.disabled = false;
-      signUpBtn.innerHTML = originalBtnText;
-    }
+  if (signUpBtn) {
+    signUpBtn.disabled = true;
+    signUpBtn.innerHTML = 'Verifying...';
   }
 
-  // Set pendingRegistrationData BEFORE Razorpay just in case
+  // Verify the OTP using Supabase
+  if (supabaseActive && supabaseClient) {
+    if (window.mockOtpActive) {
+      if (otpCode !== '123456') {
+        showRegError('Invalid OTP. Please enter 123456 in fallback mode.');
+        if (signUpBtn) {
+          signUpBtn.disabled = false;
+          signUpBtn.innerHTML = originalBtnText;
+        }
+        return;
+      }
+    } else {
+      const { data, error } = await supabaseClient.auth.verifyOtp({
+        email,
+        token: otpCode,
+        type: 'email'
+      });
+
+      if (error) {
+        if (signUpBtn) {
+          signUpBtn.disabled = false;
+          signUpBtn.innerHTML = originalBtnText;
+        }
+        const errorMsg = error.message || JSON.stringify(error);
+        showRegError('Invalid OTP: ' + errorMsg);
+        return;
+      }
+    }
+  } else {
+    // Fallback if supabase is disabled, but ideally we shouldn't hit this if OTP was sent via Supabase
+    showRegError('Supabase is not active. Cannot verify OTP.');
+    return;
+  }
+
   window.pendingRegistrationData = {
     email, password, name, activeRegisterRole,
     faceData: document.getElementById('reg-face-data') ? document.getElementById('reg-face-data').value : '',
@@ -2135,24 +2145,13 @@ async function handleRegisterSubmit(event) {
     mentorDomain: document.getElementById('reg-mentor-domain') ? document.getElementById('reg-mentor-domain').value : ''
   };
 
-  // Razorpay Checkout Hook for Premium Tier (AFTER OTP VERIFICATION)
-  if (activeRegisterRole === 'student' && document.getElementById('reg-tier').value === 'paid' && !pendingRegistrationPayment) {
-    const feeAmount = _selectedInternFee > 0 ? _selectedInternFee : 99;
-    openRzpModal(email, feeAmount, 'InternX Registration Fee', async (razorpayPaymentId) => {
-      pendingRegistrationPayment = {
-        method: 'Razorpay',
-        timestamp: new Date().toISOString(),
-        amount: feeAmount,
-        reference: razorpayPaymentId
-      };
-      // Once payment succeeds, directly finalize registration!
-      await finalizeRegistration();
-    });
-    return; // Wait for payment callback
-  }
-
-  // Directly finalize registration now that OTP is verified (Free tier or already paid)
+  // Directly finalize registration now that OTP is verified
   await finalizeRegistration();
+  
+  if (signUpBtn) {
+    signUpBtn.disabled = false;
+    signUpBtn.innerHTML = originalBtnText;
+  }
 }
 
 // ==========================================
@@ -6256,7 +6255,7 @@ async function captureRegistrationFace() {
   statusEl.style.color = "var(--warning)";
 
   try {
-    const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
+    const detection = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
     if (!detection) {
       statusEl.innerText = "Face not detected! Please align your face in the center.";
       statusEl.style.color = "var(--danger)";
@@ -6326,7 +6325,7 @@ function handleRegistrationFileUpload(event) {
       img.src = base64;
       await new Promise(r => img.onload = r);
 
-      const detection = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
+      const detection = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
       if (!detection) {
         statusEl.innerText = "No face detected in photo! Please upload a clear front face photo.";
         statusEl.style.color = "var(--danger)";
@@ -6398,7 +6397,7 @@ function handleEditFileUpload(event) {
       img.src = base64;
       await new Promise(r => img.onload = r);
 
-      const detection = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
+      const detection = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
       if (!detection) {
         statusEl.innerText = "No face detected in photo! Please upload a clear front face photo.";
         statusEl.style.color = "var(--danger)";
@@ -6723,7 +6722,7 @@ async function captureEditFace() {
   statusEl.style.color = "var(--warning)";
 
   try {
-    const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
+    const detection = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
     if (!detection) {
       statusEl.innerText = "Face not detected! Please align your face in the center.";
       statusEl.style.color = "var(--danger)";
@@ -6839,7 +6838,7 @@ async function getOrExtractUserDescriptor(user) {
       img.onload = resolve;
       img.onerror = () => reject(new Error("Failed to load image"));
     });
-    const detection = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
+    const detection = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
     if (detection) {
       // Cache it back to the database so next time is instant!
       const arr = Array.from(detection.descriptor);
@@ -7061,8 +7060,8 @@ async function compareFaces(img1Input, img2Input) {
       const image1 = await loadFaceImageElement(face1);
       const image2 = await loadFaceImageElement(face2);
       if (image1 && image2) {
-        const det1 = await faceapi.detectSingleFace(image1, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
-        const det2 = await faceapi.detectSingleFace(image2, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptor();
+        const det1 = await faceapi.detectSingleFace(image1).withFaceLandmarks().withFaceDescriptor();
+        const det2 = await faceapi.detectSingleFace(image2).withFaceLandmarks().withFaceDescriptor();
         if (det1 && det2) {
           const distance = faceapi.euclideanDistance(det1.descriptor, det2.descriptor);
           const similarity = Math.round((1 - distance) * 100);
@@ -7202,7 +7201,7 @@ async function runFaceVerificationScan() {
   scanningInterval = setTimeout(async () => {
     try {
       // 1. Current video stream video frame data analyze karo
-      const currentFaceDetection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 }))
+      const currentFaceDetection = await faceapi.detectSingleFace(video)
         .withFaceLandmarks()
         .withFaceDescriptor();
 
@@ -7538,7 +7537,7 @@ async function runDailyAttendanceScan() {
   window.dailyScanningInterval = setTimeout(async () => {
     try {
       // 1. Current video stream frame detection
-      const currentFaceDetection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 }))
+      const currentFaceDetection = await faceapi.detectSingleFace(video)
         .withFaceLandmarks()
         .withFaceDescriptor();
 
@@ -13853,7 +13852,7 @@ async function runFaceVerificationScan() {
 
   try {
     // 1. Live camera image frames capture and detect face landmark array
-    const currentFaceDetection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 }))
+    const currentFaceDetection = await faceapi.detectSingleFace(video)
       .withFaceLandmarks()
       .withFaceDescriptor();
 

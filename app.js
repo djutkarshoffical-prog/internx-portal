@@ -1992,6 +1992,122 @@ async function handleRegisterSubmit(event) {
     }
   }
 
+  // --- INLINE OTP VERIFICATION VIA SUPABASE ---
+  const otpInput = document.getElementById('reg-inline-otp');
+  const otpCode = otpInput ? otpInput.value.trim() : '';
+
+  if (!otpCode || otpCode.length < 6) {
+    showRegError('Please enter the OTP sent to your email.');
+    return;
+  }
+
+  const signUpBtn = event.submitter || document.querySelector('#register-form button[type="submit"]');
+  const originalBtnText = signUpBtn ? signUpBtn.innerHTML : 'Sign Up →';
+  if (signUpBtn) {
+    signUpBtn.disabled = true;
+    signUpBtn.innerHTML = 'Verifying...';
+  }
+
+  // Verify the OTP using Supabase
+  if (supabaseActive && supabaseClient) {
+    const { data, error } = await supabaseClient.auth.verifyOtp({
+      email,
+      token: otpCode,
+      type: 'email'
+    });
+
+    if (error) {
+      if (signUpBtn) {
+        signUpBtn.disabled = false;
+        signUpBtn.innerHTML = originalBtnText;
+      }
+      const errorMsg = error.message || JSON.stringify(error);
+      showRegError('Invalid OTP: ' + errorMsg);
+      return;
+    }
+  } else {
+    // Fallback if supabase is disabled, but ideally we shouldn't hit this if OTP was sent via Supabase
+    showRegError('Supabase is not active. Cannot verify OTP.');
+    return;
+  }
+
+  window.pendingRegistrationData = {
+    email, password, name, activeRegisterRole,
+    faceData: document.getElementById('reg-face-data') ? document.getElementById('reg-face-data').value : '',
+    domain: document.getElementById('reg-domain') ? document.getElementById('reg-domain').value : '',
+    mentorEmail: document.getElementById('reg-mentor-select') ? document.getElementById('reg-mentor-select').value : '',
+    duration: document.getElementById('reg-duration') ? document.getElementById('reg-duration').value : '1',
+    tier: document.getElementById('reg-tier') ? document.getElementById('reg-tier').value : '',
+    title: document.getElementById('reg-title') ? document.getElementById('reg-title').value : '',
+    mentorDomain: document.getElementById('reg-mentor-domain') ? document.getElementById('reg-mentor-domain').value : ''
+  };
+
+  // Directly finalize registration now that OTP is verified
+  await finalizeRegistration();
+  
+  if (signUpBtn) {
+    signUpBtn.disabled = false;
+    signUpBtn.innerHTML = originalBtnText;
+  }
+}
+
+// ==========================================
+// SUPABASE INLINE OTP LOGIC
+// ==========================================
+async function sendInlineRegistrationOTP() {
+  const emailInput = document.getElementById('reg-email');
+  const email = emailInput.value.trim().toLowerCase();
+  
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('Please enter a valid Email Address first.');
+    return;
+  }
+  
+  if (!supabaseActive || !supabaseClient) {
+    alert("Supabase is not connected.");
+    return;
+  }
+  
+  const btn = document.getElementById('btn-send-inline-otp');
+  btn.disabled = true;
+  btn.innerText = 'Sending...';
+
+  // Send OTP via Supabase Auth
+  const { data, error } = await supabaseClient.auth.signInWithOtp({ email });
+
+  if (error) {
+    console.error('Supabase OTP Error:', error);
+    // If error is an empty object, it's often a rate limit or SMTP failure
+    const errorMsg = error.message || JSON.stringify(error);
+    alert('Failed to send OTP.\nError: ' + errorMsg + '\n\nNote: If error is {}, please check your Supabase SMTP settings (like App Password) or Rate Limits in your Supabase Dashboard.');
+    btn.disabled = false;
+    btn.innerText = 'Send OTP';
+  } else {
+    showToast('✅ OTP sent successfully via Supabase!', 3000);
+    document.getElementById('reg-inline-otp').disabled = false;
+    document.getElementById('reg-inline-otp').focus();
+    
+    // Start 60-second countdown timer
+    let timeLeft = 60;
+    btn.innerText = `Resend in ${timeLeft}s`;
+    
+    const timerInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        btn.disabled = false;
+        btn.innerText = 'Resend OTP';
+      } else {
+        btn.innerText = `Resend in ${timeLeft}s`;
+      }
+    }, 1000);
+  }
+}
+
+async function finalizeRegistration() {
+  if (!window.pendingRegistrationData) return;
+  const { email, password, name, activeRegisterRole, faceData, domain, mentorEmail, duration, tier, title, mentorDomain } = window.pendingRegistrationData;
+
   const newUser = {
     id: `${activeRegisterRole}-${Date.now()}`,
     email,
@@ -2002,25 +2118,21 @@ async function handleRegisterSubmit(event) {
   };
 
   if (activeRegisterRole === 'student') {
-    let faceData = document.getElementById('reg-face-data').value;
-    
-    // Face scan compulsory hai — bina scan ke registration nahi hogi
+    // Face scan compulsory hai
     if (!faceData) {
       showRegError('Face scan is required. Please capture your face using the camera.');
       return;
     }
     newUser.faceScanImage = faceData;
     newUser.faceDescriptor = window.lastRegisteredFaceDescriptor || '';
-    newUser.domain = document.getElementById('reg-domain').value || 'Web Development';
-    newUser.mentorEmail = (document.getElementById('reg-mentor-select').value || "").trim().toLowerCase();
+    newUser.domain = domain || 'Web Development';
+    newUser.mentorEmail = (mentorEmail || "").trim().toLowerCase();
     newUser.mentorStatus = newUser.mentorEmail ? "Pending" : ""; // Wait for mentor approval
     newUser.progress = 0;
     newUser.startDate = new Date().toISOString().split('T')[0];
-    const regDurationEl = document.getElementById('reg-duration');
-    newUser.duration = regDurationEl ? parseInt(regDurationEl.value, 10) : 1;
+    newUser.duration = parseInt(duration, 10) || 1;
 
-    const regTierVal = document.getElementById('reg-tier').value;
-    if (regTierVal === 'paid') {
+    if (tier === 'paid') {
       newUser.internshipType = 'paid';
       newUser.stipendAmount = 15000;
       newUser.stipendFrequency = 'monthly';
@@ -2072,7 +2184,6 @@ async function handleRegisterSubmit(event) {
       };
 
       if (existingReqIndex > -1) {
-        // OVERWRITE existing request so dedupePairingRequests doesn't drop it if it was previously 'Accepted'
         db.pairingRequests[existingReqIndex] = req;
       } else {
         db.pairingRequests.push(req);
@@ -2082,8 +2193,8 @@ async function handleRegisterSubmit(event) {
       syncRecordToFirestore('pairingRequests', req);
     }
   } else if (activeRegisterRole === 'mentor') {
-    newUser.title = document.getElementById('reg-title').value.trim() || 'Technical Advisor';
-    newUser.domain = document.getElementById('reg-mentor-domain').value || 'Web Development';
+    newUser.title = title || 'Technical Advisor';
+    newUser.domain = mentorDomain || 'Web Development';
   }
 
   // Shut off webcam
@@ -2098,14 +2209,19 @@ async function handleRegisterSubmit(event) {
   db.users.push(newUser);
   db.users = dedupeUsersByEmail(db.users);
   saveDatabase();
-  const regSynced = await syncRecordToSupabase('users', newUser);
-  if (!regSynced && supabaseActive) {
-    console.warn('Registration saved locally but Supabase sync may have failed ... check browser console.');
+  
+  if (supabaseActive) {
+    const regSynced = await syncRecordToSupabase('users', newUser);
+    if (!regSynced) {
+      console.warn('Registration saved locally but Supabase sync may have failed ... check browser console.');
+    }
   }
+  
   if (newUser.mentorEmail && db.pairingRequests) {
     const lastReq = db.pairingRequests[db.pairingRequests.length - 1];
-    if (lastReq) await syncRecordToSupabase('pairingRequests', lastReq);
+    if (lastReq && supabaseActive) await syncRecordToSupabase('pairingRequests', lastReq);
   }
+  
   updateLandingStats();
 
   currentUser = newUser;
@@ -2115,7 +2231,158 @@ async function handleRegisterSubmit(event) {
   
   // Reset form
   document.getElementById('register-form').reset();
+  window.pendingRegistrationData = null;
 }
+
+// ==========================================
+// OTP AND FORGOT PASSWORD LOGIC
+// ==========================================
+
+function closeOTPModal() {
+  document.getElementById('otp-verification-modal').style.display = 'none';
+  document.getElementById('otp-input').value = '';
+}
+
+async function handleOTPSubmit(event) {
+  event.preventDefault();
+  const otp = document.getElementById('otp-input').value.trim();
+  const verifyBtn = document.getElementById('btn-verify-otp');
+  
+  if (!supabaseActive || !supabaseClient) {
+    alert("Supabase is not connected.");
+    return;
+  }
+
+  if (otp.length < 6 || otp.length > 8) {
+    alert("Please enter a valid 6 to 8-digit OTP.");
+    return;
+  }
+
+  let emailToVerify = '';
+  if (window.otpContext === 'registration' && window.pendingRegistrationData) {
+    emailToVerify = window.pendingRegistrationData.email;
+  } else if (window.otpContext === 'forgot_password') {
+    emailToVerify = document.getElementById('fp-email').value.trim().toLowerCase();
+  }
+
+  verifyBtn.innerText = 'Verifying...';
+  verifyBtn.disabled = true;
+
+  const { data, error } = await supabaseClient.auth.verifyOtp({
+    email: emailToVerify,
+    token: otp,
+    type: 'email'
+  });
+
+  verifyBtn.innerText = 'Verify & Continue';
+  verifyBtn.disabled = false;
+
+  if (error) {
+    alert("Invalid OTP: " + error.message);
+  } else {
+    // OTP Success!
+    closeOTPModal();
+    if (window.otpContext === 'registration') {
+      await finalizeRegistration();
+    } else if (window.otpContext === 'forgot_password') {
+      // Proceed to Step 2 of Forgot Password (New Password input)
+      document.getElementById('fp-step-1').style.display = 'none';
+      document.getElementById('fp-step-2').style.display = 'block';
+      document.getElementById('fp-otp').value = otp; // Pre-fill the OTP so we can use it to update user or just assume verified
+    }
+  }
+}
+
+function openForgotPasswordModal() {
+  document.getElementById('forgot-password-modal').style.display = 'flex';
+  document.getElementById('fp-step-1').style.display = 'block';
+  document.getElementById('fp-step-2').style.display = 'none';
+  document.getElementById('fp-email').value = '';
+  document.getElementById('fp-otp').value = '';
+  document.getElementById('fp-new-password').value = '';
+}
+
+async function handleForgotPasswordSendOTP(event) {
+  event.preventDefault();
+  const email = document.getElementById('fp-email').value.trim().toLowerCase();
+  const btn = document.getElementById('btn-fp-send');
+
+  if (!supabaseActive || !supabaseClient) {
+    alert("Supabase is not connected. Cannot send OTP.");
+    return;
+  }
+
+  btn.innerText = 'Sending OTP...';
+  btn.disabled = true;
+
+  const { data, error } = await supabaseClient.auth.signInWithOtp({ email });
+
+  btn.innerText = 'Send OTP';
+  btn.disabled = false;
+
+  if (error) {
+    alert("Error sending OTP: " + error.message);
+  } else {
+    // OTP sent successfully. Use the common OTP modal to verify.
+    window.otpContext = 'forgot_password';
+    document.getElementById('otp-display-email').innerText = email;
+    document.getElementById('otp-verification-modal').style.display = 'flex';
+    closeModal('forgot-password-modal'); // Hide this while verifying
+  }
+}
+
+async function handleForgotPasswordSubmit(event) {
+  event.preventDefault();
+  const email = document.getElementById('fp-email').value.trim().toLowerCase();
+  const newPassword = document.getElementById('fp-new-password').value;
+  const btn = document.getElementById('btn-fp-reset');
+
+  if (!email || !newPassword) {
+    alert("Missing information.");
+    return;
+  }
+
+  btn.innerText = 'Resetting...';
+  btn.disabled = true;
+
+  try {
+    // Update local DB
+    let updatedLocal = false;
+    const userIndex = db.users.findIndex(u => u && u.email && u.email.trim().toLowerCase() === email);
+    if (userIndex !== -1) {
+      db.users[userIndex].password = newPassword;
+      updatedLocal = true;
+      saveDatabase();
+    }
+
+    // Update Supabase Custom Table 'registration and login'
+    if (supabaseActive && supabaseClient) {
+      const { error } = await supabaseClient
+        .from('registration and login')
+        .update({ 'Password': newPassword })
+        .eq('Email Id', email);
+        
+      if (error) {
+        throw error;
+      }
+    }
+
+    alert("Password reset successfully! You can now log in.");
+    document.getElementById('forgot-password-modal').style.display = 'none';
+    
+    // Auto-fill login form
+    document.getElementById('login-email').value = email;
+    document.getElementById('login-password').value = newPassword;
+    showAuthPage('login');
+    
+  } catch (err) {
+    alert("Failed to reset password: " + err.message);
+  } finally {
+    btn.innerText = 'Reset Password';
+    btn.disabled = false;
+  }
+}
+
 
 function handleLogout() {
   // Clear activity heartbeat timer
@@ -3223,7 +3490,28 @@ async function acceptPairingRequest(requestId) {
   lastMentorDashListKey = '';
   lastMentorChatListKey = '';
   loadMentorDashboard();
-  alert(`Successfully paired with student ${req.studentName}!`);
+
+  // --- Automated Offer Letter via EmailJS ---
+  if (window.emailjs && student && student.studentId) {
+    const offerUrl = `${window.location.origin}${window.location.pathname}?verify=${encodeURIComponent(student.studentId)}`;
+    try {
+      emailjs.init({ publicKey: '7bCd8tFi0ynS9hCMk' });
+      emailjs.send('service_qjeb0oi', 'i9d83mf', {
+        to_email: student.email,
+        student_name: student.name,
+        offer_url: offerUrl
+      }).then(() => {
+        console.log("Offer letter sent to", student.email);
+      }).catch(err => {
+        console.error("Failed to send offer letter email:", err);
+      });
+    } catch (e) {
+      console.error("Error triggering EmailJS:", e);
+    }
+  }
+  // ------------------------------------------
+
+  showToast(`✅ Successfully paired with student ${req.studentName}!`, 3000);
 }
 
 async function rejectPairingRequest(requestId) {
@@ -4078,6 +4366,11 @@ function openInternDetails(studentEmail) {
       `;
       tbody.appendChild(row);
     });
+  }
+
+  const badgeBtn = document.getElementById('btn-generate-badge');
+  if (badgeBtn) {
+    badgeBtn.setAttribute('onclick', `generateAndSendBadge('${student.email}')`);
   }
 
   openModal('intern-details-modal');
@@ -17031,3 +17324,82 @@ function submitBadgeUrl(week) {
 
 window.submitBadgeUrl = submitBadgeUrl;
 window.renderStudentBadges = renderStudentBadges;
+
+async function generateAndSendBadge(studentEmail) {
+  const weekSelect = document.getElementById('intern-modal-badge-week');
+  const btn = document.getElementById('btn-generate-badge');
+  if (!weekSelect) return;
+  const week = parseInt(weekSelect.value, 10);
+  
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px; animation: spin 1s linear infinite;"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg> Sending...`;
+  }
+  
+  const student = db.users.find(u => u.email && u.email.trim().toLowerCase() === studentEmail.trim().toLowerCase());
+  if (!student) {
+    showToast('❌ Student not found', 3000);
+    if (btn) { btn.disabled = false; btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Generate & Send via Email`; }
+    return;
+  }
+
+  const uniqueId = Math.random().toString(36).substring(2, 10).toUpperCase();
+  const domainSlug = (student.domain || 'intern').replace(/\s+/g, '-').toLowerCase();
+  const badgeUrl = `https://internx.com/badge/${domainSlug}-w${week}-${uniqueId}`;
+
+  // 1. EmailJS Logic (Free Email)
+  /*
+    NOTE TO USER: Replace these keys with your real EmailJS keys.
+    Go to emailjs.com -> Create Account -> Add Service -> Create Template -> Get Public Key
+  */
+  const SERVICE_ID = 'service_qjeb0oi';
+  const TEMPLATE_ID = 'template_n1kl1uo';
+  const PUBLIC_KEY = '7bCd8tFi0ynS9hCMk';
+
+  if (PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && window.emailjs) {
+    try {
+      emailjs.init({ publicKey: PUBLIC_KEY });
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+        to_email: student.email,
+        student_name: student.name,
+        week_number: week,
+        badge_url: badgeUrl
+      });
+      console.log('EmailJS Success: Badge sent to', student.email);
+    } catch (err) {
+      console.error('EmailJS Error:', err);
+    }
+  } else {
+    console.warn("EmailJS is not configured. Email was skipped, but Chat message will still be sent.");
+  }
+
+  // 2. Automated Chat Message (Fallback/In-Platform Delivery)
+  const mentorEmail = currentUser.email;
+  const autoMessage = {
+    id: `msg-${Date.now()}`,
+    from: normalizeChatEmail(mentorEmail),
+    to: normalizeChatEmail(student.email),
+    message: `🎉 Congratulations ${student.name}! I have approved your Week ${week} tasks.\n\nYour official Week ${week} Badge and Link have been successfully sent to your registered Gmail address.\n\nPlease check your email inbox (and spam folder) for the link, then copy and paste it into your "Milestones & Badges" section on your dashboard!`,
+    timestamp: new Date().toISOString()
+  };
+
+  if (!db.chats) db.chats = [];
+  db.chats.push(autoMessage);
+  saveDatabase(true);
+  
+  try {
+    if (typeof syncRecordToFirestore === 'function') {
+      syncRecordToFirestore('chats', autoMessage);
+    } else if (typeof syncRecordToSupabase === 'function') {
+      syncRecordToSupabase('chats', autoMessage).catch(e => console.log(e));
+    }
+  } catch (err) {
+    console.warn("Background sync warning:", err);
+  }
+
+  showToast(`✅ Week ${week} Badge Generated & Sent to ${student.name}!`, 4000);
+  if (btn) { btn.disabled = false; btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Generate & Send via Email`; }
+  closeModal('intern-details-modal');
+}
+
+window.generateAndSendBadge = generateAndSendBadge;

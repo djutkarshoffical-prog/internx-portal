@@ -17480,76 +17480,65 @@ async function generateAndSendBadge(studentEmail) {
 window.generateAndSendBadge = generateAndSendBadge;
 
 /* ==================== SMART APP BANNER LOGIC ==================== */
-document.addEventListener("DOMContentLoaded", () => {
-  // Check if user has already closed it (optional, currently disabled to always show for demo)
-  // if(localStorage.getItem('smartBannerClosed') === 'true') return;
+/* ==================== APP DOWNLOAD POPUP LOGIC ==================== */
+function initAppDownloadPopup() {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const popup = document.getElementById('app-download-popup');
+  const contentContainer = document.getElementById('popup-content-container');
+  
+  if (!popup || !contentContainer) return;
+  
+  let basePath = window.location.href;
+  if (!basePath.endsWith('/')) {
+    basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+  }
+  const apkUrl = basePath + 'app.apk';
+  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(apkUrl)}`;
 
-  // Wait 3.5 seconds before showing banner
+  if (isMobile) {
+    // Mobile layout
+    contentContainer.innerHTML = `
+      <p style="margin-bottom: 12px; font-size: 14px;">Get the full experience!</p>
+      <a href="${apkUrl}" download class="btn btn-primary btn-sm" style="width: 100%; border-radius: 8px;">Download App</a>
+    `;
+  } else {
+    // Desktop layout with QR code
+    contentContainer.innerHTML = `
+      <img src="${qrApiUrl}" alt="Scan to Download App">
+      <p>Scan with your phone to<br><span>Download App</span></p>
+      <a href="${apkUrl}" download class="btn btn-primary btn-sm" style="margin-top: 16px; width: 100%; border-radius: 8px;">Download APK</a>
+    `;
+  }
+  
+  // Show automatically after 3 seconds
   setTimeout(() => {
-    const banner = document.getElementById('smart-app-banner');
-    if (!banner) return;
-    
-    // Check device type
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    const actionContainer = document.getElementById('banner-action-container');
-    
-    let basePath = window.location.href;
-    if (!basePath.endsWith('/')) {
-      basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
-    }
-    const apkUrl = basePath + 'app.apk';
-    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(apkUrl)}`;
-    
-    if (isMobile) {
-      // Mobile: direct download link
-      actionContainer.innerHTML = `
-        <a href="${apkUrl}" download class="btn btn-primary btn-sm" id="banner-download-btn" style="width: auto; white-space: nowrap;">Download App</a>
-      `;
-      document.getElementById('banner-message').innerText = "Get our App for faster access! 🚀";
-    } else {
-      // Desktop: QR code approach
-      actionContainer.innerHTML = `
-        <button class="btn btn-primary btn-sm" id="banner-qr-toggle" onclick="toggleQRPopup()">Get App via QR</button>
-        <div id="banner-qr-popup" class="qr-code-popup">
-          <img src="${qrApiUrl}" alt="Scan to Download App">
-          <p>Scan with your phone to<br><span>Download App</span></p>
-          <a href="${apkUrl}" download class="btn btn-primary btn-sm" style="margin-top: 16px; width: 100%; border-radius: 8px;">Download APK</a>
-        </div>
-      `;
-      document.getElementById('banner-message').innerText = "Download our mobile App for on-the-go access! 🚀";
-    }
-    
-    // Show the banner only if we are on the landing page
+    // Show the popup only if we are on the landing page
     if (!document.getElementById('landing-page').classList.contains('hidden')) {
-      banner.classList.add('show');
+      popup.classList.add('show');
     }
-  }, 3500); // 3.5 seconds delay
-});
+  }, 3000);
+}
 
-window.closeSmartBanner = function() {
-  const banner = document.getElementById('smart-app-banner');
-  if (banner) {
-    banner.classList.remove('show');
-    // Save to localStorage so it doesn't annoy the user
-    // localStorage.setItem('smartBannerClosed', 'true');
+window.closeAppPopup = function() {
+  const popup = document.getElementById('app-download-popup');
+  if (popup) {
+    popup.classList.remove('show');
     
     // Auto-reopen after 8 seconds
     setTimeout(() => {
-      // Only add show class if we are still on the landing page
+      // Reopen only if we are still on the landing page
       if (!document.getElementById('landing-page').classList.contains('hidden')) {
-        banner.classList.add('show');
+        popup.classList.add('show');
       }
     }, 8000);
   }
-};
+}
 
-window.toggleQRPopup = function() {
-  const qrPopup = document.getElementById('banner-qr-popup');
-  if (qrPopup) {
-    qrPopup.classList.toggle('show');
-  }
-};
+// Initialize when DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+  initAppDownloadPopup();
+});
+
 
 /* ==================== PWA SERVICE WORKER REGISTRATION ==================== */
 if ('serviceWorker' in navigator) {

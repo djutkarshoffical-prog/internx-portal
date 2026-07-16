@@ -14869,7 +14869,7 @@ function handleRegisterTierChange(value) {
 
 // ====== RAZORPAY REAL PAYMENT GATEWAY ======
 // NOTE: Only Key ID is used here (client-side). Secret Key must NEVER be in browser code.
-const RZP_KEY_ID = 'rzp_live_T3U7sGGqNiT587';
+const RZP_KEY_ID = 'rzp_live_T3jfxVo6f5MZkg';
 
 let rzpPaymentSuccessCallback = null;
 

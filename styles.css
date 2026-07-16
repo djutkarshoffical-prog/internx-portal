@@ -86,7 +86,8 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-main);
-  overflow-x: hidden;
+  min-width: 1200px; /* Forces desktop layout */
+  overflow-x: auto; /* Allows WebView to calculate true width */
   min-height: 100vh;
   position: relative;
   line-height: 1.5;

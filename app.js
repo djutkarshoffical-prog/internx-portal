@@ -3576,7 +3576,7 @@ async function acceptPairingRequest(requestId) {
     const offerUrl = `${window.location.origin}${window.location.pathname}?verify=${encodeURIComponent(student.studentId)}`;
     try {
       emailjs.init({ publicKey: '7bCd8tFi0ynS9hCMk' });
-      emailjs.send('service_qjeb0oi', 'i9d83mf', {
+      emailjs.send('service_qjeb0oi', 'template_5xhgf8q', {
         to_email: student.email,
         student_name: student.name,
         offer_url: offerUrl

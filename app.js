@@ -2333,7 +2333,7 @@ function loadStudentDashboard() {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>
-              <div style="font-weight:600; color:#fff;">${task.title}</div>
+              <div style="font-weight:600; color:var(--text-main);">${task.title}</div>
               <div style="font-size:10px; color:var(--text-dark); margin-top:2px;">Mentor: ${mentorName}${attachmentLink}${referenceLinkHTML}</div>
             </td>
             <td>${task.dueDate}</td>
@@ -2739,7 +2739,7 @@ function loadStudentLogs() {
       card.className = 'log-card glass-panel mb-4';
       card.innerHTML = `
         <div class="log-card-header">
-          <h4 style="color:#fff;">Week ${log.weekNumber} Report</h4>
+          <h4 style="color:var(--text-main);">Week ${log.weekNumber} Report</h4>
           <span class="status-badge ${statusClass}">${log.status || 'Pending'}</span>
         </div>
         <div style="font-size:12px;color:var(--text-dark);margin-bottom:8px;">
@@ -2945,7 +2945,7 @@ function renderMentorDashboardContent() {
         const timeStr = todayLog.timestamp ? (todayLog.timestamp.split(',')[1] || '').trim() : '';
         attendanceStatusHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
-            <span style="background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--success); font-size: 11px; font-weight: bold; display: inline-block;">?? Checked-In</span>
+            <span style="background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--success); font-size: 11px; font-weight: bold; display: inline-block;">&#10003; Checked-In</span>
             ${timeStr ? `<span style="font-size: 9px; color: var(--text-muted);">${timeStr}</span>` : ''}
           </div>
         `;
@@ -3113,7 +3113,7 @@ function renderPairingRequests() {
     myRequests.forEach(req => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td style="font-weight:600; color:#fff;">${req.studentName}</td>
+        <td style="font-weight:600; color:var(--text-main);">${req.studentName}</td>
         <td>${req.studentEmail}</td>
         <td><span class="status-badge" style="background: rgba(255, 255, 255, 0.05); color: #fff;">${req.domain}</span></td>
         <td>
@@ -3337,7 +3337,7 @@ function loadMentorTasks() {
       row.innerHTML = `
         <td style="font-weight:600;">${studentName}</td>
         <td>
-          <div style="font-weight:600; color:#fff;">${task.title}</div>
+          <div style="font-weight:600; color:var(--text-main);">${task.title}</div>
           <div style="font-size:11px; color:var(--text-dark); margin-top:2px;">${task.description ? task.description.substring(0, 45) + (task.description.length > 45 ? '...' : '') : 'No written description'}</div>
           ${attachmentHTML}
           ${referenceLinkHTML}
@@ -3566,7 +3566,7 @@ async function loadMentorReviews() {
       card.className = 'log-card glass-panel mb-4';
       card.innerHTML = `
         <div class="log-card-header">
-          <h4 style="color:#fff;">${task.title}</h4>
+          <h4 style="color:var(--text-main);">${task.title}</h4>
           <span style="font-size:12px; color:var(--primary-magenta); font-weight:600;">By: ${sName}</span>
         </div>
         <div style="font-size:12px; color:var(--text-dark); margin-bottom:10px;">Submitted on: ${task.submission.submittedAt}</div>
@@ -3593,7 +3593,7 @@ async function loadMentorReviews() {
       card.className = 'log-card glass-panel mb-4';
       card.innerHTML = `
         <div class="log-card-header">
-          <h4 style="color:#fff;">Week ${log.weekNumber} Activity Report</h4>
+          <h4 style="color:var(--text-main);">Week ${log.weekNumber} Activity Report</h4>
           <span style="font-size:12px; color:var(--primary-magenta); font-weight:600;">By: ${sName}</span>
         </div>
         <div style="font-size:12px; color:var(--text-dark); margin-bottom:10px;">Dates: ${log.startDate} to ${log.endDate} | Logged: ${log.hoursLogged} Hours</div>
@@ -3689,7 +3689,7 @@ function getChatMessagePreview(chat) {
   if (chat.attachment) {
     const isImg = chat.attachment.type && chat.attachment.type.startsWith('image/');
     const textPart = chat.message ? `: ${chat.message}` : '';
-    return isImg ? `?? Photo${textPart}` : `?? File: ${chat.attachment.name}${textPart}`;
+    return isImg ? `📷 Photo${textPart}` : `📎 File: ${chat.attachment.name}${textPart}`;
   }
   return chat.message;
 }
@@ -3922,7 +3922,7 @@ function loadMentorChat(forceReload = false) {
       <img src="${student.avatar}" class="user-avatar" style="width:36px; height:36px; cursor: pointer;" onclick="event.stopPropagation(); openChatImageLightbox(this.src)">
       <div style="flex-grow:1; overflow:hidden;">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
-          <h4 style="font-size:13px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0;">${student.name}</h4>
+          <h4 style="font-size:13px; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0;">${student.name}</h4>
           <span class="inbox-preview-time" style="font-size:10px; color:var(--text-muted); flex-shrink:0;">${formatChatPreviewTime(lastMsg?.timestamp)}</span>
         </div>
         <p style="font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:2px 0 0 0;">${preview}</p>
@@ -4104,10 +4104,10 @@ function loadAdminUsers() {
     row.innerHTML = `
       <td class="flex align-center gap-2">
         <img src="${user.avatar}" class="user-avatar" style="width:28px; height:28px;">
-        <span style="font-weight:600; color:#fff;">${user.name}</span>
+        <span style="font-weight:600; color:var(--text-main);">${user.name}</span>
       </td>
       <td>${user.email}</td>
-      <td><span class="status-badge" style="background: rgba(255,255,255,0.05); color:#fff;">${user.role}</span></td>
+      <td><span class="status-badge" style="background: rgba(255,255,255,0.05); color:var(--text-main);">${user.role}</span></td>
       <td style="font-size:12px; color:var(--text-muted);">${attributeText}</td>
       <td>
         ${user.id !== currentUser.id ? `<button class="btn btn-secondary btn-sm" style="border-color:var(--danger); color:var(--danger); padding:4px 8px; font-size:11px;" onclick="deleteUserAccount('${user.id}')">Delete</button>` : '<span style="font-size:11px; color:var(--text-dark);">Current User</span>'}
@@ -4372,7 +4372,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
         const meetNode = document.createElement('div');
         meetNode.style.cssText = 'margin:8px auto;max-width:420px;background:linear-gradient(135deg,rgba(0,182,108,0.12),rgba(66,133,244,0.12));border:1px solid rgba(0,182,108,0.35);border-radius:12px;padding:12px 16px;text-align:center;';
         const lnk = chat.meetLink ? ('<a href="' + chat.meetLink + '" target="_blank" style="color:#4285f4;font-weight:700;word-break:break-all;">' + chat.meetLink + '</a>') : '';
-        meetNode.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,0.9);"><span style="font-size:18px;">📹</span> ' + escapeHTML(chat.message || '') + (lnk ? ('<br><span style="font-size:11px;color:rgba(255,255,255,0.55);">Meet Link:</span> ' + lnk) : '') + '</div><div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:4px;">' + (new Date(chat.timestamp)).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + '</div>';
+        meetNode.innerHTML = '<div style="font-size:12px;color:var(--text-main);"><span style="font-size:18px;">📹</span> ' + escapeHTML(chat.message || '') + (lnk ? ('<br><span style="font-size:11px;color:var(--text-muted);">Meet Link:</span> ' + lnk) : '') + '</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px;">' + (new Date(chat.timestamp)).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + '</div>';
         container.appendChild(meetNode);
         return;
       }
@@ -4492,7 +4492,7 @@ function renderChatHistory(recipientEmail, chatHistoryElementId) {
       }
 
       // Show trash icon for messages (allows WhatsApp options)
-      const deleteBtnHTML = `<span class="delete-msg-btn" onclick="showDeleteMenu(event, '${chat.id}', ${isSent})" title="Delete Message" style="margin-left: 8px; cursor: pointer; color: var(--text-dark); opacity: 0.5; transition: opacity var(--transition-fast);">???</span>`;
+      const deleteBtnHTML = `<span class="delete-msg-btn" onclick="showDeleteMenu(event, '${chat.id}', ${isSent})" title="Delete Message" style="margin-left: 8px; cursor: pointer; color: var(--text-dark); opacity: 0.5; transition: opacity var(--transition-fast);">🗑️</span>`;
 
       msgNode.innerHTML = `
         <div class="msg-bubble">${bubbleContent}</div>
@@ -5516,7 +5516,7 @@ function refreshDebugPanel() {
   html += `<div style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); line-height: 1.4; margin-top: 4px;">`;
   if (db.users) {
     db.users.forEach(u => {
-      html += `<span style="color:#fff; font-weight:600;">${u.name}</span> (${u.role})<br>+ Email: ${u.email}<br>`;
+      html += `<span style="color:var(--text-main); font-weight:600;">${u.name}</span> (${u.role})<br>+ Email: ${u.email}<br>`;
       if (u.role === 'student') {
         html += `  + Mentor: ${u.mentorEmail || 'None'} | Status: ${u.mentorStatus || 'None'}<br>`;
       }
@@ -8636,7 +8636,7 @@ function showMentorDialingOverlay(invitedStudents, meeting) {
           <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#8327ec,#5b21b6);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid rgba(131,39,236,0.5);">
             ${avatar
               ? `<img src="${avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
-              : `<span style="font-size:22px;font-weight:800;color:#fff;">${initial}</span>`}
+              : `<span style="font-size:22px;font-weight:800;color:var(--text-main);">${initial}</span>`}
           </div>
           <div id="dialing-status-${email.replace(/[@.]/g, '-')}" style="position:absolute;bottom:0;right:0;width:18px;height:18px;border-radius:50%;background:#6b7280;border:2px solid #0a0015;display:flex;align-items:center;justify-content:center;">
             <div style="width:8px;height:8px;border-radius:50%;background:#fff;animation:dialingRing 1.2s ease-in-out infinite;"></div>
@@ -9982,7 +9982,7 @@ function openStudentMeetingSummary(cacheKey) {
     if (msgs.length) {
       chatSection.classList.remove('hidden');
       chatLog.innerHTML = msgs.map(m =>
-        `<div style="margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.06);"><span style="color:var(--primary-magenta); font-weight:600;">${escapeHTML(m.from || 'User')}</span> <span style="color:var(--text-muted); font-size:10px;">${escapeHTML(m.timestamp || '')}</span><br><span style="color:#fff;">${escapeHTML(m.text || '')}</span></div>`
+        `<div style="margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.06);"><span style="color:var(--primary-magenta); font-weight:600;">${escapeHTML(m.from || 'User')}</span> <span style="color:var(--text-muted); font-size:10px;">${escapeHTML(m.timestamp || '')}</span><br><span style="color:var(--text-main);">${escapeHTML(m.text || '')}</span></div>`
       ).join('');
     } else {
       chatSection.classList.add('hidden');
@@ -10137,7 +10137,7 @@ async function loadDashboardMeetings(role) {
           <td style="font-size:11px;white-space:nowrap;">${escapeHTML(duration)}</td>
           <td style="font-size:11px;max-width:260px;line-height:1.5;">${rawSummary ? formatMeetingSummaryHtml(rawSummary) : '<em style="color:var(--text-muted)">No summary yet</em>'}</td>
           <td style="text-align:center;">
-            ${recLink ? `<a href="${escapeHTML(recLink)}" target="_blank" style="color:var(--primary-magenta);font-size:11px;font-weight:600;">? Play</a>` : '<span style="color:var(--text-muted);font-size:11px;">�</span>'}
+            ${recLink ? `<a href="${escapeHTML(recLink)}" target="_blank" style="color:var(--primary-magenta);font-size:11px;font-weight:600;">&#x25B6; Play</a>` : '<span style="color:var(--text-muted);font-size:11px;">�</span>'}
           </td>`;
       }
       tbody.appendChild(tr);
@@ -11327,7 +11327,7 @@ function renderMentorAttendanceSheet() {
   const startDay = new Date(year, month, 1).getDay(); // Sunday = 0
 
   let headerHTML = `
-    <th style="min-width: 140px; text-align: left; position: sticky; left: 0; background: #0f0f15; z-index: 10;">Intern Name</th>
+    <th style="min-width: 140px; text-align: left; position: sticky; left: 0; background: var(--bg-main); z-index: 10;">Intern Name</th>
     <th style="min-width: 120px; text-align: left;">Technical Domain</th>
   `;
   
@@ -11375,7 +11375,7 @@ function renderMentorAttendanceSheet() {
     );
 
     let rowHTML = `
-      <td style="font-weight: 600; color: #fff; text-align: left; position: sticky; left: 0; background: #12121a; z-index: 5; border-right: 1px solid var(--border-color);">${student.name}</td>
+      <td style="font-weight: 600; color: #fff; text-align: left; position: sticky; left: 0; background: var(--bg-main); z-index: 5; border-right: 1px solid var(--border-color);">${student.name}</td>
       <td style="text-align: left; color: var(--text-muted);">${student.domain}</td>
     `;
 
@@ -11391,7 +11391,7 @@ function renderMentorAttendanceSheet() {
       const checkedLog = attendanceLogs.find(l => l.date === cellDateStr);
 
       if (isSunday) {
-        rowHTML += `<td style="text-align: center; background: rgba(217, 4, 181, 0.03);"><span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(217, 4, 181, 0.1); border: 1px solid rgba(217, 4, 181, 0.2); color: #ff85d8; text-align: center; line-height: 18px; font-weight: bold; font-size: 9px;" title="Sunday Holiday">S</span></td>`;
+        rowHTML += `<td style="text-align: center; background: rgba(217, 4, 181, 0.03);"><span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(217, 4, 181, 0.1); border: 1px solid rgba(217, 4, 181, 0.2); color: #ff85d8; font-weight: bold; font-size: 9px;" title="Sunday Holiday">S</span></td>`;
       } else {
         if (!isFuture) {
           totalElapsedWorkDays++;
@@ -11401,7 +11401,7 @@ function renderMentorAttendanceSheet() {
           const checkInTime = checkedLog.timestamp ? (checkedLog.timestamp.split(',')[1] || '').trim() : 'Checked-In';
           rowHTML += `
             <td style="text-align: center;">
-              <span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: var(--success); text-align: center; line-height: 18px; font-weight: bold; font-size: 10px; cursor: pointer;" title="Checked-In: ${checkInTime}">??</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: var(--success); font-weight: bold; font-size: 10px; cursor: pointer;" title="Checked-In: ${checkInTime}">&#10003;</span>
             </td>
           `;
         } else if (isFuture) {
@@ -11409,7 +11409,7 @@ function renderMentorAttendanceSheet() {
         } else {
           rowHTML += `
             <td style="text-align: center;">
-              <span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); text-align: center; line-height: 18px; font-weight: bold; font-size: 10px;" title="Absent (No Log)">?</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); font-weight: bold; font-size: 10px;" title="Absent (No Log)">&#10005;</span>
             </td>
           `;
         }
@@ -11462,6 +11462,13 @@ function renderMentorAttendanceSheet() {
     rowHTML += `<td style="text-align: center; font-weight: bold; color: var(--success); font-size: 12px; background: rgba(16, 185, 129, 0.04);">${totalPctText}</td>`;
 
     const tr = document.createElement('tr');
+    tr.className = 'attendance-row';
+    tr.onclick = function() {
+      document.querySelectorAll('.attendance-row').forEach(row => {
+        if (row !== this) row.classList.remove('selected');
+      });
+      this.classList.toggle('selected');
+    };
     tr.innerHTML = rowHTML;
     tbody.appendChild(tr);
   });
@@ -11662,11 +11669,11 @@ function exportAttendancePDF() {
         }
         if (checkedLog) {
           totalCheckedInDays++;
-          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: green; font-weight: bold;">??</td>`;
+          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: green; font-weight: bold;">&#10003;</td>`;
         } else if (isFuture) {
           tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: #999;">-</td>`;
         } else {
-          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: red; font-weight: bold;">?</td>`;
+          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: red; font-weight: bold;">&#10005;</td>`;
         }
       }
     }
@@ -13736,7 +13743,7 @@ function showVerificationResult(type, data) {
         <div style="padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Student Name</div>
-            <div style="font-size:15px;font-weight:700;color:#fff;font-family:'Outfit',sans-serif;">${s.name || 'N/A'}</div>
+            <div style="font-size:15px;font-weight:700;color:var(--text-main);font-family:'Outfit',sans-serif;">${s.name || 'N/A'}</div>
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Student ID</div>
@@ -13744,19 +13751,19 @@ function showVerificationResult(type, data) {
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Domain</div>
-            <div style="font-size:13px;font-weight:600;color:#fff;">${domain}</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-main);">${domain}</div>
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Start Date</div>
-            <div style="font-size:13px;font-weight:600;color:#fff;">${startDate}</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-main);">${startDate}</div>
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Duration</div>
-            <div style="font-size:13px;font-weight:600;color:#fff;">${duration}</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-main);">${duration}</div>
           </div>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px;">Program Type</div>
-            <div style="font-size:13px;font-weight:600;color:#fff;">${internType}</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-main);">${internType}</div>
           </div>
         </div>
 
@@ -14078,14 +14085,14 @@ function _buildInternshipCard(intern) {
           font-weight:900;
           text-transform:uppercase;
           letter-spacing:0.13em;
-          color:#fff;
+          color:var(--text-main);
           text-shadow:0 1px 6px rgba(0,0,0,0.25);
         ">${intern.domain}</span>
         <span style="
           font-size:10px;
           font-weight:800;
           text-transform:uppercase;
-          color:#fff;
+          color:var(--text-main);
           background:rgba(255,255,255,0.22);
           border:1px solid rgba(255,255,255,0.45);
           padding:3px 10px;
@@ -14200,9 +14207,9 @@ function initExploreOpportunities() {
     nav.id = 'explore-nav-controls';
     nav.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:20px;margin-top:32px;margin-bottom:24px;';
     nav.innerHTML = `
-      <button id="explore-prev-btn" onclick="exploreCarouselPrev()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);color:#fff;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1;" title="Previous">&#8249;</button>
+      <button id="explore-prev-btn" onclick="exploreCarouselPrev()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);color:var(--text-main);width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1;" title="Previous">&#8249;</button>
       <span id="explore-page-info" style="font-size:15px;font-weight:700;color:var(--text-muted);min-width:28px;text-align:center;">1</span>
-      <button id="explore-next-btn" onclick="exploreCarouselNext()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);color:#fff;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1;" title="Next">&#8250;</button>
+      <button id="explore-next-btn" onclick="exploreCarouselNext()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border-color);color:var(--text-main);width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;line-height:1;" title="Next">&#8250;</button>
     `;
     const grid = document.getElementById('explore-internships-grid');
     if (grid) grid.after(nav);
@@ -14250,7 +14257,7 @@ function openAddInternshipModal() {
       <button onclick="document.getElementById('add-intern-modal').remove()" style="
         position:absolute; top:16px; right:16px;
         background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
-        color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer;
+        color:var(--text-main); width:32px; height:32px; border-radius:50%; cursor:pointer;
         font-size:16px; display:flex; align-items:center; justify-content:center;
       ">&times;</button>
 
@@ -14478,8 +14485,8 @@ function loadAdminListings() {
     card.innerHTML = `
       <!-- Gradient header -->
       <div style="background:${grad};padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#fff;">${intern.domain}</span>
-        <span style="font-size:9px;font-weight:800;text-transform:uppercase;color:#fff;background:${badgeBg};border:1px solid ${badgeCol};padding:2px 8px;border-radius:20px;">${badgeText}</span>
+        <span style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-main);">${intern.domain}</span>
+        <span style="font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text-main);background:${badgeBg};border:1px solid ${badgeCol};padding:2px 8px;border-radius:20px;">${badgeText}</span>
       </div>
       <!-- Body -->
       <div style="padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:8px;">
@@ -14582,7 +14589,7 @@ window.openAddInternshipModal = function(fromAdmin, editData, editIdx) {
       <button onclick="document.getElementById('add-intern-modal').remove()" style="
         position:absolute;top:16px;right:16px;
         background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
-        color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;
+        color:var(--text-main);width:32px;height:32px;border-radius:50%;cursor:pointer;
         font-size:16px;display:flex;align-items:center;justify-content:center;
       ">&times;</button>
 
@@ -15677,7 +15684,7 @@ function showStudentMeetingAlert(meeting, isLive, mentorName) {
     + '<div style="font-size:28px;line-height:1;">\uD83D\uDCF9</div>'
     + '<div style="flex:1;">'
     + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' + badge + '</div>'
-    + '<div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:2px;">' + title + '</div>'
+    + '<div style="font-size:15px;font-weight:800;color:var(--text-main);margin-bottom:2px;">' + title + '</div>'
     + '<div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:12px;">Hosted by <strong>' + host + '</strong>' + scheduledTime + '</div>'
     + '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">'
     + joinBtn
@@ -15860,7 +15867,7 @@ function populateScheduleMeetingNotifyList() {
 
   myStudents.forEach(student => {
     const row = document.createElement('label');
-    row.style.cssText = 'display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:#fff; padding:4px 0;';
+    row.style.cssText = 'display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:var(--text-main); padding:4px 0;';
     row.innerHTML = `
       <input type="checkbox" name="sm-notify-student" value="${student.email}" checked style="accent-color:#00b66c; width:14px; height:14px;">
       <img src="${student.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(student.name || 'S') + '&background=random&size=24'}" 
@@ -16019,9 +16026,9 @@ function renderMentorGroupCallTab() {
       .sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
 
     if (upcomingAndLive.length === 0) {
-      upcomingList.innerHTML = `<div style="text-align:center; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions. Click <strong>Schedule Meeting</strong> to add one.</div>`;
+      if (upcomingList.innerHTML !== `<div style="text-align:left; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions. Click <strong>Schedule Meeting</strong> to add one.</div>`) upcomingList.innerHTML = `<div style="text-align:left; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions. Click <strong>Schedule Meeting</strong> to add one.</div>`;
     } else {
-      upcomingList.innerHTML = upcomingAndLive.map(m => buildMentorMeetingCard(m)).join('');
+      const hm = upcomingAndLive.map(m => buildMentorMeetingCard(m)).join(''); if (upcomingList.innerHTML !== hm) upcomingList.innerHTML = hm;
     }
   }
 
@@ -16033,11 +16040,11 @@ function renderMentorGroupCallTab() {
       .sort((a, b) => new Date(b.scheduledAt) - new Date(a.scheduledAt));
 
     if (past.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`;
+      if (tbody.innerHTML !== `<tr><td colspan="8" style="text-align:left; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`) tbody.innerHTML = `<tr><td colspan="8" style="text-align:left; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`;
     } else {
-      tbody.innerHTML = past.map(m => `
+      const h2 = past.map(m => `
         <tr>
-          <td style="font-weight:600; color:#fff;">${m.title || 'Untitled'}</td>
+          <td style="font-weight:600; color:var(--text-main);">${m.title || 'Untitled'}</td>
           <td style="color:var(--text-muted); font-size:12px;">${formatMeetDateTime(m.scheduledAt)}</td>
           <td><span style="font-size:11px; background:rgba(131,39,236,0.15); color:var(--primary); padding:2px 8px; border-radius:6px;">${m.domain || '�'}</span></td>
           <td style="color:var(--text-muted); font-size:12px;">${formatDuration(m.duration)}</td>
@@ -16049,7 +16056,7 @@ function renderMentorGroupCallTab() {
             <button onclick="deleteMeeting('${m.id}')" style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); color:#ef4444; padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer; margin-left:4px;">Delete</button>
           </td>
         </tr>
-      `).join('');
+      `).join(''); if (typeof hm2 !== "undefined" && tbody.innerHTML !== hm2) tbody.innerHTML = hm2; if (typeof h2 !== "undefined" && tbody.innerHTML !== h2) tbody.innerHTML = h2;
     }
   }
 }
@@ -16058,21 +16065,21 @@ function buildMentorMeetingCard(m) {
   const status = getMeetingStatus(m);
   const statusClass = status === 'live' ? 'live' : 'upcoming';
   const statusLabel = status === 'live'
-    ? '<span style="background:#ef4444; color:#fff; font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px; animation:gcPulse 1.5s infinite;">?? LIVE</span>'
-    : '<span style="background:rgba(0,182,108,0.2); color:#00b66c; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px;">?? UPCOMING</span>';
+    ? '<span style="background:#ef4444; color:var(--text-main); font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px; animation:gcPulse 1.5s infinite;">🔴 LIVE</span>'
+    : '<span style="background:rgba(0,182,108,0.2); color:#00b66c; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px;">📅 UPCOMING</span>';
 
   return `
     <div class="gc-session-card ${statusClass}">
       <div style="flex:1; min-width:200px;">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
           ${statusLabel}
-          <span style="font-size:14px; font-weight:700; color:#fff;">${m.title || 'Untitled Session'}</span>
+          <span style="font-size:14px; font-weight:700; color:var(--text-main);">${m.title || 'Untitled Session'}</span>
         </div>
         <div style="font-size:12px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:12px;">
-          <span>?? ${formatMeetDateTime(m.scheduledAt)}</span>
-          <span>? ${formatDuration(m.duration)}</span>
-          <span>?? ${(m.invitees || []).length} students invited</span>
-          ${m.domain ? `<span>?? ${m.domain}</span>` : ''}
+          <span>📅 ${formatMeetDateTime(m.scheduledAt)}</span>
+          <span>⏳ ${formatDuration(m.duration)}</span>
+          <span>👤 ${(m.invitees || []).length} students invited</span>
+          ${m.domain ? `<span>🌐 ${m.domain}</span>` : ''}
         </div>
         ${m.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic;">${m.notes}</div>` : ''}
       </div>
@@ -16103,7 +16110,7 @@ function renderStudentGroupCallTab() {
       liveBanner.style.display = 'flex';
       const titleEl = document.getElementById('student-gc-live-title');
       const linkEl = document.getElementById('student-gc-live-link');
-      if (titleEl) titleEl.textContent = `?? LIVE � ${liveMeeting.title}`;
+      if (titleEl) titleEl.textContent = `🔴 LIVE � ${liveMeeting.title}`;
       if (linkEl) linkEl.href = liveMeeting.meetLink || '#';
       // Hide NEW badge when they see the tab
       const badge = document.getElementById('student-groupcall-badge');
@@ -16124,9 +16131,9 @@ function renderStudentGroupCallTab() {
 
   if (upcomingList) {
     if (upcoming.length === 0) {
-      upcomingList.innerHTML = `<div style="text-align:center; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions yet. Your mentor will schedule one soon.</div>`;
+      if (upcomingList.innerHTML !== `<div style="text-align:left; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions yet. Your mentor will schedule one soon.</div>`) upcomingList.innerHTML = `<div style="text-align:left; padding:32px; color:var(--text-muted); font-size:13px;">No upcoming sessions yet. Your mentor will schedule one soon.</div>`;
     } else {
-      upcomingList.innerHTML = upcoming.map(m => buildStudentMeetingCard(m)).join('');
+      const h = upcoming.map(m => buildStudentMeetingCard(m)).join(''); if (upcomingList.innerHTML !== h) upcomingList.innerHTML = h;
     }
   }
 
@@ -16138,18 +16145,18 @@ function renderStudentGroupCallTab() {
       .sort((a, b) => new Date(b.scheduledAt) - new Date(a.scheduledAt));
 
     if (past.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`;
+      if (tbody.innerHTML !== `<tr><td colspan="6" style="text-align:left; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`) tbody.innerHTML = `<tr><td colspan="6" style="text-align:left; color:var(--text-muted); padding:24px;">No past sessions yet.</td></tr>`;
     } else {
-      tbody.innerHTML = past.map(m => `
+      const h2 = past.map(m => `
         <tr>
-          <td style="font-weight:600; color:#fff;">${m.title || 'Untitled'}</td>
+          <td style="font-weight:600; color:var(--text-main);">${m.title || 'Untitled'}</td>
           <td style="color:var(--text-muted); font-size:12px;">${formatMeetDateTime(m.scheduledAt)}</td>
           <td style="font-size:12px;">${m.mentorName || m.mentorEmail || '�'}</td>
           <td style="color:var(--text-muted); font-size:12px;">${formatDuration(m.duration)}</td>
           <td>${m.meetLink ? `<a href="${m.meetLink}" target="_blank" class="gc-meet-badge">&#x1F4F9; Rejoin</a>` : '�'}</td>
           <td style="font-size:11px; color:var(--text-muted); max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.notes || '�'}</td>
         </tr>
-      `).join('');
+      `).join(''); if (typeof hm2 !== "undefined" && tbody.innerHTML !== hm2) tbody.innerHTML = hm2; if (typeof h2 !== "undefined" && tbody.innerHTML !== h2) tbody.innerHTML = h2;
     }
   }
 }
@@ -16159,15 +16166,15 @@ function buildStudentMeetingCard(m) {
     <div class="gc-session-card upcoming">
       <div style="flex:1; min-width:200px;">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-          <span style="background:rgba(0,182,108,0.2); color:#00b66c; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px;">?? UPCOMING</span>
-          <span style="font-size:14px; font-weight:700; color:#fff;">${m.title || 'Untitled Session'}</span>
+          <span style="background:rgba(0,182,108,0.2); color:#00b66c; font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px;">📅 UPCOMING</span>
+          <span style="font-size:14px; font-weight:700; color:var(--text-main);">${m.title || 'Untitled Session'}</span>
         </div>
         <div style="font-size:12px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:12px;">
-          <span>?? ${formatMeetDateTime(m.scheduledAt)}</span>
-          <span>? ${formatDuration(m.duration)}</span>
-          <span>?? Hosted by ${m.mentorName || 'Your Mentor'}</span>
+          <span>📅 ${formatMeetDateTime(m.scheduledAt)}</span>
+          <span>⏳ ${formatDuration(m.duration)}</span>
+          <span>👤 Hosted by ${m.mentorName || 'Your Mentor'}</span>
         </div>
-        ${m.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic;">?? ${m.notes}</div>` : ''}
+        ${m.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic;">📝 ${m.notes}</div>` : ''}
       </div>
       <a href="${m.meetLink}" target="_blank" class="gc-meet-badge" style="text-decoration:none; cursor:pointer; flex-shrink:0;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -16201,12 +16208,12 @@ function showMeetingDetail(meetingId) {
       </div>
       <div style="flex:1; min-width:180px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:10px; padding:12px;">
         <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Date & Time</div>
-        <div style="font-size:12px; color:#fff;">${formatMeetDateTime(meeting.scheduledAt)}</div>
+        <div style="font-size:12px; color:var(--text-main);">${formatMeetDateTime(meeting.scheduledAt)}</div>
       </div>
     </div>
     <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:10px; padding:12px;">
       <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Duration</div>
-      <div style="font-size:12px; color:#fff;">${formatDuration(meeting.duration)}</div>
+      <div style="font-size:12px; color:var(--text-main);">${formatDuration(meeting.duration)}</div>
     </div>
     <div style="background:rgba(66,133,244,0.08); border:1px solid rgba(66,133,244,0.25); border-radius:10px; padding:12px;">
       <div style="font-size:10px; color:rgba(66,133,244,0.8); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Google Meet Link</div>
@@ -16794,7 +16801,7 @@ function waRenderParticipantsList() {
     const d = document.createElement('div');
     d.className = 'wa-participants-item';
     d.innerHTML = (avatar ? `<img src="${avatar}" alt="${name}">` : `<div class="wa-p-initial">${name.charAt(0).toUpperCase()}</div>`)
-      + `<div><div style="font-size:11px;font-weight:600;color:#fff;">${name}${isMe?' (You)':''}</div><div style="font-size:9px;color:#22c55e;">● Active</div></div>`;
+      + `<div><div style="font-size:11px;font-weight:600;color:var(--text-main);">${name}${isMe?' (You)':''}</div><div style="font-size:9px;color:#22c55e;">● Active</div></div>`;
     c.appendChild(d);
   });
 }

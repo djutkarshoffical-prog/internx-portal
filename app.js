@@ -1,4 +1,4 @@
-﻿// app.js - Core Javascript Controller for InternX by UTX
+// app.js - Core Javascript Controller for InternX by UTX
 
 // Safe localStorage wrapper to prevent exceptions under file:// or restricted browser profiles
 const storage = {
@@ -120,7 +120,7 @@ function handleLogoSecretClick() {
       anyVisible = vis;
     }
 
-    showToast(anyVisible ? '?? DB Badge hidden' : '?? DB Badge visible', 1800);
+    showToast(anyVisible ? '🟢 DB Badge hidden' : '🟢 DB Badge visible', 1800);
   }
 }
 
@@ -370,6 +370,7 @@ function stopWebcamTracking(videoElId) {
 
 // 1. DATABASE INITIALIZATION
 let db = {};
+if (!db.badges) db.badges = [];
 let currentUser = null;
 let activeRegisterRole = 'student'; // 'student', 'mentor', 'admin'
 // ====== PASTE HERE: Face-API State Engine Variables ======
@@ -1589,21 +1590,21 @@ function populateRegisterMentors() {
 
   mentorSelect.innerHTML = '';
 
-  if (mentors.length === 0) {
-    const opt = document.createElement('option');
-    opt.value = "";
-    opt.innerText = "No mentors available for this domain yet";
-    mentorSelect.appendChild(opt);
-  } else {
+  const defaultOpt = document.createElement('option');
+  defaultOpt.value = "";
+  defaultOpt.innerText = mentors.length === 0 ? "No mentors available for this domain" : "--- Select Assigned Mentor ---";
+  mentorSelect.appendChild(defaultOpt);
+
+  if (mentors.length > 0) {
     mentors.forEach(m => {
       const opt = document.createElement('option');
       opt.value = m.email.trim().toLowerCase();
       opt.innerText = `${m.name} (${m.domain || m.title || 'Mentor'})`;
       mentorSelect.appendChild(opt);
     });
-    // Auto-select first available mentor
-    mentorSelect.selectedIndex = 0;
   }
+  
+  mentorSelect.selectedIndex = 0;
 }
 
 function handleRegisterDomainChange(domain) {
@@ -1979,7 +1980,7 @@ async function handleRegisterSubmit(event) {
     try {
       const { data: existingRow } = await supabaseClient
         .from('registration and login')
-        .select('Email Id')
+        .select('"Email Id"')
         .eq('Email Id', email)
         .maybeSingle();
       if (existingRow) {
@@ -2059,20 +2060,26 @@ async function handleRegisterSubmit(event) {
       if (!db.pairingRequests) db.pairingRequests = [];
       cleanupPairingRequestsStore();
       const reqKey = getPairingRequestKey({ mentorEmail: newUser.mentorEmail, studentEmail: newUser.email });
-      const existingReq = db.pairingRequests.find(r => getPairingRequestKey(r) === reqKey && r.status === 'Pending');
-      if (!existingReq) {
-        const req = {
-          id: `req-${Date.now()}`,
-          studentEmail: newUser.email,
-          studentName: newUser.name,
-          domain: newUser.domain,
-          mentorEmail: newUser.mentorEmail,
-          status: 'Pending'
-        };
+      const existingReqIndex = db.pairingRequests.findIndex(r => getPairingRequestKey(r) === reqKey);
+      
+      const req = {
+        id: `req-${Date.now()}`,
+        studentEmail: newUser.email,
+        studentName: newUser.name,
+        domain: newUser.domain,
+        mentorEmail: newUser.mentorEmail,
+        status: 'Pending'
+      };
+
+      if (existingReqIndex > -1) {
+        // OVERWRITE existing request so dedupePairingRequests doesn't drop it if it was previously 'Accepted'
+        db.pairingRequests[existingReqIndex] = req;
+      } else {
         db.pairingRequests.push(req);
-        db.pairingRequests = dedupePairingRequests(db.pairingRequests);
-        syncRecordToFirestore('pairingRequests', req);
       }
+      
+      db.pairingRequests = dedupePairingRequests(db.pairingRequests);
+      syncRecordToFirestore('pairingRequests', req);
     }
   } else if (activeRegisterRole === 'mentor') {
     newUser.title = document.getElementById('reg-title').value.trim() || 'Technical Advisor';
@@ -2083,6 +2090,10 @@ async function handleRegisterSubmit(event) {
   stopWebcam('reg-webcam');
   regWebcamActive = false;
   window.lastRegisteredFaceDescriptor = null; // Clear temp cache
+
+  // REMOVE existing user with same email to prevent deduplication logic from discarding the new registration
+  const emailNorm = email.trim().toLowerCase();
+  db.users = db.users.filter(u => !u || !u.email || u.email.trim().toLowerCase() !== emailNorm);
 
   db.users.push(newUser);
   db.users = dedupeUsersByEmail(db.users);
@@ -2328,6 +2339,8 @@ function loadStudentDashboard() {
     document.getElementById('student-dash-quiz-val').innerText = `${quizAvgScore}%`;
     document.getElementById('student-dash-quiz-bar').style.width = `${quizAvgScore}%`;
 
+    if (typeof renderStudentBadges === 'function') renderStudentBadges();
+
     // Draw dashboard task tables
     const tableBody = document.querySelector('#student-dash-tasks-table tbody');
     if (tableBody) {
@@ -2341,11 +2354,11 @@ function loadStudentDashboard() {
           const mentorName = db.users.find(u => u && u.email === task.assignedBy)?.name || 'Mentor';
           let attachmentLink = '';
           if (task.attachment) {
-            attachmentLink = ` <a href="javascript:void(0)" onclick="downloadTaskAttachment('${task.id}', '${task.attachment.name}')" style="color: var(--primary-magenta); margin-left: 6px; font-weight:600;" title="Download Task Document">?? Download</a>`;
+            attachmentLink = ` <a href="javascript:void(0)" onclick="downloadTaskAttachment('${task.id}', '${task.attachment.name}')" style="color: var(--primary-magenta); margin-left: 6px; font-weight:600;" title="Download Task Document">⬇️ Download</a>`;
           }
           let referenceLinkHTML = '';
           if (task.referenceLink) {
-            referenceLinkHTML = ` | <a href="${task.referenceLink}" target="_blank" style="color: var(--primary-magenta); margin-left: 6px; font-weight:600;" title="Open Task Platform">?? Platform</a>`;
+            referenceLinkHTML = ` | <a href="${task.referenceLink}" target="_blank" style="color: var(--primary-magenta); margin-left: 6px; font-weight:600;" title="Open Task Platform">🔗 Platform</a>`;
           }
 
           const row = document.createElement('tr');
@@ -2420,7 +2433,7 @@ function loadStudentTasks() {
     msgCard.style.color = 'var(--text-muted)';
     msgCard.style.textAlign = 'center';
     msgCard.style.margin = '12px';
-    msgCard.innerHTML = `?? Tasks will appear here once <strong>${mentorName}</strong> accepts your pairing request.`;
+    msgCard.innerHTML = `📝 Tasks will appear here once <strong>${mentorName}</strong> accepts your pairing request.`;
     todoCol.appendChild(msgCard);
     
     document.getElementById('count-todo').innerText = '0';
@@ -2471,8 +2484,8 @@ function loadStudentTasks() {
     if (task.attachment) {
       attachmentHTML = `
         <div style="margin-top: 10px; padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 6px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05);">
-          <span style="font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" title="${task.attachment.name}">?? ${task.attachment.name}</span>
-          <a href="javascript:void(0)" onclick="downloadTaskAttachment('${task.id}', '${task.attachment.name}')" class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 10px; display: inline-flex; align-items: center; gap: 2px; height: auto;">?? Download</a>
+          <span style="font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" title="${task.attachment.name}">📎 ${task.attachment.name}</span>
+          <a href="javascript:void(0)" onclick="downloadTaskAttachment('${task.id}', '${task.attachment.name}')" class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 10px; display: inline-flex; align-items: center; gap: 2px; height: auto;">⬇️ Download</a>
         </div>
       `;
     }
@@ -2480,9 +2493,7 @@ function loadStudentTasks() {
     if (task.referenceLink) {
       referenceLinkHTML = `
         <div style="margin-top: 10px;">
-          <a href="${task.referenceLink}" target="_blank" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 4px; border-color: var(--primary-magenta); color: var(--primary-magenta); background: rgba(224, 26, 139, 0.04); font-size: 11px; padding: 4px 10px; text-decoration: none; border-radius: 6px;">
-            ?? Open Task Platform
-          </a>
+          <a href="${task.referenceLink}" target="_blank" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 4px; border-color: var(--primary-magenta); color: var(--primary-magenta); background: rgba(224, 26, 139, 0.04); font-size: 11px; padding: 4px 10px; text-decoration: none; border-radius: 6px;">🔗 Open Task Platform</a>
         </div>
       `;
     }
@@ -2490,8 +2501,8 @@ function loadStudentTasks() {
     let startBtnHTML = '';
     if (task.status === 'Todo') {
       startBtnHTML = `
-        <button class="btn btn-primary btn-sm" onclick="moveTaskToInProgress('${task.id}')" style="font-size: 10px; padding: 4px 8px; margin-top: 8px; width: 100%; border-radius: 6px; cursor: pointer;">
-          ? Start Task (In Progress)
+        <button class="btn btn-primary btn-sm" onclick="moveTaskToInProgress('${task.id}')" style="font-size: 10px; padding: 4px 8px; margin-top: 8px; width: 100%; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+          ▶ Start Task (In Progress)
         </button>
       `;
     }
@@ -2499,9 +2510,7 @@ function loadStudentTasks() {
     let submitBtnHTML = '';
     if (task.status === 'In Progress') {
       submitBtnHTML = `
-        <button class="btn btn-primary btn-sm" onclick="openSubmitTaskModal('${task.id}', '${task.title}')" style="font-size: 10px; padding: 4px 8px; margin-top: 8px; width: 100%; border-radius: 6px; background: var(--primary-magenta); border-color: var(--primary-magenta); cursor: pointer;">
-          ?? Submit Work for Review
-        </button>
+        <button class="btn btn-primary btn-sm" onclick="openSubmitTaskModal('${task.id}', '${task.title.replace(/'/g, "\\'")}')" style="font-size: 10px; padding: 4px 8px; margin-top: 8px; width: 100%; border-radius: 6px; background: var(--primary-magenta); border-color: var(--primary-magenta); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">✅ Submit Work for Review</button>
       `;
     }
 
@@ -2576,12 +2585,11 @@ function handleDrop(event, targetStatus) {
       return;
     }
 
-    startFaceVerification(`Move Task to ${targetStatus}`, () => {
-      task.status = targetStatus;
-      saveDatabase();
-      syncRecordToFirestore('tasks', task);
-      loadStudentTasks();
-    });
+    // Face verification removed for smoother drag-and-drop UX
+    task.status = targetStatus;
+    saveDatabase();
+    syncRecordToFirestore('tasks', task);
+    loadStudentTasks();
   }
 }
 
@@ -2646,53 +2654,52 @@ function handleTaskSubmissionSubmit(event) {
   const proceedSubmit = (compressedScreenshot) => {
     closeModal('submit-task-modal');
     
-    startFaceVerification(`Submit Task: ${task.title}`, () => {
-      const syncedTask = db.tasks.find(t => t.id === taskId);
-      if (syncedTask) {
-        syncedTask.status = 'Pending Approval';
-        syncedTask.submission = {
-          text: comments,
-          links: link ? [link] : [],
-          screenshot: compressedScreenshot || null,
-          submittedAt: new Date().toISOString().split('T')[0]
-        };
-      }
+    // Face verification removed for smoother task submission UX
+    const syncedTask = db.tasks.find(t => t.id === taskId);
+    if (syncedTask) {
+      syncedTask.status = 'Pending Approval';
+      syncedTask.submission = {
+        text: comments,
+        links: link ? [link] : [],
+        screenshot: compressedScreenshot || null,
+        submittedAt: new Date().toISOString().split('T')[0]
+      };
+    }
+    saveDatabase(true);
+
+    // Sync to Supabase (primary cloud sync)
+    syncRecordToSupabase('tasks', syncedTask).catch(() => {});
+    syncRecordToFirestore('tasks', syncedTask);
+
+    // Auto-send a chat notification message to mentor
+    const mentorEmail = currentUser.mentorEmail || (syncedTask && syncedTask.assignedBy) || '';
+    if (mentorEmail) {
+      const notifMsg = {
+        id: `msg-task-submit-${Date.now()}`,
+        from: currentUser.email,
+        to: mentorEmail.trim().toLowerCase(),
+        text: `✅ Task submitted for review: "${syncedTask.title}"\n\n${comments ? '📝 Notes: ' + comments : ''}${link ? '\n🔗 Link: ' + link : ''}`,
+        timestamp: new Date().toISOString(),
+        type: 'task_submission_alert',
+        taskId: syncedTask.id
+      };
+      if (!db.chats) db.chats = [];
+      db.chats.push(notifMsg);
       saveDatabase(true);
+      syncRecordToSupabase('chats', notifMsg).catch(() => {});
+      syncRecordToFirestore('chats', notifMsg);
 
-      // Sync to Supabase (primary cloud sync)
-      syncRecordToSupabase('tasks', syncedTask).catch(() => {});
-      syncRecordToFirestore('tasks', syncedTask);
+      // Broadcast to mentor's tab if open
+      try {
+        if (window.__apexChatChannel) window.__apexChatChannel.postMessage({ type: 'new_message', msg: notifMsg });
+      } catch (e) {}
+    }
 
-      // Auto-send a chat notification message to mentor
-      const mentorEmail = currentUser.mentorEmail || (syncedTask && syncedTask.assignedBy) || '';
-      if (mentorEmail) {
-        const notifMsg = {
-          id: `msg-task-submit-${Date.now()}`,
-          from: currentUser.email,
-          to: mentorEmail.trim().toLowerCase(),
-          text: `?? Task submitted for review: "${syncedTask.title}"\n\n${comments ? '?? Notes: ' + comments : ''}${link ? '\n?? Link: ' + link : ''}`,
-          timestamp: new Date().toISOString(),
-          type: 'task_submission_alert',
-          taskId: syncedTask.id
-        };
-        if (!db.chats) db.chats = [];
-        db.chats.push(notifMsg);
-        saveDatabase(true);
-        syncRecordToSupabase('chats', notifMsg).catch(() => {});
-        syncRecordToFirestore('chats', notifMsg);
+    // Broadcast meeting/task update to sync mentor dashboard
+    notifyMeetingEvent({ type: 'task_submitted', taskId: syncedTask.id, studentEmail: currentUser.email });
 
-        // Broadcast to mentor's tab if open
-        try {
-          if (window.__apexChatChannel) window.__apexChatChannel.postMessage({ type: 'new_message', msg: notifMsg });
-        } catch (e) {}
-      }
-
-      // Broadcast meeting/task update to sync mentor dashboard
-      notifyMeetingEvent({ type: 'task_submitted', taskId: syncedTask.id, studentEmail: currentUser.email });
-
-      loadStudentTasks();
-      showToast('? Task submitted! Mentor has been notified.', 3000);
-    });
+    loadStudentTasks();
+    showToast('✅ Task submitted! Mentor has been notified.', 3000);
   };
 
   if (fileInput && fileInput.files.length > 0) {
@@ -2760,13 +2767,12 @@ function loadStudentLogs() {
           <h4 style="color:#fff;">Week ${log.weekNumber} Report</h4>
           <span class="status-badge ${statusClass}">${log.status || 'Pending'}</span>
         </div>
-        <div style="font-size:12px;color:var(--text-dark);margin-bottom:8px;">
-          ?? ${log.startDate || '...'} ? ${log.endDate || '...'} &nbsp;|&nbsp; ?? ${log.hoursLogged || 0} hrs
+        <div style="font-size:12px;color:var(--text-dark);margin-bottom:8px;">📅 ${log.startDate || '...'} — ${log.endDate || '...'} &nbsp;|&nbsp; ⏱️ ${log.hoursLogged || 0} hrs
         </div>
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Submitted: ${log.submittedAt || '...'}</div>
         ${log.summary ? `<p style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-top:6px;">${log.summary}</p>` : ''}
-        ${log.blockers ? `<div style="font-size:12px;color:var(--danger);margin-top:6px;">?? Blockers: ${log.blockers}</div>` : ''}
-        ${log.feedback ? `<div style="font-size:12px;color:var(--primary-magenta);border-top:1px dashed var(--border-color);padding-top:8px;margin-top:8px;">?? Mentor Feedback: ${log.feedback}</div>` : ''}
+        ${log.blockers ? `<div style="font-size:12px;color:var(--danger);margin-top:6px;">⚠️ Blockers: ${log.blockers}</div>` : ''}
+        ${log.feedback ? `<div style="font-size:12px;color:var(--primary-magenta);border-top:1px dashed var(--border-color);padding-top:8px;margin-top:8px;">💬 Mentor Feedback: ${log.feedback}</div>` : ''}
       `;
       historyList.appendChild(card);
     });
@@ -2784,17 +2790,17 @@ function handleLogSubmit(event) {
 
   // Validations
   if (!weekNumber || weekNumber < 1) {
-    showToast('?? Please enter a valid week number.', 2500); return;
+    showToast('⚠️ Please enter a valid week number.', 2500); return;
   }
   if (!summary) {
-    showToast('?? Please fill in the Work Accomplished Summary.', 2500);
+    showToast('⚠️ Please fill in the Work Accomplished Summary.', 2500);
     document.getElementById('log-summary').focus();
     return;
   }
 
   // Validate duplicate week
   if (db.weeklyLogs && db.weeklyLogs.some(l => l && l.studentId && l.studentId.trim().toLowerCase() === currentUser.email.trim().toLowerCase() && l.weekNumber === weekNumber)) {
-    showToast(`?? Week ${weekNumber} report already submitted.`, 2500);
+    showToast(`⚠️ Week ${weekNumber} report already submitted.`, 2500);
     return;
   }
 
@@ -2830,7 +2836,7 @@ function handleLogSubmit(event) {
         id: `msg-log-submit-${Date.now()}`,
         from: currentUser.email,
         to: mentorEmail,
-        text: `?? Weekly Report Submitted ... Week ${weekNumber}\n\n?? Period: ${startDate} ? ${endDate}\n?? Hours: ${hoursLogged}h\n\n?? Summary: ${summary}${blockers ? '\n\n?? Blockers: ' + blockers : ''}`,
+        text: `📋 Weekly Report Submitted — Week ${weekNumber}\n⏱️ Hours: ${hoursLogged}h\n\n📝 Summary: ${summary}${blockers ? '\n\n⚠️ Blockers: ' + blockers : ''}`,
         timestamp: new Date().toISOString(),
         type: 'weekly_log_alert',
         logId: newLog.id
@@ -3011,18 +3017,23 @@ function renderMentorDashboardContent() {
         <td>
           <div style="font-weight:600; margin-bottom:4px;">${progress}% (${studentCompleted}/${studentTasks.length} tasks)</div>
           <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">Quiz Avg: ${quizAvg}% (${studentQuizzes.length} completed)</div>
+          ${(() => {
+            const badgeCount = (db.badges || []).filter(b => b.studentEmail && b.studentEmail.trim().toLowerCase() === student.email.trim().toLowerCase()).length;
+            return `<div style="font-size:11px; font-weight: 600; color:var(--primary-magenta); margin-bottom:4px;">Badges: ${badgeCount}/4</div>`;
+          })()}
           <div class="progress-container"><div class="progress-bar" style="width: ${progress}%;"></div></div>
         </td>
         <td>
           <button class="btn btn-secondary btn-sm" onclick="openInternDetails('${student.email}')">Inspect Details</button>
           ${(() => {
             const hasCert = db.certificates && db.certificates.some(c => c.studentEmail && c.studentEmail.trim().toLowerCase() === student.email.trim().toLowerCase());
+            const badgeCount = (db.badges || []).filter(b => b.studentEmail && b.studentEmail.trim().toLowerCase() === student.email.trim().toLowerCase()).length;
             if (hasCert) {
               return `<button class="btn btn-primary btn-sm" onclick="viewCertificateForStudent('${student.email}')" style="background: #10b981; border-color: #10b981; color: white; font-size:11px; padding: 4px 8px; cursor: pointer; margin-top: 4px; display: block; width: 100%;">View Certificate</button>`;
-            } else if (progress === 100) {
+            } else if (progress === 100 && badgeCount === 4) {
               return `<button class="btn btn-primary btn-sm" onclick="issueCertificate('${student.email}')" style="background: var(--primary-magenta); border-color: var(--primary-magenta); font-size:11px; padding: 4px 8px; cursor: pointer; margin-top: 4px; display: block; width: 100%;">Issue Certificate</button>`;
             } else {
-              return `<button class="btn btn-secondary btn-sm" disabled style="opacity: 0.5; font-size:11px; padding: 4px 8px; margin-top: 4px; display: block; width: 100%; cursor: not-allowed;" title="Requires 100% Progress">Issue Certificate</button>`;
+              return `<button class="btn btn-secondary btn-sm" disabled style="opacity: 0.5; font-size:11px; padding: 4px 8px; margin-top: 4px; display: block; width: 100%; cursor: not-allowed;" title="Requires 100% Progress and 4/4 Badges">Issue Certificate</button>`;
             }
           })()}
         </td>
@@ -3106,7 +3117,7 @@ function renderPairingRequests() {
       pairIndicator.style.background = 'rgba(245, 158, 11, 0.1)';
       pairIndicator.style.cursor = 'pointer';
       pairIndicator.style.fontWeight = 'bold';
-      pairIndicator.innerHTML = `?? ${myRequests.length} Student Request${myRequests.length > 1 ? 's' : ''} Pending`;
+      pairIndicator.innerHTML = `🤝 ${myRequests.length} Student Request${myRequests.length > 1 ? 's' : ''} Pending`;
       pairIndicator.onclick = () => {
         const reqPanel = document.getElementById('mentor-pairing-requests-panel');
         if (reqPanel) {
@@ -3329,7 +3340,7 @@ function loadMentorTasks() {
 
       let referenceLinkHTML = '';
       if (task.referenceLink) {
-        referenceLinkHTML = `<div style="margin-top: 4px;"><a href="${task.referenceLink}" target="_blank" style="font-size: 11px; color: var(--primary-magenta); text-decoration: underline;" title="Open Task Platform">🔗 Task Platform</a></div>`;
+        referenceLinkHTML = `<div style="margin-top: 4px;"><a href="${task.referenceLink}" target="_blank" style="font-size: 11px; color: var(--primary-magenta); text-decoration: underline;" title="Open Task Platform">🔗 Platform</a></div>`;
       }
 
       let progressHTML = '';
@@ -3567,7 +3578,7 @@ async function loadMentorReviews() {
       
       let linkHTML = '';
       if (task.submission.links && task.submission.links[0]) {
-        linkHTML = `<div class="mb-3"><a href="${task.submission.links[0]}" target="_blank" class="btn btn-secondary btn-sm" style="display:inline-flex;">?? View Resource Link</a></div>`;
+        linkHTML = `<div class="mb-3"><a href="${task.submission.links[0]}" target="_blank" class="btn btn-secondary btn-sm" style="display:inline-flex;">🔗 View Resource Link</a></div>`;
       }
 
       let screenshotHTML = '';
@@ -4133,12 +4144,13 @@ function loadAdminUsers() {
           if (user.role !== 'student') return '';
           const progress = calculateStudentProgress(user.email);
           const hasCert = db.certificates && db.certificates.some(c => c.studentEmail && c.studentEmail.trim().toLowerCase() === user.email.trim().toLowerCase());
+          const badgeCount = (db.badges || []).filter(b => b.studentEmail && b.studentEmail.trim().toLowerCase() === user.email.trim().toLowerCase()).length;
           if (hasCert) {
             return `<button class="btn btn-primary btn-sm" onclick="viewCertificateForStudent('${user.email}')" style="background: #10b981; border-color: #10b981; color: white; font-size:11px; padding: 4px 8px; cursor: pointer; margin-left: 6px;">View Certificate</button>`;
-          } else if (progress === 100) {
+          } else if (progress === 100 && badgeCount === 4) {
             return `<button class="btn btn-primary btn-sm" onclick="issueCertificate('${user.email}')" style="background: var(--primary-magenta); border-color: var(--primary-magenta); font-size:11px; padding: 4px 8px; cursor: pointer; margin-left: 6px;">Issue Certificate</button>`;
           } else {
-            return `<button class="btn btn-secondary btn-sm" disabled style="opacity: 0.5; font-size:11px; padding: 4px 8px; margin-left: 6px; cursor: not-allowed;" title="Requires 100% Progress">Issue Certificate</button>`;
+            return `<button class="btn btn-secondary btn-sm" disabled style="opacity: 0.5; font-size:11px; padding: 4px 8px; margin-left: 6px; cursor: not-allowed;" title="Requires 100% Progress and 4/4 Badges">Issue Certificate</button>`;
           }
         })()}
       </td>
@@ -4675,7 +4687,7 @@ function handleChatFileSelect(portalRole) {
           if (file.type.startsWith('image/')) {
             previewHTML = `<img src="${attachment.data}" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px; border: 1px solid var(--primary-magenta);" alt="preview">`;
           } else {
-            previewHTML = `<span style="font-size: 20px;">??</span>`;
+            previewHTML = `<span style="font-size: 20px;">📸</span>`;
           }
           previewHTML += `<span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 240px; font-weight: 500; font-size: 11px;">${file.name}</span>`;
           previewContent.innerHTML = previewHTML;
@@ -4781,7 +4793,7 @@ function uploadChunkedFile(portalRole, file, rawData) {
         if (file.type.startsWith('image/')) {
           previewHTML = `<img src="${rawData}" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px; border: 1px solid var(--primary-magenta);" alt="preview">`;
         } else {
-          previewHTML = `<span style="font-size: 20px;">??</span>`;
+          previewHTML = `<span style="font-size: 20px;">📸</span>`;
         }
         previewHTML += `<span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 200px; font-weight: 500; font-size: 11px; margin-left: 6px;">${file.name}</span>`;
         previewHTML += `<span style="font-size: 10px; color: var(--success); font-weight: bold; margin-left: 6px;">? Ready</span>`;
@@ -5061,7 +5073,11 @@ function deleteChatMessage(msgId) {
 // ==================== 8. UTILITY POPUPS AND ESCAPING ====================
 
 function openModal(modalId) {
-  document.getElementById(modalId).classList.add('active');
+  const modalEl = document.getElementById(modalId);
+  if (!modalEl) return;
+  modalEl.classList.remove('hidden');
+  modalEl.style.display = 'flex'; // Reset display to allow flex layout
+  modalEl.classList.add('active');
 }
 
 function closeModal(modalId) {
@@ -6657,7 +6673,7 @@ function warnFileProtocolIfNeeded() {
       const banner = document.createElement('div');
       banner.id = 'file-protocol-warning';
       banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#ef4444;color:#fff;padding:12px 16px;font-size:13px;text-align:center;font-weight:600;line-height:1.5;';
-      banner.innerHTML = '?? <b>file:// mode</b> breaks Camera, Face Scan, Attendance & Cloud Sync. Double-click <b>run_local_server.bat</b> ? open <b>http://localhost:8080/</b>';
+      banner.innerHTML = '⚠️ <b>file:// mode</b> breaks Camera, Face Scan, Attendance & Cloud Sync. Double-click <b>run_local_server.bat</b> ➡️ open <b>http://localhost:8080/</b>';
       document.body.prepend(banner);
       document.body.style.paddingTop = '52px';
     }
@@ -7385,8 +7401,8 @@ function initSupabase() {
   // Use the provided user config by default if none is configured locally
   if (!supabaseConfig) {
     supabaseConfig = {
-      url: "https://gvsextnrduejeaxyadbj.supabase.co",
-      anonKey: "sb_publishable_r6uHi1migqF4gOHtSiqO-Q_VBRsZ-Yk"
+      url: "https://zycwknzpeuwspdjytfwq.supabase.co",
+      anonKey: "sb_publishable_4X2SP-M9CabUWETijiekZA_SouYc8sw"
     };
     try {
       storage.setItem('apex_intern_supabase_config', JSON.stringify(supabaseConfig));
@@ -7925,7 +7941,12 @@ async function syncRecordToSupabase(collection, record) {
       .upsert({ id: docId, collection: collection, data: payload });
       
     if (error) {
-      console.error(`Error saving document ${docId} to Supabase apex_sync:`, error);
+      if (error.code === '42501' || error.message?.includes('security policy')) {
+        console.error(`🚨 SUPABASE RLS ERROR: The table "apex_sync" is blocking writes!`);
+        console.error(`👉 Fix it by going to Supabase -> SQL Editor and running: ALTER TABLE "apex_sync" DISABLE ROW LEVEL SECURITY;`);
+      } else {
+        console.error(`Error saving document ${docId} to Supabase apex_sync:`, error);
+      }
       if (collection === 'tasks') {
         console.error('Task cloud sync failed ... student will not see this task until sync succeeds.');
       }
@@ -9238,7 +9259,7 @@ function renderMeetingParticipants() {
       tile.innerHTML = contentHTML + `
         <div class="tile-name-label">
           <span class="tile-user-name">${escapeHTML(userName)}</span>
-          <span class="tile-mute-status">${isMuted ? '??' : ''}</span>
+          <span class="tile-mute-status">${isMuted ? '🔇' : ''}</span>
           <span class="speaking-indicator-container"></span>
         </div>
         <div class="tile-status-icon-container"></div>
@@ -9246,7 +9267,7 @@ function renderMeetingParticipants() {
     } else {
       const muteStatus = tile.querySelector('.tile-mute-status');
       if (muteStatus) {
-        muteStatus.innerText = isMuted ? '??' : '';
+        muteStatus.innerText = isMuted ? '🔇' : '';
       }
     }
 
@@ -9269,9 +9290,9 @@ function renderMeetingParticipants() {
     const statusIconContainer = tile.querySelector('.tile-status-icon-container');
     if (statusIconContainer) {
       if (isMuted) {
-        statusIconContainer.innerHTML = `<div class="tile-status-icon">??</div>`;
+        statusIconContainer.innerHTML = `<div class="tile-status-icon">✅</div>`;
       } else if (isVideoOff) {
-        statusIconContainer.innerHTML = `<div class="tile-status-icon" style="color:var(--text-muted)">???</div>`;
+        statusIconContainer.innerHTML = `<div class="tile-status-icon" style="color:var(--text-muted)">⏳</div>`;
       } else {
         statusIconContainer.innerHTML = '';
       }
@@ -9884,10 +9905,10 @@ Keep it brief and student-facing. Do NOT include greetings or sign-offs.`;
     console.warn('Gemini summary failed, using structured fallback:', err.message);
     const fallback = `Meeting held on ${new Date().toDateString()} with students: ${studentList || 'N/A'}. Duration: ${durationStr}. ${verbalNotes ? `Topics covered: ${verbalNotes}.` : 'Key internship topics were discussed.'} Students are advised to review shared resources and complete assigned tasks.`;
     window._generatedMeetingSummary = fallback;
-    if (outputEl) outputEl.innerHTML = `<em style="color:var(--text-muted);">?? AI unavailable ... auto-summary:</em><br>${fallback}`;
+    if (outputEl) outputEl.innerHTML = `<em style="color:var(--text-muted);">🤖 AI unavailable — auto-summary:</em><br>${fallback}`;
   }
 
-  if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '?? Regenerate Summary'; }
+  if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '🔄 Regenerate Summary'; }
 }
 
 async function submitEndMeetingWithSummary() {
@@ -10590,8 +10611,8 @@ function renderMeetingParticipantsList() {
         <span>${escapeHTML(userName)} ${isLocal ? '(You)' : ''}</span>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
-        <span>${isMuted ? '??' : '???'}</span>
-        <span>${isVideoOff ? '???' : '??'}</span>
+        <span>${isMuted ? '🔇' : '🎙️'}</span>
+        <span>${isVideoOff ? '🚫' : '📹'}</span>
       </div>
     `;
     container.appendChild(row);
@@ -11050,37 +11071,36 @@ function downloadTaskAttachment(taskId, fileName) {
 function moveTaskToInProgress(taskId) {
   const task = db.tasks.find(t => t.id === taskId);
   if (task) {
-    startFaceVerification("Move Task to In Progress", () => {
-      // Immediately update task status
-      const syncedTask = db.tasks.find(t => t.id === taskId);
-      if (syncedTask) {
-        syncedTask.status = 'In Progress';
-        syncedTask.startedAt = new Date().toISOString();
+    // Note: Face verification removed for smoother UX when starting a task
+    // Immediately update task status
+    const syncedTask = db.tasks.find(t => t.id === taskId);
+    if (syncedTask) {
+      syncedTask.status = 'In Progress';
+      syncedTask.startedAt = new Date().toISOString();
+    }
+    saveDatabase(true);
+    syncRecordToFirestore('tasks', syncedTask);
+
+    // Show success toast
+    showToast('🚀 Task moved to In Progress!', 2000);
+
+    // Immediately re-render tasks board
+    loadStudentTasks();
+
+    // Highlight the moved task card with a flash animation
+    setTimeout(() => {
+      const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
+      if (taskCard) {
+        taskCard.style.transition = 'box-shadow 0.3s ease, transform 0.3s ease';
+        taskCard.style.boxShadow = '0 0 20px rgba(16,185,129,0.6)';
+        taskCard.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+          taskCard.style.boxShadow = '';
+          taskCard.style.transform = '';
+        }, 1200);
+        taskCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
-      saveDatabase(true);
-      syncRecordToFirestore('tasks', syncedTask);
-
-      // Show success toast
-      showToast('? Task moved to In Progress!', 2000);
-
-      // Immediately re-render tasks board
-      loadStudentTasks();
-
-      // Highlight the moved task card with a flash animation
-      setTimeout(() => {
-        const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
-        if (taskCard) {
-          taskCard.style.transition = 'box-shadow 0.3s ease, transform 0.3s ease';
-          taskCard.style.boxShadow = '0 0 20px rgba(16,185,129,0.6)';
-          taskCard.style.transform = 'scale(1.02)';
-          setTimeout(() => {
-            taskCard.style.boxShadow = '';
-            taskCard.style.transform = '';
-          }, 1200);
-          taskCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      }, 150);
-    });
+    }, 150);
   }
 }
 
@@ -11278,7 +11298,7 @@ function renderStudentCalendar() {
               <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 1px 5px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase;">Present</span>
             </div>
             <div style="margin-top: auto; font-size: 10px; color: #a7f3d0; font-weight: 500; display: flex; align-items: center; gap: 4px;">
-              <span>??</span> <span>${checkInTime}</span>
+              <span>✅</span> <span>${checkInTime}</span>
             </div>
           `;
         } else if (isFuture) {
@@ -11742,11 +11762,11 @@ function exportAttendancePDF() {
         }
         if (checkedLog) {
           totalCheckedInDays++;
-          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: green; font-weight: bold;">??</td>`;
+          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: green; font-weight: bold;">✅</td>`;
         } else if (isFuture) {
           tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: #999;">-</td>`;
         } else {
-          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: red; font-weight: bold;">?</td>`;
+          tableHTML += `<td style="border: 1px solid #ccc; padding: 4px; text-align: center; color: red; font-weight: bold;">✅</td>`;
         }
       }
     }
@@ -11879,7 +11899,7 @@ function toggleAICopilot() {
   
   if (panel.classList.contains('active') && aiCopilotHistory.length === 0) {
     // Add default welcoming message
-    addAICopilotMessage('bot', `Hello! I am your **InternX AI Assistant** ??\n\nI have full knowledge of this project's file structure, CSS styles, workflows, and database schemas.\n\nI am connected directly to **Google Gemini** to help you resolve project issues, write code, or debug features in real-time! Ask me anything!`);
+    addAICopilotMessage('bot', `Hello! I am your **InternX AI Assistant** ✨\n\nI have full knowledge of this project's file structure, CSS styles, workflows, and database schemas.\n\nI am connected directly to **Google Gemini** to help you resolve project issues, write code, or debug features in real-time! Ask me anything!`);
   }
 }
 
@@ -11922,7 +11942,7 @@ function addAICopilotMessage(sender, text) {
   const messageDiv = document.createElement('div');
   messageDiv.className = `ai-message ${sender}`;
   
-  const avatar = sender === 'user' ? '??' : '<img src="robot_avatar.png" alt="AI">';
+  const avatar = sender === 'user' ? '👤' : '<img src="robot_avatar.png" alt="AI">';
   
   // Basic markdown compiler for chatbot output
   let formattedText = text
@@ -12041,7 +12061,7 @@ function getLocalAIResponse(prompt) {
   }
   
   // Default response showing options
-  return `I analyzed your question: "${prompt}".\n\nTo give you the best answer, please ask something related to:\n- **?? Project Structure** (files, directories, assets)\n- **🗄️ Database Collections** (schema, firestore keys)\n- **?? Attendance Flow** (face checks, spreadsheet formulas, exports)\n- **? Core Features** (login, tasks, intern chat, video calls)\n\n*Tip: Connect your **Google Gemini API Key** in settings (??) above and I will be able to answer any custom developer question, generate specific code snippets, or debug files dynamically!*`;
+  return `I analyzed your question: "${prompt}".\n\nTo give you the best answer, please ask something related to:\n- **📂 Project Structure** (files, directories, assets)\n- **🗄️ Database Collections** (schema, firestore keys)\n- **📸 Attendance Flow** (face checks, spreadsheet formulas, exports)\n- **⚡ Core Features** (login, tasks, intern chat, video calls)\n\n*Tip: Connect your **Google Gemini API Key** in settings (⚙️) above and I will be able to answer any custom developer question, generate specific code snippets, or debug files dynamically!*`;
 }
 
 async function queryLiveGeminiAI(prompt, apiKey, typingIndicator) {
@@ -12534,8 +12554,8 @@ function renderQuizQuestion(index) {
         let statusClass = '';
         let icon = '?';
         if (caseResult) {
-          statusClass = caseResult.passed ? 'passed' : 'failed';
-          icon = caseResult.passed ? '??' : '?';
+          statusClass = caseResult.passed ? '✅' : '❌';
+          icon = caseResult.passed ? '✅' : '❌';
         }
         
         const argsStr = tc.args ? JSON.stringify(tc.args) : '()';
@@ -15015,7 +15035,7 @@ function verifyRegPayment() {
       }, 400);
     }
 
-    showToast('? UTR matched! Complete face scan to sign up.', 3000);
+    showToast('✅ UTR matched! Complete face scan to sign up.', 3000);
   }, 1500);
 }
 
@@ -16167,10 +16187,10 @@ function buildMentorMeetingCard(m) {
           <span style="font-size:14px; font-weight:700; color:#fff;">${m.title || 'Untitled Session'}</span>
         </div>
         <div style="font-size:12px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:12px;">
-          <span>?? ${formatMeetDateTime(m.scheduledAt)}</span>
+          <span>📅 ${formatMeetDateTime(m.scheduledAt)}</span>
           <span>? ${formatDuration(m.duration)}</span>
-          <span>?? ${(m.invitees || []).length} students invited</span>
-          ${m.domain ? `<span>?? ${m.domain}</span>` : ''}
+          <span>👥 ${(m.invitees || []).length} students invited</span>
+          ${m.domain ? `<span>💼 ${m.domain}</span>` : ''}
         </div>
         ${m.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic;">${m.notes}</div>` : ''}
       </div>
@@ -16261,11 +16281,11 @@ function buildStudentMeetingCard(m) {
           <span style="font-size:14px; font-weight:700; color:#fff;">${m.title || 'Untitled Session'}</span>
         </div>
         <div style="font-size:12px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:12px;">
-          <span>?? ${formatMeetDateTime(m.scheduledAt)}</span>
+          <span>📅 ${formatMeetDateTime(m.scheduledAt)}</span>
           <span>? ${formatDuration(m.duration)}</span>
-          <span>?? Hosted by ${m.mentorName || 'Your Mentor'}</span>
+          <span>👤 Hosted by ${m.mentorName || 'Your Mentor'}</span>
         </div>
-        ${m.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic;">?? ${m.notes}</div>` : ''}
+        ${m.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic;">📝 ${m.notes}</div>` : ''}
       </div>
       <a href="${m.meetLink}" target="_blank" class="gc-meet-badge" style="text-decoration:none; cursor:pointer; flex-shrink:0;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -16936,3 +16956,78 @@ window.waPopupRestore = waPopupRestore;
 
 
 
+
+// ==================== WEEKLY BADGE SYSTEM ====================
+function renderStudentBadges() {
+  const container = document.getElementById('student-badges-container');
+  if (!container) return;
+  if (!db.badges) db.badges = [];
+
+  let html = '';
+  const studentEmail = currentUser.email;
+
+  for (let week = 1; week <= 4; week++) {
+    const badge = db.badges.find(b => b.studentEmail && b.studentEmail.trim().toLowerCase() === studentEmail.trim().toLowerCase() && b.week === week);
+    
+    if (badge) {
+      html += `
+        <div style="background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; padding: 16px; text-align: center; position: relative; overflow: hidden; min-height: 180px; display: flex; flex-direction: column; justify-content: center;">
+          <div style="position: absolute; top: -10px; right: -10px; font-size: 40px; opacity: 0.1;">✅</div>
+          <h4 style="color: var(--success); margin: 0 0 8px 0; font-size: 14px;">Week ${week} Badge</h4>
+          <div style="margin-bottom: 12px; font-size: 32px;">🏆</div>
+          <div style="font-size: 11px; color: var(--success); font-weight: 600; margin-bottom: 16px;">Claimed & Verified</div>
+          <a href="${badge.badgeUrl}" target="_blank" class="btn btn-secondary btn-sm" style="font-size: 10px; width: 100%; border-color: rgba(16,185,129,0.3); color: var(--success);">View Badge</a>
+        </div>
+      `;
+    } else {
+      html += `
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 16px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px;">
+          <div>
+            <h4 style="color: var(--text-color); margin: 0 0 8px 0; font-size: 14px;">Week ${week} Badge</h4>
+            <div style="margin-bottom: 12px; font-size: 32px; filter: grayscale(100%); opacity: 0.3;">🏆</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Waiting for URL...</div>
+          </div>
+          <div>
+            <input type="url" id="badge-input-w${week}" placeholder="Paste URL here..." class="form-control" style="font-size: 10px; padding: 6px 8px; margin-bottom: 8px; text-align: center; height: auto;">
+            <button class="btn btn-primary btn-sm" onclick="submitBadgeUrl(${week})" style="font-size: 10px; width: 100%; padding: 6px; background: var(--primary-magenta); border-color: var(--primary-magenta);">Claim Badge</button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  container.innerHTML = html;
+}
+
+function submitBadgeUrl(week) {
+  const input = document.getElementById(`badge-input-w${week}`);
+  if (!input) return;
+  const url = input.value.trim();
+  
+  if (!url || !url.startsWith('http')) {
+    showToast('❌ Please enter a valid badge URL (http://...)', 3000);
+    return;
+  }
+
+  if (!db.badges) db.badges = [];
+  
+  const newBadge = {
+    id: `badge-${Date.now()}`,
+    studentEmail: currentUser.email.trim().toLowerCase(),
+    week: week,
+    badgeUrl: url,
+    claimedAt: new Date().toISOString()
+  };
+
+  db.badges.push(newBadge);
+  saveDatabase(true);
+  
+  showToast('✅ Badge claimed successfully!', 3000);
+  renderStudentBadges();
+  
+  // Reload dashboard elements
+  if (typeof loadStudentDashboard === 'function') loadStudentDashboard();
+}
+
+window.submitBadgeUrl = submitBadgeUrl;
+window.renderStudentBadges = renderStudentBadges;

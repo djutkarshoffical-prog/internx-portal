@@ -267,11 +267,6 @@ function cleanDatabaseCollections() {
       }
     });
   }
-
-  // Force reset quizzes for testing so the shuffled version generates!
-  if (db) {
-    db.quizzes = [];
-  }
 }
 
 // ====== Face-API Initialization and Eye Tracking Scan Logic ======

@@ -4885,3 +4885,52 @@ textarea,
 select {
   font-size: 16px !important;
 }
+
+/* ==================== GLASSMORPHIC TOAST ALERTS ==================== */
+#toast-container {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+  align-items: center;
+}
+
+.glass-toast {
+  background: rgba(18, 18, 26, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 4px solid var(--primary-magenta);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(224, 26, 139, 0.2);
+  border-radius: 12px;
+  padding: 16px 24px;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  max-width: 500px;
+  text-align: center;
+  transform: translateY(100px) scale(0.9);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: auto;
+}
+
+.glass-toast.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+[data-theme="light"] .glass-toast {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1e1b4b;
+  box-shadow: 0 10px 40px rgba(131, 39, 236, 0.15);
+  border: 1px solid rgba(131, 39, 236, 0.2);
+  border-left: 4px solid var(--primary-magenta);
+}
+

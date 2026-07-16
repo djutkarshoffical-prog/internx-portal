@@ -1,5 +1,48 @@
 // app.js - Core Javascript Controller for InternX by UTX
 
+/* ==================== CUSTOM TOAST NOTIFICATIONS ==================== */
+window.showToast = function(message, type = 'info') {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = 'glass-toast';
+  
+  let icon = '🔔';
+  if (message.toLowerCase().includes('success') || message.toLowerCase().includes('complete') || message.toLowerCase().includes('issued')) icon = '✅';
+  else if (message.toLowerCase().includes('fail') || message.toLowerCase().includes('error') || message.toLowerCase().includes('invalid') || message.toLowerCase().includes('mismatch')) icon = '❌';
+  else if (message.toLowerCase().includes('warning') || message.toLowerCase().includes('already')) icon = '⚠️';
+
+  toast.innerHTML = `<span style="margin-right:8px; font-size:16px;">${icon}</span> ${message}`;
+  container.appendChild(toast);
+
+  // Trigger reflow
+  void toast.offsetWidth;
+
+  // Animate in
+  toast.classList.add('show');
+
+  // Remove after 5 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 400); // Wait for transition
+  }, 5000);
+};
+
+// OVERRIDE DEFAULT BROWSER ALERT
+window.alert = function(message) {
+  if (typeof message !== 'string') {
+    try { message = JSON.stringify(message); } catch(e) { message = String(message); }
+  }
+  showToast(message);
+};
+
 // Safe localStorage wrapper to prevent exceptions under file:// or restricted browser profiles
 const storage = {
   getItem(key) {
